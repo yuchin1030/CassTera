@@ -10,6 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
+#include "TestEnemyy.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -38,6 +41,10 @@ ACassTeraCharacter::ACassTeraCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
+
+	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
+	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+	//GetMesh()->SetupAttachment(FollowCamera);
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -86,6 +93,9 @@ void ACassTeraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACassTeraCharacter::Look);
+
+		// Fire
+		EnhancedInputComponent->BindAction(ia_fire, ETriggerEvent::Started, this, &ACassTeraCharacter::Fire);
 	}
 	else
 	{
@@ -127,4 +137,30 @@ void ACassTeraCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void ACassTeraCharacter::Fire(const FInputActionValue& Value)
+{
+	bFire = true;
+
+	FHitResult HitInfo;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+
+	FVector start = FollowCamera->GetComponentLocation();
+	FVector end = start + FollowCamera->GetComponentRotation().Vector()  * 1000.0f;
+
+	GetWorld()->LineTraceSingleByChannel(HitInfo, start, end, ECC_Visibility, params);
+
+	if (bFire)
+	{
+		DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
+		DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireVFX, end);
+		UE_LOG(LogTemp, Warning, TEXT("Fire"));
+
+		//ATestEnemyy* enemy = Cast<ATestEnemyy>(HitInfo);
+	}
+
+	bFire = false;
 }

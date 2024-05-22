@@ -47,6 +47,15 @@ class ACassTeraCharacter : public ACharacter
 public:
 	ACassTeraCharacter();
 	
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* ia_fire;
+	
+	bool bFire = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	UParticleSystem* fireVFX;
+
+	void Fire(const FInputActionValue& Value);
 
 protected:
 
