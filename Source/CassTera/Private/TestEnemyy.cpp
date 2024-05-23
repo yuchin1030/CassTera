@@ -25,3 +25,16 @@ void ATestEnemyy::Tick(float DeltaTime)
 
 }
 
+void ATestEnemyy::OnDamaged(float dmg)
+{
+	enemyHP -= dmg;
+	enemyHP = FMath::Clamp(enemyHP, 0.0f , 5.0f);
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), enemyHP);
+
+	if (enemyHP <= 0)
+	{
+		Destroy();
+	}
+}
+

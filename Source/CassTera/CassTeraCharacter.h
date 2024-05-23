@@ -50,12 +50,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ia_fire;
 	
-	bool bFire = false;
+	//bool bFire = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	UParticleSystem* fireVFX;
 
 	void Fire(const FInputActionValue& Value);
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	class UAnimMontage* FireMontage;
+
+	class UGameTimerWidget* gameTimerwidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	TSubclassOf<UGameTimerWidget> WBP_gameTimerWidget;
 
 protected:
 
@@ -78,5 +86,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	
 };
 

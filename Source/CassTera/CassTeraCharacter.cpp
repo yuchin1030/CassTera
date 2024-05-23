@@ -13,6 +13,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "TestEnemyy.h"
+#include "GameTimerWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -66,6 +67,13 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+
+	if (gameTimerwidget != nullptr)
+	{
+		gameTimerwidget->AddToViewport();
+	}
+	
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -141,7 +149,9 @@ void ACassTeraCharacter::Look(const FInputActionValue& Value)
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
-	bFire = true;
+	//bFire = true;
+
+	PlayAnimMontage(FireMontage);
 
 	FHitResult HitInfo;
 	FCollisionQueryParams params;
@@ -150,17 +160,32 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 	FVector start = FollowCamera->GetComponentLocation();
 	FVector end = start + FollowCamera->GetComponentRotation().Vector()  * 1000.0f;
 
-	GetWorld()->LineTraceSingleByChannel(HitInfo, start, end, ECC_Visibility, params);
+	bool bFire = GetWorld()->LineTraceSingleByChannel(HitInfo, start, end, ECC_Visibility, params);
 
 	if (bFire)
 	{
 		DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
 		DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireVFX, end);
-		UE_LOG(LogTemp, Warning, TEXT("Fire"));
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireVFX, HitInfo.ImpactPoint);	//
 
-		//ATestEnemyy* enemy = Cast<ATestEnemyy>(HitInfo);
+		if (HitInfo.GetActor()->IsA<ATestEnemyy>())
+		{
+			ATestEnemyy* enemy = Cast<ATestEnemyy>(HitInfo.GetActor());
+			enemy->OnDamaged(1);
+		}
+		else
+		{
+			if (gameTimerwidget != nullptr)
+			{
+				gameTimerwidget->DecreaseTime();
+				UE_LOG(LogTemp, Warning, TEXT("Not Enemy"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Fail222222"));
+			}
+		}
 	}
 
-	bFire = false;
+	//bFire = false;
 }
