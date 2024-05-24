@@ -9,7 +9,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Kismet/GameplayStatics.h"
-#include "Components/BoxComponent.h"
 
 AHidePlayer::AHidePlayer()
 {
@@ -28,12 +27,8 @@ AHidePlayer::AHidePlayer()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2050.f;
 	GetCharacterMovement()->GroundFriction = 8.0f;
 
-	rootComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Root Component"));
-	SetRootComponent(rootComp);
-	rootComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 	cameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	cameraBoom->SetupAttachment(rootComp);
+	cameraBoom->SetupAttachment(RootComponent);
 	cameraBoom->TargetArmLength = 400.f;
 	cameraBoom->bUsePawnControlRotation = true;
 	camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -41,10 +36,9 @@ AHidePlayer::AHidePlayer()
 	camera->bUsePawnControlRotation = true;
 
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
-	meshComp->SetupAttachment(rootComp);
+	meshComp->SetupAttachment(RootComponent);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
-
 
 }
 
@@ -109,8 +103,8 @@ void AHidePlayer::OnIALook(const FInputActionValue& value)
 
 void AHidePlayer::OnIAJump(const FInputActionValue& value)
 {
-	
-}
+	Jump();
+} 
 
 void AHidePlayer::OnIASounding(const FInputActionValue& value)
 {

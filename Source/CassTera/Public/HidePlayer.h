@@ -22,8 +22,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
-	class UBoxComponent* rootComp;
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
 	class UCameraComponent* camera;
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
 	class USpringArmComponent* cameraBoom;
