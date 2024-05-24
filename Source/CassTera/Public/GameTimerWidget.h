@@ -15,15 +15,35 @@ class CASSTERA_API UGameTimerWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
-	int minute = 3;
+	virtual void NativePreConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta =(BindWidget))
+	class UTextBlock* txt_Minute;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UTextBlock* txt_Second;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
-	int seconds = 0;
+	int32 seconds = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
+	int32 minute = 3;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	int minusSeconds = 9;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
+	int32 totalSeconds = 180;
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	FTimerHandle timerHandler;
+
+	bool bClearTimer = false;
+
 	UFUNCTION()
 	void DecreaseTime();
+
+	UFUNCTION()
+	void Timer();
 };

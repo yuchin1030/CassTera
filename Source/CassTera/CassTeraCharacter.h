@@ -65,6 +65,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	TSubclassOf<UGameTimerWidget> WBP_gameTimerWidget;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
+	bool bIsNotEnemy = false;
+
+	
+
 protected:
 
 	/** Called for movement input */
@@ -79,7 +84,9 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// To add mapping context
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
+
+	virtual void Tick( float DeltaSeconds ) override;
 
 public:
 	/** Returns CameraBoom subobject **/

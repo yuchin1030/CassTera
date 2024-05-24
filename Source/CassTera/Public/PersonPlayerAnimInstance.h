@@ -21,13 +21,13 @@ public:
 	UPROPERTY()
 	class ACassTeraCharacter* player;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Net)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	float horizontal;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Net)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	float vertical;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Net)
+	 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	float PitchAngle;
 
 

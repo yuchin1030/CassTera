@@ -84,6 +84,11 @@ void ACassTeraCharacter::BeginPlay()
 	}
 }
 
+void ACassTeraCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -178,7 +183,6 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 			if (gameTimerwidget != nullptr)
 			{
 				gameTimerwidget->DecreaseTime();
-				UE_LOG(LogTemp, Warning, TEXT("Not Enemy"));
 			}
 			else
 			{
