@@ -41,7 +41,8 @@ AHidePlayer::AHidePlayer()
 	meshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
-
+	
+	// 랜덤 매시로 로드
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh0(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/BlackBoard.BlackBoard'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh1(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Chair.Chair'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh2(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Chalk.Chalk'"));
@@ -58,8 +59,29 @@ AHidePlayer::AHidePlayer()
 void AHidePlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//랜덤 매시 로딩 
 	int32 random = FMath::RandRange(0, meshOptions.Num() - 1);
-	meshComp->SetStaticMesh(meshOptions[random]);
+	if (random == 0)
+	{
+		meshComp->SetStaticMesh(meshOptions[0]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -30), FRotator(0, 90, 0));
+	}
+	if (random == 1)
+	{
+		meshComp->SetStaticMesh(meshOptions[1]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0,0,-80), FRotator(0,90,0));
+	}
+	if (random == 2)
+	{
+		meshComp->SetStaticMesh(meshOptions[2]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -80), FRotator(0, 90, 0));
+	}
+	if (random == 3)
+	{
+		meshComp->SetStaticMesh(meshOptions[3]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -80), FRotator(0, 90, 0));
+	}
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -75,10 +97,17 @@ void AHidePlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector localMoveDir = GetTransform().TransformVector(MovementVector);
-
-	SetActorLocation(GetActorLocation() + localMoveDir * 600 * DeltaTime);
-	AddControllerYawInput(deltaRotation.Yaw);
-	AddControllerPitchInput(deltaRotation.Pitch);
+	if (bLockLocation == true)
+	{
+		SetActorLocation(lockLoc);
+		SetActorRotation(lockRot);
+	}
+	else 
+	{
+		SetActorLocation(GetActorLocation() + localMoveDir * 600 * DeltaTime);
+		AddControllerYawInput(deltaRotation.Yaw);
+		AddControllerPitchInput(deltaRotation.Pitch);
+	}
 }
 
 void AHidePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -118,15 +147,35 @@ void AHidePlayer::OnIALook(const FInputActionValue& value)
 
 void AHidePlayer::OnIAJump(const FInputActionValue& value)
 {
-	Jump();
+	if (bLockLocation == false)
+	{
+		Jump();
+	}
 } 
 
 void AHidePlayer::OnIASounding(const FInputActionValue& value)
 {
+	int32 random = FMath::RandRange(0, 1);
+	if (random == 0)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), boop1, GetActorLocation());
+	}
+	if (random == 1)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), boop2, GetActorLocation());
+	}
 }
 
 void AHidePlayer::OnIALockLocation(const FInputActionValue& value)
 {
+	if (bLockLocation == true)
+	{
+		bLockLocation = false;
+
+	}
+	bLockLocation = true;
+	lockLoc = GetActorLocation();
+	lockRot = GetActorRotation();
 }
 
 void AHidePlayer::OnIAChangeCamera(const FInputActionValue& value)

@@ -28,23 +28,34 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
 	class UStaticMeshComponent* meshComp;
 
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Inputs")
 	class UInputMappingContext* imc_hidingPlayer;
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Inputs")
 	class UInputAction* ia_move;
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Inputs")
 	class UInputAction* ia_look;
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Inputs")
 	class UInputAction* ia_jump;
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Inputs")
 	class UInputAction* ia_sounding;
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Inputs")
 	class UInputAction* ia_lockLocation;
-	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Inputs")
 	class UInputAction* ia_changeCam;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Sounds")
+	class USoundBase* boop1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Sounds")
+	class USoundBase* boop2;
+		
 
 	FVector MovementVector;
 	FRotator deltaRotation;
+
+	bool bLockLocation = false;
+	FVector lockLoc;
+	FRotator lockRot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HidePlayer|Meshs")
 	TArray<UStaticMesh*> meshOptions;
