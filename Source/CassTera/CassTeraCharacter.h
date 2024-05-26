@@ -65,6 +65,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	TSubclassOf<UGameTimerWidget> WBP_gameTimerWidget;
 
+	class UMainUI* mainUI;
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	TSubclassOf<UMainUI> WBP_mainUI;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	bool bIsNotEnemy = false;
 

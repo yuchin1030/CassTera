@@ -20,7 +20,6 @@ void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 	if (bClearTimer == false)
 	{
 		bClearTimer = true;
-
 		GetWorld()->GetTimerManager().SetTimer(timerHandler, this, &UGameTimerWidget::Timer, 1.0f, false);
 	}
 	
@@ -37,11 +36,12 @@ void UGameTimerWidget::DecreaseTime()
 	{
 		seconds = 0;
 	}
-	else if (minute > 0 && seconds > 30)
+	else if (!(minute == 0 && seconds <= 30))	// 버닝타임 제외하고는 모두 10초씩 차감
 	{
 		seconds -= minusSeconds;
-		//seconds = FMath::Clamp(seconds - minusSeconds, 0, 59);
 	}
+
+	
 }
 
 void UGameTimerWidget::Timer()
