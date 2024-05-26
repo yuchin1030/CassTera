@@ -1,0 +1,8 @@
+블루프린트 구현사항
+
+  - 메쉬 모양 바꾸는 부분
+
+
+
+c++
+ - 랜덤으로 Visible, Simulate Physics, Collision Enable 세팅 바꾸기
