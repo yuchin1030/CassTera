@@ -14,6 +14,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "TestEnemyy.h"
 #include "GameTimerWidget.h"
+#include "MainUI.h"
+
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -68,10 +70,16 @@ void ACassTeraCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+	mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
 
 	if (gameTimerwidget != nullptr)
 	{
 		gameTimerwidget->AddToViewport();
+	}
+
+	if (mainUI != nullptr)
+	{
+		mainUI->AddToViewport();
 	}
 	
 	//Add Input Mapping Context
@@ -171,7 +179,6 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 	{
 		DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
 		DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireVFX, HitInfo.ImpactPoint);	//
 
 		if (HitInfo.GetActor()->IsA<ATestEnemyy>())
 		{
@@ -180,6 +187,7 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 		}
 		else
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireVFX, HitInfo.ImpactPoint);	//
 			if (gameTimerwidget != nullptr)
 			{
 				gameTimerwidget->DecreaseTime();

@@ -2,6 +2,7 @@
 
 
 #include "TestEnemyy.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATestEnemyy::ATestEnemyy()
@@ -27,13 +28,13 @@ void ATestEnemyy::Tick(float DeltaTime)
 
 void ATestEnemyy::OnDamaged(float dmg)
 {
-	enemyHP -= dmg;
-	enemyHP = FMath::Clamp(enemyHP, 0.0f , 5.0f);
+	enemyHP = FMath::Clamp(enemyHP -= dmg, 0.0f , 5.0f);
 
 	UE_LOG(LogTemp, Warning, TEXT("%f"), enemyHP);
 
 	if (enemyHP <= 0)
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), correctVFX, GetActorLocation());	//
 		Destroy();
 	}
 }

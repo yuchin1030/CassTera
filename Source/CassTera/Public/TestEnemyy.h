@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	float enemyHP = 5.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	UParticleSystem* correctVFX;
+
 	UFUNCTION()
 	void OnDamaged(float dmg);
 
