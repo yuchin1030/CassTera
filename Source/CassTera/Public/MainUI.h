@@ -13,5 +13,16 @@ UCLASS()
 class CASSTERA_API UMainUI : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	virtual void NativeConstruct() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UImage* img_RedCH;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UImage* img_Kill;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UTextBlock* txt_Kill;
 };

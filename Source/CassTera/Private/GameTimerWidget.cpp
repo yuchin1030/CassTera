@@ -7,6 +7,7 @@
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h>
 #include "../CassTeraCharacter.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include "Components/ProgressBar.h"
 
 void UGameTimerWidget::NativePreConstruct()
 {
@@ -27,10 +28,16 @@ void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 
 void UGameTimerWidget::DecreaseTime()
 {
+	if (!(minute == 0 && seconds <= 30))
+	{
+		pgPercent += (1.0f / totalSeconds * minusSeconds);
+		pg_Timer->SetPercent(pgPercent);
+	}
+
 	if (minute > 0 && seconds < 10)
 	{
 		minute -= 1;
-		seconds += 50;
+		seconds += 51;
 	}
 	else if (minute == 0 && seconds < 10)
 	{
@@ -46,6 +53,11 @@ void UGameTimerWidget::DecreaseTime()
 
 void UGameTimerWidget::Timer()
 {
+	// 프로그래스바 타이머
+	pgPercent += (1.0f / totalSeconds);
+	pg_Timer->SetPercent(pgPercent);
+
+	// 숫자 타이머
 	if (minute >= 0 && seconds > 0)
 	{
 		seconds -= 1;

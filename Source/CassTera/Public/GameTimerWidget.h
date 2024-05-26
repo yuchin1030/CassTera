@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
 	class UTextBlock* txt_Second;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UProgressBar* pg_Timer;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	int32 seconds = 0;
 
@@ -34,7 +37,10 @@ public:
 	int minusSeconds = 9;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
-	int32 totalSeconds = 180;
+	float totalSeconds = 180.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
+	float pgPercent = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	FTimerHandle timerHandler;

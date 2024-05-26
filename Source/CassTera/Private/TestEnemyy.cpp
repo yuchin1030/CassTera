@@ -3,6 +3,7 @@
 
 #include "TestEnemyy.h"
 #include "Kismet/GameplayStatics.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 
 // Sets default values
 ATestEnemyy::ATestEnemyy()
@@ -30,11 +31,14 @@ void ATestEnemyy::OnDamaged(float dmg)
 {
 	enemyHP = FMath::Clamp(enemyHP -= dmg, 0.0f , 5.0f);
 
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), hitVFX, GetActorLocation());
+
 	UE_LOG(LogTemp, Warning, TEXT("%f"), enemyHP);
 
 	if (enemyHP <= 0)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), correctVFX, GetActorLocation());	//
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
+
 		Destroy();
 	}
 }

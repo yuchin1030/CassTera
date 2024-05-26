@@ -15,7 +15,9 @@
 #include "TestEnemyy.h"
 #include "GameTimerWidget.h"
 #include "MainUI.h"
-
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
+#include "../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -183,14 +185,38 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 		if (HitInfo.GetActor()->IsA<ATestEnemyy>())
 		{
 			ATestEnemyy* enemy = Cast<ATestEnemyy>(HitInfo.GetActor());
+
 			enemy->OnDamaged(1);
+
+			if (enemy->enemyHP == 0)
+			{
+				mainUI->img_Kill->SetVisibility(ESlateVisibility::Visible);
+				mainUI->txt_Kill->SetVisibility(ESlateVisibility::Visible);
+
+				FTimerHandle visibleKillHandler;
+				GetWorld()->GetTimerManager().SetTimer(visibleKillHandler, [&]() {
+
+					mainUI->img_Kill->SetVisibility(ESlateVisibility::Hidden);
+					mainUI->txt_Kill->SetVisibility(ESlateVisibility::Hidden);
+					GetWorld()->GetTimerManager().ClearTimer(visibleKillHandler);
+
+				}, 1.0f, false);
+			}
 		}
 		else
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireVFX, HitInfo.ImpactPoint);	//
 			if (gameTimerwidget != nullptr)
 			{
 				gameTimerwidget->DecreaseTime();
+				mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
+
+				FTimerHandle visibleHandler;
+				GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
+
+					mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
+					GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
+
+				}, 0.5f, false);
 			}
 			else
 			{
