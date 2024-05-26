@@ -46,6 +46,9 @@ public:
 	FVector MovementVector;
 	FRotator deltaRotation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HidePlayer|Meshs")
+	TArray<UStaticMesh*> meshOptions;
+
 	UFUNCTION()
 	void OnIAMove(const FInputActionValue& value);
 	UFUNCTION()

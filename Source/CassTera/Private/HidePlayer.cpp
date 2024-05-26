@@ -26,6 +26,7 @@ AHidePlayer::AHidePlayer()
 	GetCharacterMovement()->MaxAcceleration = 2050.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2050.f;
 	GetCharacterMovement()->GroundFriction = 8.0f;
+	JumpMaxCount = 2;
 
 	cameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	cameraBoom->SetupAttachment(RootComponent);
@@ -37,14 +38,28 @@ AHidePlayer::AHidePlayer()
 
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Component"));
 	meshComp->SetupAttachment(RootComponent);
+	meshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh0(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/BlackBoard.BlackBoard'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh1(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Chair.Chair'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh2(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Chalk.Chalk'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh3(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Desk.Desk'"));
+
+	meshOptions.Add(mesh0.Object);
+	meshOptions.Add(mesh1.Object);
+	meshOptions.Add(mesh2.Object);
+	meshOptions.Add(mesh3.Object);
+
 
 }
 
 void AHidePlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	int32 random = FMath::RandRange(0, meshOptions.Num() - 1);
+	meshComp->SetStaticMesh(meshOptions[random]);
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
