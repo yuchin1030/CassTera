@@ -3,6 +3,7 @@
 
 #include "Grenade.h"
 #include "Components/BoxComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include <TestEnemyy.h>
 
@@ -21,7 +22,7 @@ void AGrenade::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Bomb();
+	//Bomb();
 }
 
 void AGrenade::Tick(float DeltaTime)
@@ -36,13 +37,13 @@ void AGrenade::Bomb()
 	FTimerHandle bombHandler;
 	GetWorld()->GetTimerManager().SetTimer(bombHandler, [&] () {
 
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, GetActorTransform());
 
 		TArray<FOverlapResult> hitsArr;
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
 
-		bool bHit = GetWorld()->OverlapMultiByObjectType(hitsArr, GetActorLocation(), FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(1000), params);
+		//
+		bool bHit = GetWorld()->OverlapMultiByObjectType(hitsArr, GetActorLocation(), FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(500), params);
 
 		for (int i = 0; i < hitsArr.Num(); i++)
 		{
@@ -50,11 +51,20 @@ void AGrenade::Bomb()
 			if (enemy)
 			{
 				enemy->OnDamaged(1);
+
 			}
 		}
+			
+		spawnedBombVFX = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, GetActorTransform());	//
 
+	}, 2, false);
+
+	FTimerHandle vfxDestroyHandler;
+	GetWorldTimerManager().SetTimer(vfxDestroyHandler, [&]() {
+
+		spawnedBombVFX->DestroyComponent();
 		this->Destroy();
 
-		}, 2, false);
+	}, 4, false);
 }
 

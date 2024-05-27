@@ -47,13 +47,27 @@ class ACassTeraCharacter : public ACharacter
 public:
 	ACassTeraCharacter();
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
+	class UStaticMeshComponent* gun;
+
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ia_fire;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* ia_throw;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	UParticleSystem* fireVFX;
 
 	void Fire(const FInputActionValue& Value);
+
+	void Throw(const FInputActionValue& Value);
+	void ThrowFinish(const FInputActionValue& Value);
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	TSubclassOf<class AGrenade> grenade_bp;
+
+	AGrenade* grenade;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	class UAnimMontage* FireMontage;

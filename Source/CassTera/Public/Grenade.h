@@ -29,5 +29,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	class UParticleSystem* bombVFX;
 
+	class UParticleSystemComponent* spawnedBombVFX;
+
 	void Bomb();
 };

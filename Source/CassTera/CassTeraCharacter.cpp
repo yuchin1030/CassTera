@@ -17,7 +17,10 @@
 #include "MainUI.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/StaticMeshComponent.h"
 #include "../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
+#include <Grenade.h>
+#include <Kismet/KismetMathLibrary.h>
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -64,6 +67,10 @@ ACassTeraCharacter::ACassTeraCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	gun = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunComp"));
+	gun->SetupAttachment(GetMesh());
+	gun->SetRelativeLocation(FVector(3.212873, 12.293117, 3.621451));
+	gun->SetRelativeRotation(FRotator(0, -109.999999, 0));
 }
 
 void ACassTeraCharacter::BeginPlay()
@@ -119,6 +126,11 @@ void ACassTeraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Fire
 		EnhancedInputComponent->BindAction(ia_fire, ETriggerEvent::Started, this, &ACassTeraCharacter::Fire);
+
+		// Throw
+		EnhancedInputComponent->BindAction(ia_throw, ETriggerEvent::Started, this, &ACassTeraCharacter::Throw);
+		EnhancedInputComponent->BindAction(ia_throw, ETriggerEvent::Completed, this, &ACassTeraCharacter::ThrowFinish);
+
 	}
 	else
 	{
@@ -226,6 +238,34 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 				UE_LOG(LogTemp, Warning, TEXT("Fail222222"));
 			}
 		}
+	}
+
+}
+
+void ACassTeraCharacter::Throw(const FInputActionValue& Value)
+{
+	gun->SetVisibility(false);
+
+	FActorSpawnParameters params;
+	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("grenade_R"), params);
+	grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "grenade_R");
+}
+
+void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
+{
+	if (grenade != nullptr)
+	{
+		grenade->meshComp->SetSimulatePhysics(true);
+		grenade->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		gun->SetVisibility(true);
+
+		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), grenade->GetActorLocation());
+		float speed = 1100;
+		grenade->meshComp->SetPhysicsLinearVelocity(newVel * speed);
+
+		grenade->Bomb();
+		
+		
 	}
 
 }
