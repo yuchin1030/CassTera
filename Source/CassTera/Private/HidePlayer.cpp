@@ -9,6 +9,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "HidePlayerCamera.h"
 
 AHidePlayer::AHidePlayer()
 {
@@ -41,7 +43,7 @@ AHidePlayer::AHidePlayer()
 	meshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
-	
+
 	// 랜덤 매시로 로드
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh0(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/BlackBoard.BlackBoard'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh1(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Chair.Chair'"));
@@ -63,6 +65,8 @@ AHidePlayer::AHidePlayer()
 void AHidePlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 
 	//랜덤 매시 로딩 
 	int32 random = FMath::RandRange(0, meshOptions.Num() - 1);
@@ -103,14 +107,16 @@ void AHidePlayer::BeginPlay()
 		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -30), FRotator(0, 90, 0));
 		meshComp->SetRelativeScale3D(FVector(0.55f));
 	}
-
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
 		}
 	}
+	
+	currentHP = maxHP;
 }
 
 void AHidePlayer::Tick(float DeltaTime)
@@ -120,12 +126,12 @@ void AHidePlayer::Tick(float DeltaTime)
 	FVector localMoveDir = GetTransform().TransformVector(MovementVector);
 	if (bLockLocation == true)
 	{
-		SetActorLocation(lockLoc);
+		SetActorLocation(lockLoc, true);
 		SetActorRotation(lockRot);
 	}
 	else 
 	{
-		SetActorLocation(GetActorLocation() + localMoveDir * 600 * DeltaTime);
+		SetActorLocation(GetActorLocation() + localMoveDir * 600 * DeltaTime, true);
 		AddControllerYawInput(deltaRotation.Yaw);
 		AddControllerPitchInput(deltaRotation.Pitch);
 	}
@@ -189,18 +195,105 @@ void AHidePlayer::OnIASounding(const FInputActionValue& value)
 
 void AHidePlayer::OnIALockLocation(const FInputActionValue& value)
 {
-	if (bLockLocation == true)
+	if (bLockLocation)
 	{
-		bLockLocation = false;
-
+		UnLockLocation();
 	}
+	else
+	{
+		LockLocation();
+	}
+}
+
+void AHidePlayer::UnLockLocation()
+{
+	if (!bLockLocation)
+	{
+		return;
+	}
+	bLockLocation = false;
+}
+
+void AHidePlayer::LockLocation()
+{
+	if (bLockLocation)
+	{
+		return;
+	}
+
 	bLockLocation = true;
 	lockLoc = GetActorLocation();
 	lockRot = GetActorRotation();
+
 }
 
 void AHidePlayer::OnIAChangeCamera(const FInputActionValue& value)
 {
+	if (!bLockLocation)
+	{
+		return;
+	}
+
+	if (bChangeCam)
+	{
+		OnResetCamera();
+	}
+	else
+	{
+		OnChangeCamera();
+	}
+
+}
+
+void AHidePlayer::OnChangeCamera()
+{
+	if (bChangeCam)
+	{
+		return;
+	}
+	bChangeCam = true;
+
+	FVector loc = GetActorLocation() + FVector(0, 50, 50);
+	FActorSpawnParameters params;
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
+	if (watchingCam)
+	{
+		PlayerController->Possess(watchingCam);
+	}
+	
+}
+
+void AHidePlayer::OnResetCamera()
+{
+	if (!bChangeCam)
+	{
+		return;
+	}
+	bChangeCam = false;
+
+}
+
+void AHidePlayer::OnTakeDamage()
+{
+	currentHP = currentHP-1;
+	if (hitVFX != nullptr)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), hitVFX, GetActorLocation());
+	}
+	if (currentHP <= 0)
+	{
+		bDie = true;
+		Die();
+	}
+}
+
+void AHidePlayer::Die()
+{
+	if (dieVFX != nullptr)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
+	}
 }
 
 
