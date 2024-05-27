@@ -49,8 +49,6 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ia_fire;
-	
-	//bool bFire = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	UParticleSystem* fireVFX;
@@ -73,7 +71,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	bool bIsNotEnemy = false;
 
-	
+	bool bDecreasing;
 
 protected:
 

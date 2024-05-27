@@ -164,8 +164,6 @@ void ACassTeraCharacter::Look(const FInputActionValue& Value)
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
-	//bFire = true;
-
 	PlayAnimMontage(FireMontage);
 
 	FHitResult HitInfo;
@@ -207,15 +205,20 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 		{
 			if (gameTimerwidget != nullptr)
 			{
+				if (bDecreasing)
+					return;
+
+				bDecreasing = true;
+
 				gameTimerwidget->DecreaseTime();
 				mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
 
 				FTimerHandle visibleHandler;
-				GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
+				GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&] () {
 
 					mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
 					GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
-
+					bDecreasing = false;
 				}, 0.5f, false);
 			}
 			else
@@ -225,5 +228,4 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 		}
 	}
 
-	//bFire = false;
 }
