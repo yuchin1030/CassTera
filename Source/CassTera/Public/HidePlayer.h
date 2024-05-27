@@ -49,6 +49,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|Sounds")
 	class USoundBase* boop2;
 		
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	int32 maxHP = 2;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
+	int32 currentHP = maxHP;
+
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|VFX")
+	class UNiagaraSystem* hitVFX;
+	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|VFX")
+	class UNiagaraSystem* dieVFX;
+
+
+	bool bDie;
 
 	FVector MovementVector;
 	FRotator deltaRotation;
@@ -71,7 +84,31 @@ public:
 	UFUNCTION()
 	void OnIALockLocation(const FInputActionValue& value);
 	UFUNCTION()
-	void OnIAChangeCamera(const FInputActionValue& value);
+	void UnLockLocation();
+	UFUNCTION()
+	void LockLocation();
 
+	UFUNCTION()
+	void OnIAChangeCamera(const FInputActionValue& value);
+	UFUNCTION()
+	void OnChangeCamera();
+	UFUNCTION()
+	void OnResetCamera();
+	bool bChangeCam = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HidePlayer")
+	TSubclassOf<class AHidePlayerCamera> watcingCam_bp;
+
+	UPROPERTY()
+	class AHidePlayerCamera* watchingCam;
+
+	class APlayerController* PlayerController;
+
+
+	UFUNCTION()
+	void OnTakeDamage();
+
+	UFUNCTION()
+	void Die();
 
 };
