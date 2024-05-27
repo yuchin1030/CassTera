@@ -30,5 +30,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	float PitchAngle;
 
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 
 };
