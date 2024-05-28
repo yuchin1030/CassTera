@@ -51,6 +51,12 @@ AHidePlayer::AHidePlayer()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh3(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Desk.Desk'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh4(TEXT("/Script/Engine.StaticMesh'/Game/bohyun/Meshs/Bag.Bag'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh5(TEXT("/Script/Engine.StaticMesh'/Game/bohyun/Meshs/Trash.Trash'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh6(TEXT("/Script/Engine.StaticMesh'/Game/bohyun/Meshs/Cleaner.Cleaner'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh7(TEXT("/Script/Engine.StaticMesh'/Game/bohyun/Meshs/Paper.Paper'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh8(TEXT("/Script/Engine.StaticMesh'/Game/bohyun/Meshs/Pen.Pen'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh9(TEXT("/Script/Engine.StaticMesh'/Game/bohyun/Meshs/shibainu.shibainu'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh10(TEXT("/Script/Engine.StaticMesh'/Game/bohyun/Meshs/TableShelp.TableShelp'"));
+
 
 	meshOptions.Add(mesh0.Object);
 	meshOptions.Add(mesh1.Object);
@@ -58,6 +64,11 @@ AHidePlayer::AHidePlayer()
 	meshOptions.Add(mesh3.Object);
 	meshOptions.Add(mesh4.Object);
 	meshOptions.Add(mesh5.Object);
+	meshOptions.Add(mesh6.Object);
+	meshOptions.Add(mesh7.Object);
+	meshOptions.Add(mesh8.Object);
+	meshOptions.Add(mesh9.Object);
+	meshOptions.Add(mesh10.Object);
 
 
 }
@@ -107,6 +118,37 @@ void AHidePlayer::BeginPlay()
 		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -30), FRotator(0, 90, 0));
 		meshComp->SetRelativeScale3D(FVector(0.55f));
 	}
+	if (random == 6)
+	{
+		meshComp->SetStaticMesh(meshOptions[6]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 10, 20), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(1));
+	}
+	if (random == 7)
+	{
+		meshComp->SetStaticMesh(meshOptions[7]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 10, -80), FRotator(0, 200, 0));
+		meshComp->SetRelativeScale3D(FVector(2));
+	}
+	if (random == 8)
+	{
+		meshComp->SetStaticMesh(meshOptions[8]);
+		meshComp->SetRelativeLocationAndRotation(FVector(-30, -20, -88), FRotator(0, 180, 0));
+		meshComp->SetRelativeScale3D(FVector(3));
+	}
+	if (random == 9)
+	{
+		meshComp->SetStaticMesh(meshOptions[9]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -38), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(3));
+	}
+	if (random == 10)
+	{
+		meshComp->SetStaticMesh(meshOptions[10]);
+		meshComp->SetRelativeLocationAndRotation(FVector(-80, -40, -368), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(2));
+	}
+
 	PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController)
 	{
