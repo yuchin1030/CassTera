@@ -69,8 +69,8 @@ ACassTeraCharacter::ACassTeraCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	gun = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunComp"));
 	gun->SetupAttachment(GetMesh());
-	gun->SetRelativeLocation(FVector(3.212873, 12.293117, 3.621451));
-	gun->SetRelativeRotation(FRotator(0, -109.999999, 0));
+	gun->SetRelativeLocation(FVector(6.974221, 17.777489, 3.074630));
+	gun->SetRelativeRotation(FRotator(-1.104704, 63.238364, 1.899696));
 }
 
 void ACassTeraCharacter::BeginPlay()
@@ -247,8 +247,8 @@ void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 	gun->SetVisibility(false);
 
 	FActorSpawnParameters params;
-	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("grenade_R"), params);
-	grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "grenade_R");
+	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
+	grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Weapon_L");
 }
 
 void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
@@ -260,7 +260,7 @@ void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 		gun->SetVisibility(true);
 
 		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), grenade->GetActorLocation());
-		float speed = 1100;
+		float speed = 950;
 		grenade->meshComp->SetPhysicsLinearVelocity(newVel * speed);
 
 		grenade->Bomb();
