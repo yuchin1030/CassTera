@@ -38,4 +38,3 @@ void AObjects::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
