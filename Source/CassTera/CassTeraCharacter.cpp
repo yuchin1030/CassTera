@@ -247,8 +247,8 @@ void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 	gun->SetVisibility(false);
 
 	FActorSpawnParameters params;
-	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("grenade_R"), params);
-	grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "grenade_R");
+	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
+	grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Weapon_L");
 }
 
 void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
@@ -260,7 +260,7 @@ void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 		gun->SetVisibility(true);
 
 		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), grenade->GetActorLocation());
-		float speed = 1100;
+		float speed = 950;
 		grenade->meshComp->SetPhysicsLinearVelocity(newVel * speed);
 
 		grenade->Bomb();

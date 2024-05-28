@@ -13,9 +13,11 @@ AGrenade::AGrenade()
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	SetRootComponent(boxComp);
+	boxComp->SetBoxExtent(FVector(10, 10, 15));
 
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	meshComp->SetupAttachment(RootComponent);
+	meshComp->SetRelativeScale3D(FVector(0.75));
 }
 
 void AGrenade::BeginPlay()
