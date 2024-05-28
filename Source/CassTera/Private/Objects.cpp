@@ -20,7 +20,7 @@ AObjects::AObjects()
 void AObjects::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// 랜덤으로 visible, 콜리전, 피직스를 끄고 시작한다
 	int32 number = FMath::RandRange(0, 100);
 
