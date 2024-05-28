@@ -69,8 +69,8 @@ ACassTeraCharacter::ACassTeraCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	gun = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunComp"));
 	gun->SetupAttachment(GetMesh());
-	gun->SetRelativeLocation(FVector(3.212873, 12.293117, 3.621451));
-	gun->SetRelativeRotation(FRotator(0, -109.999999, 0));
+	gun->SetRelativeLocation(FVector(6.974221, 17.777489, 3.074630));
+	gun->SetRelativeRotation(FRotator(-1.104704, 63.238364, 1.899696));
 }
 
 void ACassTeraCharacter::BeginPlay()
