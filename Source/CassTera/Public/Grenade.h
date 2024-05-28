@@ -31,5 +31,10 @@ public:
 
 	class UParticleSystemComponent* spawnedBombVFX;
 
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	FVector bombLoc;
+
+	bool bBeforeBomb;
+
 	void Bomb();
 };

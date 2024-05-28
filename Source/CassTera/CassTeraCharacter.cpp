@@ -120,12 +120,14 @@ void ACassTeraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACassTeraCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ACassTeraCharacter::MoveFin);
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACassTeraCharacter::Look);
 
 		// Fire
 		EnhancedInputComponent->BindAction(ia_fire, ETriggerEvent::Started, this, &ACassTeraCharacter::Fire);
+		EnhancedInputComponent->BindAction(ia_fire, ETriggerEvent::Completed, this, &ACassTeraCharacter::FireFin);
 
 		// Throw
 		EnhancedInputComponent->BindAction(ia_throw, ETriggerEvent::Started, this, &ACassTeraCharacter::Throw);
@@ -140,6 +142,8 @@ void ACassTeraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void ACassTeraCharacter::Move(const FInputActionValue& Value)
 {
+	bMoving = true;
+
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -161,6 +165,11 @@ void ACassTeraCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+void ACassTeraCharacter::MoveFin(const FInputActionValue& Value)
+{
+	bMoving = false;
+}
+
 void ACassTeraCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -176,6 +185,8 @@ void ACassTeraCharacter::Look(const FInputActionValue& Value)
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
+	bFiring = true;
+
 	PlayAnimMontage(FireMontage);
 
 	FHitResult HitInfo;
@@ -242,8 +253,16 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 
 }
 
+void ACassTeraCharacter::FireFin(const FInputActionValue& Value)
+{
+	bFiring = false;
+}
+
 void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 {
+	if (bMoving == true || bFiring == true)
+		return;
+
 	gun->SetVisibility(false);
 
 	FActorSpawnParameters params;
@@ -253,12 +272,18 @@ void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 
 void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 {
+	if (bMoving == true)
+		return;
+
 	if (grenade != nullptr)
 	{
+		PlayAnimMontage(throwMontage);
+
 		grenade->meshComp->SetSimulatePhysics(true);
 		grenade->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		gun->SetVisibility(true);
 
+		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
 		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), grenade->GetActorLocation());
 		float speed = 950;
 		grenade->meshComp->SetPhysicsLinearVelocity(newVel * speed);

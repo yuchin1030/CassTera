@@ -59,7 +59,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	UParticleSystem* fireVFX;
 
+
 	void Fire(const FInputActionValue& Value);
+	void FireFin(const FInputActionValue& Value);
 
 	void Throw(const FInputActionValue& Value);
 	void ThrowFinish(const FInputActionValue& Value);
@@ -71,6 +73,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	class UAnimMontage* FireMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	class UAnimMontage* throwMontage;
 
 	class UGameTimerWidget* gameTimerwidget;
 
@@ -87,10 +92,16 @@ public:
 
 	bool bDecreasing;
 
+	bool bMoving;
+
+	bool bFiring;
+
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
+
+	void MoveFin(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);

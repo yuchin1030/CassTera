@@ -31,7 +31,11 @@ void AGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	if (bBeforeBomb == false)
+	{
+		// 터지기 직전 수류탄 위치 저장
+		bombLoc = meshComp->GetComponentLocation();
+	}
 }
 
 void AGrenade::Bomb()
@@ -39,14 +43,15 @@ void AGrenade::Bomb()
 	FTimerHandle bombHandler;
 	GetWorld()->GetTimerManager().SetTimer(bombHandler, [&] () {
 
+		bBeforeBomb = true;
 
 		TArray<FOverlapResult> hitsArr;
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
 
-		//
-		bool bHit = GetWorld()->OverlapMultiByObjectType(hitsArr, GetActorLocation(), FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(500), params);
+		bool bHit = GetWorld()->OverlapMultiByObjectType(hitsArr, bombLoc, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(500), params);
 
+		DrawDebugSphere(GetWorld(), bombLoc, 500, 16, FColor::Blue, false, 5, 0, 5);
 		for (int i = 0; i < hitsArr.Num(); i++)
 		{
 			auto* enemy = Cast<ATestEnemyy>(hitsArr[i].GetActor());
@@ -57,7 +62,7 @@ void AGrenade::Bomb()
 			}
 		}
 			
-		spawnedBombVFX = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, GetActorTransform());	//
+		spawnedBombVFX = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, bombLoc);	//
 
 	}, 2, false);
 
