@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "HidePlayerCamera.h"
+#include "Net/UnrealNetwork.h"
 
 AHidePlayer::AHidePlayer()
 {
@@ -43,6 +44,8 @@ AHidePlayer::AHidePlayer()
 	meshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+
+	bReplicates = true;
 
 	// 랜덤 매시로 로드
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh0(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/BlackBoard.BlackBoard'"));
@@ -78,75 +81,9 @@ void AHidePlayer::BeginPlay()
 	Super::BeginPlay();
 
 
-
-	//랜덤 매시 로딩 
-	int32 random = FMath::RandRange(0, meshOptions.Num() - 1);
-	if (random == 0)
-	{
-		meshComp->SetStaticMesh(meshOptions[0]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -10), FRotator(0, 90, 0));
-		meshComp->SetRelativeScale3D(FVector(0.7f,0.7f,1));
-
-	}
-	if (random == 1)
-	{
-		meshComp->SetStaticMesh(meshOptions[1]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0,0,-80), FRotator(0,90,0));
-		meshComp->SetRelativeScale3D(FVector(1.5f));
-	}
-	if (random == 2)
-	{
-		meshComp->SetStaticMesh(meshOptions[2]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -80), FRotator(0, 90, 0));
-		meshComp->SetRelativeScale3D(FVector(5));
-	}
-	if (random == 3)
-	{
-		meshComp->SetStaticMesh(meshOptions[3]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -80), FRotator(0, 90, 0));
-		meshComp->SetRelativeScale3D(FVector(1.5f));
-	}
-	if (random == 4)
-	{
-		meshComp->SetStaticMesh(meshOptions[4]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, -320, -80), FRotator(0, 180, 0));
-		meshComp->SetRelativeScale3D(FVector(80));
-	}
-	if (random == 5)
-	{
-		meshComp->SetStaticMesh(meshOptions[5]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -30), FRotator(0, 90, 0));
-		meshComp->SetRelativeScale3D(FVector(0.55f));
-	}
-	if (random == 6)
-	{
-		meshComp->SetStaticMesh(meshOptions[6]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, 10, 20), FRotator(0, 90, 0));
-		meshComp->SetRelativeScale3D(FVector(1));
-	}
-	if (random == 7)
-	{
-		meshComp->SetStaticMesh(meshOptions[7]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, 10, -80), FRotator(0, 200, 0));
-		meshComp->SetRelativeScale3D(FVector(2));
-	}
-	if (random == 8)
-	{
-		meshComp->SetStaticMesh(meshOptions[8]);
-		meshComp->SetRelativeLocationAndRotation(FVector(-30, -20, -88), FRotator(0, 180, 0));
-		meshComp->SetRelativeScale3D(FVector(3));
-	}
-	if (random == 9)
-	{
-		meshComp->SetStaticMesh(meshOptions[9]);
-		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -38), FRotator(0, 90, 0));
-		meshComp->SetRelativeScale3D(FVector(3));
-	}
-	if (random == 10)
-	{
-		meshComp->SetStaticMesh(meshOptions[10]);
-		meshComp->SetRelativeLocationAndRotation(FVector(-80, -40, -368), FRotator(0, 90, 0));
-		meshComp->SetRelativeScale3D(FVector(2));
+	if(HasAuthority())
+	{ 
+		RandomMesh();
 	}
 
 	PlayerController = Cast<APlayerController>(Controller);
@@ -165,15 +102,15 @@ void AHidePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector localMoveDir = GetTransform().TransformVector(MovementVector);
+	localMoveDir = GetTransform().TransformVector(MovementVector);
 	if (bLockLocation == true)
 	{
 		SetActorLocation(lockLoc, true);
 		SetActorRotation(lockRot);
 	}
-	else 
+	else
 	{
-		SetActorLocation(GetActorLocation() + localMoveDir * 600 * DeltaTime, true);
+		AddMovementInput(localMoveDir * 600, true);
 		AddControllerYawInput(deltaRotation.Yaw);
 		AddControllerPitchInput(deltaRotation.Pitch);
 	}
@@ -195,11 +132,30 @@ void AHidePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	}
 }
 
+void AHidePlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AHidePlayer, newMesh);
+	DOREPLIFETIME(AHidePlayer, meshLoc);
+	DOREPLIFETIME(AHidePlayer, meshRot);
+	DOREPLIFETIME(AHidePlayer, MeshScale);
+	DOREPLIFETIME(AHidePlayer, lockLoc);
+	DOREPLIFETIME(AHidePlayer, lockRot);
+
+
+}
+
+void AHidePlayer::OnRep_SetMesh()
+{	
+	meshComp->SetStaticMesh(newMesh);
+	meshComp->SetRelativeLocationAndRotation(meshLoc,meshRot);
+	meshComp->SetRelativeScale3D(MeshScale);
+}
+
 void AHidePlayer::OnIAMove(const FInputActionValue& value)
 {
 	FVector2D moveDir = value.Get<FVector2D>();
 	MovementVector = FVector(moveDir.Y, moveDir.X, 0);
-
 }
 
 void AHidePlayer::OnIALook(const FInputActionValue& value)
@@ -239,11 +195,11 @@ void AHidePlayer::OnIALockLocation(const FInputActionValue& value)
 {
 	if (bLockLocation)
 	{
-		UnLockLocation();
+		ServerRPC_UnLockLocation();
 	}
 	else
 	{
-		LockLocation();
+		ServerRPC_LockLocation();
 	}
 }
 
@@ -266,7 +222,6 @@ void AHidePlayer::LockLocation()
 	bLockLocation = true;
 	lockLoc = GetActorLocation();
 	lockRot = GetActorRotation();
-
 }
 
 void AHidePlayer::OnIAChangeCamera(const FInputActionValue& value)
@@ -278,13 +233,12 @@ void AHidePlayer::OnIAChangeCamera(const FInputActionValue& value)
 
 	if (bChangeCam)
 	{
-		OnResetCamera();
+		ServerRPC_ResetCamera();
 	}
 	else
 	{
-		OnChangeCamera();
+		ServerRPC_ChangeCamera();
 	}
-
 }
 
 void AHidePlayer::OnChangeCamera()
@@ -303,7 +257,6 @@ void AHidePlayer::OnChangeCamera()
 	{
 		PlayerController->Possess(watchingCam);
 	}
-	
 }
 
 void AHidePlayer::OnResetCamera()
@@ -313,7 +266,6 @@ void AHidePlayer::OnResetCamera()
 		return;
 	}
 	bChangeCam = false;
-
 }
 
 void AHidePlayer::OnTakeDamage()
@@ -336,6 +288,154 @@ void AHidePlayer::Die()
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
 	}
+}
+
+void AHidePlayer::RandomMesh()
+{
+	//랜덤 매시 로딩 
+	int32 random = FMath::RandRange(0, meshOptions.Num() - 1);
+	if (random == 0)
+	{
+		meshComp->SetStaticMesh(meshOptions[0]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -10), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(0.7f, 0.7f, 1));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[0];
+	}
+	if (random == 1)
+	{
+		meshComp->SetStaticMesh(meshOptions[1]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -80), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(1.5f));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[1];
+	}
+	if (random == 2)
+	{
+		meshComp->SetStaticMesh(meshOptions[2]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -80), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(5));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[2];
+	}
+	if (random == 3)
+	{
+		meshComp->SetStaticMesh(meshOptions[3]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -80), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(1.5f));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[3];
+	}
+	if (random == 4)
+	{
+		meshComp->SetStaticMesh(meshOptions[4]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, -320, -80), FRotator(0, 180, 0));
+		meshComp->SetRelativeScale3D(FVector(80));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[4];
+	}
+	if (random == 5)
+	{
+		meshComp->SetStaticMesh(meshOptions[5]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -30), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(0.55f));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[5];
+	}
+	if (random == 6)
+	{
+		meshComp->SetStaticMesh(meshOptions[6]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 10, 20), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(1));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[6];
+	}
+	if (random == 7)
+	{
+		meshComp->SetStaticMesh(meshOptions[7]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 10, -80), FRotator(0, 200, 0));
+		meshComp->SetRelativeScale3D(FVector(2));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[7];
+	}
+	if (random == 8)
+	{
+		meshComp->SetStaticMesh(meshOptions[8]);
+		meshComp->SetRelativeLocationAndRotation(FVector(-30, -20, -88), FRotator(0, 180, 0));
+		meshComp->SetRelativeScale3D(FVector(3));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[8];
+	}
+	if (random == 9)
+	{
+		meshComp->SetStaticMesh(meshOptions[9]);
+		meshComp->SetRelativeLocationAndRotation(FVector(0, 0, -38), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(3));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[9];
+	}
+	if (random == 10)
+	{
+		meshComp->SetStaticMesh(meshOptions[10]);
+		meshComp->SetRelativeLocationAndRotation(FVector(-80, -40, -368), FRotator(0, 90, 0));
+		meshComp->SetRelativeScale3D(FVector(2));
+		meshLoc = meshComp->GetRelativeLocation();
+		meshRot = meshComp->GetRelativeRotation();
+		MeshScale = meshComp->GetRelativeScale3D();
+		newMesh = meshOptions[10];
+	}
+}
+
+void AHidePlayer::ServerRPC_LockLocation_Implementation()
+{
+	MultiRPC_LockLocation();
+}
+
+void AHidePlayer::ServerRPC_UnLockLocation_Implementation()
+{
+	MultiRPC_UnLockLocation();
+}
+
+void AHidePlayer::MultiRPC_LockLocation_Implementation()
+{
+	LockLocation();
+
+}
+
+void AHidePlayer::MultiRPC_UnLockLocation_Implementation()
+{
+	UnLockLocation();
+
+}
+
+void AHidePlayer::ServerRPC_ChangeCamera_Implementation()
+{
+	OnChangeCamera();
+}
+
+void AHidePlayer::ServerRPC_ResetCamera_Implementation()
+{
+	OnResetCamera();
 }
 
 

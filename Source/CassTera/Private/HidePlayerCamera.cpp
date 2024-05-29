@@ -94,6 +94,12 @@ void AHidePlayerCamera::OnIAChangeCamera(const FInputActionValue& value)
 	{
 		return;
 	}
+	ServerRPC_ChangeCamera();
+
+}
+
+void AHidePlayerCamera::ServerRPC_ChangeCamera_Implementation()
+{
 	PlayerController = GetWorld()->GetFirstPlayerController();
 
 	for (TActorIterator<AHidePlayer> iter(GetWorld()); iter; ++iter)
