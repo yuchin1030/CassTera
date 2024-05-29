@@ -55,5 +55,6 @@ public:
 
 	APlayerController* PlayerController;
 	
-
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ChangeCamera();
 };

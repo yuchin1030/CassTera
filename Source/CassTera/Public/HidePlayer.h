@@ -21,6 +21,8 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
 	class UCameraComponent* camera;
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
@@ -60,18 +62,41 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|VFX")
 	class UNiagaraSystem* dieVFX;
 
+	UPROPERTY(ReplicatedUsing=OnRep_SetMesh)
+	class UStaticMesh* newMesh;
+
+	UFUNCTION()
+	void OnRep_SetMesh();
+
+	UPROPERTY(Replicated)
+	FVector lockLoc;
+
+	UPROPERTY(Replicated)
+	FRotator lockRot;
+
 
 	bool bDie;
 
 	FVector MovementVector;
+
+	FVector localMoveDir;
+
 	FRotator deltaRotation;
 
-	bool bLockLocation = false;
-	FVector lockLoc;
-	FRotator lockRot;
+	bool bLockLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HidePlayer|Meshs")
 	TArray<UStaticMesh*> meshOptions;
+
+	UPROPERTY(Replicated)
+	FVector meshLoc;
+
+	UPROPERTY(Replicated)
+	FRotator meshRot;
+
+	UPROPERTY(Replicated)
+	FVector MeshScale;
+
 
 	UFUNCTION()
 	void OnIAMove(const FInputActionValue& value);
@@ -110,5 +135,23 @@ public:
 
 	UFUNCTION()
 	void Die();
+
+	UFUNCTION()
+	void RandomMesh();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_LockLocation();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_UnLockLocation();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_LockLocation();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_UnLockLocation();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ChangeCamera();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ResetCamera();
+
 
 };
