@@ -36,5 +36,7 @@ public:
 
 	bool bBeforeBomb;
 
+	void BeforeBomb(class ACassTeraCharacter* pc);
+
 	void Bomb();
 };

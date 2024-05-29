@@ -25,4 +25,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
 	class UTextBlock* txt_Kill;
+
+	UFUNCTION()
+	void ShowKillContent();
 };

@@ -59,6 +59,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	UParticleSystem* fireVFX;
 
+	UPROPERTY()
+	class ACassTeraPlayerController* MyController;
+	
+	UPROPERTY()
+	class UGameTimerWidget* gameTimerwidget;
+
+	UPROPERTY()
+	class UMainUI* mainUI;
+
 
 	void Fire(const FInputActionValue& Value);
 	void FireFin(const FInputActionValue& Value);
@@ -68,8 +77,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	TSubclassOf<class AGrenade> grenade_bp;
-
-	AGrenade* grenade;
+	
+	UPROPERTY()
+	class AGrenade* grenade;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	class UAnimMontage* FireMontage;
@@ -77,15 +87,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	class UAnimMontage* throwMontage;
 
-	class UGameTimerWidget* gameTimerwidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
-	TSubclassOf<UGameTimerWidget> WBP_gameTimerWidget;
-
-	class UMainUI* mainUI;
+	TSubclassOf<class UUserWidget> WBP_gameTimerWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
-	TSubclassOf<UMainUI> WBP_mainUI;
+	TSubclassOf<class UUserWidget> WBP_mainUI;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	bool bIsNotEnemy = false;
@@ -95,6 +102,23 @@ public:
 	bool bMoving;
 
 	bool bFiring;
+
+	bool bThrowing;
+
+
+
+	// ==========================================================================
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Fire();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Fire(FHitResult HitInfo, bool bFire);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Throw();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Throw(FHitResult HitInfo, bool bFire);
 
 protected:
 
@@ -122,6 +146,5 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	
 };
 

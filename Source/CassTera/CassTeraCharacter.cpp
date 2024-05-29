@@ -21,6 +21,7 @@
 #include "../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraFunctionLibrary.h"
 #include <Grenade.h>
 #include <Kismet/KismetMathLibrary.h>
+#include "CassTeraPlayerController.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -29,9 +30,11 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ACassTeraCharacter::ACassTeraCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -78,19 +81,6 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
-	mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
-
-	if (gameTimerwidget != nullptr)
-	{
-		gameTimerwidget->AddToViewport();
-	}
-
-	if (mainUI != nullptr)
-	{
-		mainUI->AddToViewport();
-	}
-	
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -99,6 +89,49 @@ void ACassTeraCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	//if (IsLocallyControlled())
+	//{
+	//	gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+	//	mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
+
+	//	if (gameTimerwidget != nullptr)
+	//	{
+	//		gameTimerwidget->AddToViewport();
+	//	}
+
+	//	if (mainUI != nullptr)
+	//	{
+	//		mainUI->AddToViewport();
+	//	}
+	//}
+
+
+	// 내가 조작하는 주인공만 UI를 생성하고싶다.
+	MyController = Cast<ACassTeraPlayerController>(Controller);
+
+	FString myname = GetName();
+	if (IsLocallyControlled() && (MyController && nullptr == MyController->gameTimerwidget))
+	{
+		MyController->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+		MyController->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
+
+		if (MyController->gameTimerwidget != nullptr)
+		{
+			MyController->gameTimerwidget->AddToViewport();
+		}
+
+		if (MyController->mainUI != nullptr)
+		{
+			MyController->mainUI->AddToViewport();
+		}
+	}
+	if (MyController)
+	{
+		gameTimerwidget = MyController->gameTimerwidget;
+		mainUI = MyController->mainUI;
+	}
+
 }
 
 void ACassTeraCharacter::Tick(float DeltaSeconds)
@@ -113,14 +146,14 @@ void ACassTeraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACassTeraCharacter::Move);
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ACassTeraCharacter::MoveFin);
+		//EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ACassTeraCharacter::MoveFin);
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACassTeraCharacter::Look);
@@ -142,7 +175,7 @@ void ACassTeraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void ACassTeraCharacter::Move(const FInputActionValue& Value)
 {
-	bMoving = true;
+	//bMoving = true;
 
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -155,7 +188,7 @@ void ACassTeraCharacter::Move(const FInputActionValue& Value)
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
@@ -167,7 +200,7 @@ void ACassTeraCharacter::Move(const FInputActionValue& Value)
 
 void ACassTeraCharacter::MoveFin(const FInputActionValue& Value)
 {
-	bMoving = false;
+	//bMoving = false;
 }
 
 void ACassTeraCharacter::Look(const FInputActionValue& Value)
@@ -185,49 +218,64 @@ void ACassTeraCharacter::Look(const FInputActionValue& Value)
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
+	if (bThrowing || bFiring)
+		return;
+
 	bFiring = true;
 
-	PlayAnimMontage(FireMontage);
+	ServerRPC_Fire();
+}
+
+void ACassTeraCharacter::FireFin(const FInputActionValue& Value)
+{
+	bFiring = false;
+}
+
+void ACassTeraCharacter::ServerRPC_Fire_Implementation()
+{
+	// 총 쏘면서 수류탄 동시에 하지 못하게 하는 변수
 
 	FHitResult HitInfo;
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(this);
 
 	FVector start = FollowCamera->GetComponentLocation();
-	FVector end = start + FollowCamera->GetComponentRotation().Vector()  * 1000.0f;
+	FVector end = start + FollowCamera->GetComponentRotation().Vector() * 1000.0f;
 
 	bool bFire = GetWorld()->LineTraceSingleByChannel(HitInfo, start, end, ECC_Visibility, params);
 
+	MultiRPC_Fire(HitInfo, bFire);
+}
+
+void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool bFire)
+{
+	PlayAnimMontage(FireMontage);
+
 	if (bFire)
 	{
-		DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
-		DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
+		//DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
+		//DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
 
+		// enemy 가 맞으면
 		if (HitInfo.GetActor()->IsA<ATestEnemyy>())
 		{
 			ATestEnemyy* enemy = Cast<ATestEnemyy>(HitInfo.GetActor());
 
+			// 에너미 데미지 -1
 			enemy->OnDamaged(1);
 
+			// 죽으면
 			if (enemy->enemyHP == 0)
 			{
-				mainUI->img_Kill->SetVisibility(ESlateVisibility::Visible);
-				mainUI->txt_Kill->SetVisibility(ESlateVisibility::Visible);
-
-				FTimerHandle visibleKillHandler;
-				GetWorld()->GetTimerManager().SetTimer(visibleKillHandler, [&]() {
-
-					mainUI->img_Kill->SetVisibility(ESlateVisibility::Hidden);
-					mainUI->txt_Kill->SetVisibility(ESlateVisibility::Hidden);
-					GetWorld()->GetTimerManager().ClearTimer(visibleKillHandler);
-
-				}, 1.0f, false);
+				// 킬 이미지, 텍스트 UI 띄우기
+				mainUI->ShowKillContent();
 			}
 		}
 		else
 		{
 			if (gameTimerwidget != nullptr)
 			{
+				// 더블 클릭해서 시간 감소 버그 방지용 변수
 				if (bDecreasing)
 					return;
 
@@ -237,12 +285,12 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 				mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
 
 				FTimerHandle visibleHandler;
-				GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&] () {
+				GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
 
 					mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
 					GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
 					bDecreasing = false;
-				}, 0.5f, false);
+					}, 0.5f, false);
 			}
 			else
 			{
@@ -250,18 +298,21 @@ void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 			}
 		}
 	}
-
 }
 
-void ACassTeraCharacter::FireFin(const FInputActionValue& Value)
-{
-	bFiring = false;
-}
+
+
+
+
+
+
 
 void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 {
-	if (bMoving == true || bFiring == true)
+	if (bFiring || bThrowing)
 		return;
+
+	bThrowing = true;
 
 	gun->SetVisibility(false);
 
@@ -272,25 +323,35 @@ void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 
 void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 {
-	if (bMoving == true)
-		return;
+	/*if (bMoving == true)
+		return;*/
 
-	if (grenade != nullptr)
+	if (grenade != nullptr && bThrowing)
 	{
 		PlayAnimMontage(throwMontage);
 
-		grenade->meshComp->SetSimulatePhysics(true);
-		grenade->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		gun->SetVisibility(true);
 
-		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
-		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), grenade->GetActorLocation());
-		float speed = 950;
-		grenade->meshComp->SetPhysicsLinearVelocity(newVel * speed);
+		grenade->BeforeBomb(this);
 
-		grenade->Bomb();
-		
-		
 	}
 
+	bThrowing = false;
+	/*FTimerHandle animDelayHandler;
+	GetWorldTimerManager().SetTimer(animDelayHandler, [&]() {
+		
+	}, 2.2f, false);*/
+	
 }
+
+
+void ACassTeraCharacter::ServerRPC_Throw()
+{
+
+}
+
+void ACassTeraCharacter::MultiRPC_Throw(FHitResult HitInfo, bool bFire)
+{
+
+}
+

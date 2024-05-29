@@ -24,7 +24,7 @@ void UPersonPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	vertical = FVector::DotProduct(vel, player->GetActorForwardVector());
 
-	PitchAngle = player->GetBaseAimRotation().Pitch;
+	PitchAngle = player->GetBaseAimRotation().GetNormalized().Pitch;
 
 	PitchAngle = FMath::Clamp(-PitchAngle, -60, 60);
 

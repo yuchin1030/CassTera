@@ -12,3 +12,18 @@ void UMainUI::NativeConstruct()
 	txt_Kill->SetVisibility(ESlateVisibility::Hidden);
 
 }
+
+void UMainUI::ShowKillContent()
+{
+	img_Kill->SetVisibility(ESlateVisibility::Visible);
+	txt_Kill->SetVisibility(ESlateVisibility::Visible);
+
+	FTimerHandle visibleKillHandler;
+	GetWorld()->GetTimerManager().SetTimer(visibleKillHandler, [&]() {
+
+		img_Kill->SetVisibility(ESlateVisibility::Hidden);
+		txt_Kill->SetVisibility(ESlateVisibility::Hidden);
+		GetWorld()->GetTimerManager().ClearTimer(visibleKillHandler);
+
+	}, 1.0f, false);
+}

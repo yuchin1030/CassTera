@@ -6,6 +6,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include <TestEnemyy.h>
+#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
+#include "../CassTeraCharacter.h"
 
 AGrenade::AGrenade()
 {
@@ -36,6 +38,24 @@ void AGrenade::Tick(float DeltaTime)
 		// 터지기 직전 수류탄 위치 저장
 		bombLoc = meshComp->GetComponentLocation();
 	}
+}
+
+void AGrenade::BeforeBomb(ACassTeraCharacter* pc)
+{
+	meshComp->SetSimulatePhysics(true);
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	if (pc != nullptr)
+	{
+		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
+		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(pc->GetActorLocation(), bombLoc);
+
+		float speed = 950;
+		meshComp->SetPhysicsLinearVelocity(newVel * speed);
+
+		Bomb();
+	}
+
 }
 
 void AGrenade::Bomb()
