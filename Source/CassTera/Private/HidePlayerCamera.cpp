@@ -101,21 +101,9 @@ void AHidePlayerCamera::OnIAChangeCamera(const FInputActionValue& value)
 
 void AHidePlayerCamera::ServerRPC_ChangeCamera_Implementation()
 {
-	PlayerController = Cast<AHidePlayerController>(GetWorld());
+	PlayerController = Cast<AHidePlayerController>(Controller);
 
-	for (TActorIterator<AHidePlayer> iter(GetWorld()); iter; ++iter)
-	{
-		auto* hideplayer = *iter;
-		if (hideplayer->Controller == nullptr)
-		{
-			player = hideplayer;
-		
-			if (player)
-			{
-				PlayerController->Possess(player);
-				Destroy();
-			}
-		}
-	}
+	PlayerController->ChangeToPlayer();
+	Destroy();
 }
 

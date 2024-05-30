@@ -25,4 +25,10 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeToPlayer();
+
+	UFUNCTION()
+	void ChangeToPlayer();
+
+	AHidePlayerCamera* spectator;
+	AHidePlayer* originPlayer;
 };
