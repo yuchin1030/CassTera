@@ -355,13 +355,13 @@ void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 }
 
 
-void ACassTeraCharacter::ServerRPC_Throw_Implementation()
-{
-
-}
-
-void ACassTeraCharacter::MultiRPC_Throw_Implementation(FHitResult HitInfo, bool bFire)
-{
-
-}
+//void ACassTeraCharacter::ServerRPC_Throw_Implementation()
+//{
+//
+//}
+//
+//void ACassTeraCharacter::MultiRPC_Throw_Implementation(FHitResult HitInfo, bool bFire)
+//{
+//
+//}
 

@@ -90,16 +90,26 @@ void AHidePlayer::BeginPlay()
 		RandomMesh();
 	}
 
-	PlayerController = Cast<AHidePlayerController>(Controller);
-	if (PlayerController)
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
-		}
-	}
+	
 	
 	currentHP = maxHP;
+}
+
+void AHidePlayer::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if(IsLocallyControlled())
+	{
+		PlayerController = Cast<AHidePlayerController>(Controller);
+		if (PlayerController)
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+			{
+				Subsystem->AddMappingContext(imc_hidingPlayer, 0);
+			}
+		}
+	}
 }
 
 void AHidePlayer::Tick(float DeltaTime)

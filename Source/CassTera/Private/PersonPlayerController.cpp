@@ -61,9 +61,11 @@ void APersonPlayerController::MultiRPC_DefinePawnClass_Implementation()
 
 void APersonPlayerController::ServerRPC_SetPawn_Implementation(TSubclassOf<APawn> InPawnClass)
 {
-	MyPawnClass = InPawnClass;
-
 	APawn* prevPawn = GetPawn();
+	
+	UnPossess();
+
+	MyPawnClass = InPawnClass;
 
 	//AActor* spt = GetWorld()->GetAuthGameMode()->FindPlayerStart(this);
 	//FActorSpawnParameters params;
@@ -72,9 +74,7 @@ void APersonPlayerController::ServerRPC_SetPawn_Implementation(TSubclassOf<APawn
 	//auto* newPawn = GetWorld()->SpawnActor<APawn>(MyPawnClass, spt->GetActorTransform(), params);
 	//Possess(newPawn);
 	//
-
-	UnPossess();
-
+		
 	if (prevPawn)
 		prevPawn->Destroy();
 
