@@ -8,7 +8,7 @@
 
 APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 {
-	//PlayerControllerClass = APersonPlayerController::StaticClass();
+	PlayerControllerClass = APersonPlayerController::StaticClass();
 }
 
 

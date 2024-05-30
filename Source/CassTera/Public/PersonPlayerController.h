@@ -20,6 +20,13 @@ public:
 
 	FORCEINLINE UClass * GetPlayerPawnClass() {return MyPawnClass;}
 
+
+	UPROPERTY()
+	class UGameTimerWidget* gameTimerwidget;
+
+	UPROPERTY()
+	class UMainUI* mainUI;
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -53,6 +60,5 @@ protected:
 	UPROPERTY()
 	int32 rate = 50;
 
-
-
+	
 };

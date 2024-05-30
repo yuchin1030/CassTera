@@ -19,5 +19,5 @@ public:
 	APersonPlayerGameModeBase();
 	virtual UClass* GetDefaultPawnClassForController_Implementation(class AController* InController) override;
 
-	
 };
+

@@ -22,6 +22,7 @@
 #include <Grenade.h>
 #include <Kismet/KismetMathLibrary.h>
 #include "CassTeraPlayerController.h"
+#include "PersonPlayerController.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -110,28 +111,28 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 
 
 	// 내가 조작하는 주인공만 UI를 생성하고싶다.
-	MyController = Cast<ACassTeraPlayerController>(Controller);
-
+	//MyController = Cast<ACassTeraPlayerController>(Controller);
+	auto pc = Cast<APersonPlayerController>(Controller);
 	FString myname = GetName();
-	if (IsLocallyControlled() && (MyController && nullptr == MyController->gameTimerwidget))
+	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
 	{
-		MyController->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
-		MyController->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
+		pc->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+		pc->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
 
-		if (MyController->gameTimerwidget != nullptr)
+		if (pc->gameTimerwidget != nullptr)
 		{
-			MyController->gameTimerwidget->AddToViewport();
+			pc->gameTimerwidget->AddToViewport();
 		}
 
-		if (MyController->mainUI != nullptr)
+		if (pc->mainUI != nullptr)
 		{
-			MyController->mainUI->AddToViewport();
+			pc->mainUI->AddToViewport();
 		}
 	}
-	if (MyController)
+	if (pc)
 	{
-		gameTimerwidget = MyController->gameTimerwidget;
-		mainUI = MyController->mainUI;
+		gameTimerwidget = pc->gameTimerwidget;
+		mainUI = pc->mainUI;
 	}
 }
 
@@ -311,9 +312,18 @@ void ACassTeraCharacter::MultiRPC_IMC_Implementation()
 {
 	if (IsLocallyControlled())
 	{
-		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+		/*if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 		{
 			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+			{
+				Subsystem->ClearAllMappings();
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			}
+		}*/
+		auto pc = Cast<APersonPlayerController>(Controller);
+		if (pc)
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
 			{
 				Subsystem->ClearAllMappings();
 				Subsystem->AddMappingContext(DefaultMappingContext, 0);
