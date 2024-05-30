@@ -114,11 +114,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Fire(FHitResult HitInfo, bool bFire);
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_Throw();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_Throw(FHitResult HitInfo, bool bFire);
+// 	UFUNCTION(Server, Reliable)
+// 	void ServerRPC_Throw();
+// 
+// 	UFUNCTION(NetMulticast, Reliable)
+// 	void MultiRPC_Throw(FHitResult HitInfo, bool bFire);
 
 protected:
 

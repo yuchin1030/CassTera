@@ -343,15 +343,15 @@ void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 	}, 2.2f, false);*/
 	
 }
-
-
-void ACassTeraCharacter::ServerRPC_Throw()
-{
-
-}
-
-void ACassTeraCharacter::MultiRPC_Throw(FHitResult HitInfo, bool bFire)
-{
-
-}
-
+// 
+// 
+// void ACassTeraCharacter::ServerRPC_Throw()
+// {
+// 
+// }
+// 
+// void ACassTeraCharacter::MultiRPC_Throw(FHitResult HitInfo, bool bFire)
+// {
+// 
+// }
+// 
