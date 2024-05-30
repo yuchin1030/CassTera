@@ -12,6 +12,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "HidePlayerCamera.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/CapsuleComponent.h"
+#include "HidePlayerController.h"
 
 AHidePlayer::AHidePlayer()
 {
@@ -20,6 +22,7 @@ AHidePlayer::AHidePlayer()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
+
 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
@@ -44,6 +47,7 @@ AHidePlayer::AHidePlayer()
 	meshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 	bReplicates = true;
 
@@ -86,34 +90,16 @@ void AHidePlayer::BeginPlay()
 		RandomMesh();
 	}
 
-	/*PlayerController = Cast<APlayerController>(Controller);
+	PlayerController = Cast<AHidePlayerController>(Controller);
 	if (PlayerController)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
 		}
-	}*/
+	}
 	
 	currentHP = maxHP;
-}
-
-void AHidePlayer::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-
-	if (IsLocallyControlled())
-	{
-		PlayerController = Cast<APlayerController>(Controller);
-		if (PlayerController)
-		{
-			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-			{
-				Subsystem->ClearAllMappings();
-				Subsystem->AddMappingContext(imc_hidingPlayer, 0);
-			}
-		}
-	}
 }
 
 void AHidePlayer::Tick(float DeltaTime)
@@ -273,7 +259,7 @@ void AHidePlayer::OnChangeCamera()
 	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
 	if (watchingCam)
 	{
-		PlayerController->Possess(watchingCam);
+		PlayerController->ServerRPC_ChangeToSpectator(watchingCam);
 	}
 }
 

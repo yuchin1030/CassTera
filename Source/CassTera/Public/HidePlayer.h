@@ -130,7 +130,7 @@ public:
 	UPROPERTY()
 	class AHidePlayerCamera* watchingCam;
 
-	class APlayerController* PlayerController;
+	class AHidePlayerController* PlayerController;
 
 
 	UFUNCTION()

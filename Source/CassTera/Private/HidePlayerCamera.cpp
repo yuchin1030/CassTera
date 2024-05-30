@@ -10,6 +10,7 @@
 #include "HidePlayer.h"
 #include "Components/BoxComponent.h"
 #include "EngineUtils.h"
+#include "HidePlayerController.h"
 
 AHidePlayerCamera::AHidePlayerCamera()
 {
@@ -33,7 +34,7 @@ void AHidePlayerCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerController = Cast<APlayerController>(Controller);
+	PlayerController = Cast<AHidePlayerController>(Controller);
 	if (PlayerController)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -100,16 +101,9 @@ void AHidePlayerCamera::OnIAChangeCamera(const FInputActionValue& value)
 
 void AHidePlayerCamera::ServerRPC_ChangeCamera_Implementation()
 {
-	PlayerController = GetWorld()->GetFirstPlayerController();
+	PlayerController = Cast<AHidePlayerController>(Controller);
 
-	for (TActorIterator<AHidePlayer> iter(GetWorld()); iter; ++iter)
-	{
-		player = *iter;
-		if (player)
-		{
-			PlayerController->Possess(player);
-			Destroy();
-		}
-	}
+	PlayerController->ChangeToPlayer();
+	Destroy();
 }
 

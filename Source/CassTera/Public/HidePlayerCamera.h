@@ -53,7 +53,7 @@ public:
 	UPROPERTY()
 	bool bDie = false;
 
-	APlayerController* PlayerController;
+	class AHidePlayerController* PlayerController;
 	
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeCamera();
