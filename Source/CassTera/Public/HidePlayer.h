@@ -133,6 +133,7 @@ public:
 	class AHidePlayerController* PlayerController;
 
 
+
 	UFUNCTION()
 	void OnTakeDamage();
 
