@@ -8,13 +8,9 @@
 
 APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 {
-	PlayerControllerClass = APersonPlayerController::StaticClass();
+	//PlayerControllerClass = APersonPlayerController::StaticClass();
 }
 
-//UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController(AController* InController)
-//{
-//
-//}
 
 UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
 {	

@@ -84,7 +84,6 @@ void AHidePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	if(HasAuthority())
 	{ 
 		RandomMesh();
@@ -99,17 +98,8 @@ void AHidePlayer::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if(IsLocallyControlled())
-	{
-		PlayerController = Cast<AHidePlayerController>(Controller);
-		if (PlayerController)
-		{
-			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-			{
-				Subsystem->AddMappingContext(imc_hidingPlayer, 0);
-			}
-		}
-	}
+	ServerRPC_MakeIMC();
+	
 }
 
 void AHidePlayer::Tick(float DeltaTime)
@@ -452,4 +442,25 @@ void AHidePlayer::ServerRPC_ResetCamera_Implementation()
 	OnResetCamera();
 }
 
+void AHidePlayer::ServerRPC_MakeIMC_Implementation()
+{
+	MultiRPC_MakeIMC();
+}
+
+void AHidePlayer::MultiRPC_MakeIMC_Implementation()
+{
+	if (IsLocallyControlled())
+	{
+		//PlayerController = Cast<AHidePlayerController>(Controller);
+		auto pc = Cast<APlayerController>(Controller);
+		if (pc)
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
+			{
+				Subsystem->ClearAllMappings();
+				Subsystem->AddMappingContext(imc_hidingPlayer, 0);
+			}
+		}
+	}
+}
 

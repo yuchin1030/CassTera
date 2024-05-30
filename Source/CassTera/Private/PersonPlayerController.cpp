@@ -25,12 +25,16 @@ void APersonPlayerController::BeginPlay()
 	if (rate < number)
 	{
 		ServerRPC_SetPawn(SeakPlayerPawn);
+				
 	}
 	else
 	{
 		ServerRPC_SetPawn(HidePlayerPawn);
 	}
+
 }
+
+
 
 void APersonPlayerController::ServerRPC_DefinePawnClass_Implementation()
 {
@@ -61,9 +65,9 @@ void APersonPlayerController::MultiRPC_DefinePawnClass_Implementation()
 
 void APersonPlayerController::ServerRPC_SetPawn_Implementation(TSubclassOf<APawn> InPawnClass)
 {
-	APawn* prevPawn = GetPawn();
-	
-	UnPossess();
+	/*APawn* prevPawn = GetPawn();
+
+	UnPossess();*/
 
 	MyPawnClass = InPawnClass;
 
@@ -74,9 +78,9 @@ void APersonPlayerController::ServerRPC_SetPawn_Implementation(TSubclassOf<APawn
 	//auto* newPawn = GetWorld()->SpawnActor<APawn>(MyPawnClass, spt->GetActorTransform(), params);
 	//Possess(newPawn);
 	//
-		
+	/*	
 	if (prevPawn)
-		prevPawn->Destroy();
+		prevPawn->Destroy();*/
 
 	//시간 내에 서버에 PawnClass를 가져오지 못한 경우를 대비한다
 	UE_LOG(LogTemp, Warning, TEXT("%s"), MyPawnClass);
@@ -94,4 +98,5 @@ void  APersonPlayerController::GetLifetimeReplicatedProps(TArray < FLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	//s
 	DOREPLIFETIME(APersonPlayerController, MyPawnClass);
+
 }

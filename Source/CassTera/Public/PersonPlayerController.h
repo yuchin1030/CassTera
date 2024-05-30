@@ -22,6 +22,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
 
 
 	
@@ -51,5 +52,7 @@ protected:
 	// 랜덤으로 폰 설정
 	UPROPERTY()
 	int32 rate = 50;
+
+
 
 };

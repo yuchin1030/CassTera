@@ -115,6 +115,12 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Fire(FHitResult HitInfo, bool bFire);
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_IMC();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_IMC();
+
 // 	UFUNCTION(Server, Reliable)
 // 	void ServerRPC_Throw();
 // 

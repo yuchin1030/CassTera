@@ -81,7 +81,7 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	
+
 
 }
 
@@ -90,17 +90,8 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	//Add Input Mapping Context
-	if (IsLocallyControlled())
-	{
-		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-		{
-			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-			{
-				Subsystem->ClearAllMappings();
-				Subsystem->AddMappingContext(DefaultMappingContext, 0);
-			}
-		}
-	}
+	ServerRPC_IMC();
+
 	//if (IsLocallyControlled())
 	//{
 	//	gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
@@ -311,11 +302,25 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 }
 
 
+void ACassTeraCharacter::ServerRPC_IMC_Implementation()
+{
+	MultiRPC_IMC();
+}
 
-
-
-
-
+void ACassTeraCharacter::MultiRPC_IMC_Implementation()
+{
+	if (IsLocallyControlled())
+	{
+		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+			{
+				Subsystem->ClearAllMappings();
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			}
+		}
+	}
+}
 
 void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 {

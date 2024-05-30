@@ -156,5 +156,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ResetCamera();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_MakeIMC();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_MakeIMC();
 };
