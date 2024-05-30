@@ -81,15 +81,26 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	
+
+}
+
+void ACassTeraCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
 	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (IsLocallyControlled())
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+			{
+				Subsystem->ClearAllMappings();
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			}
 		}
 	}
-
 	//if (IsLocallyControlled())
 	//{
 	//	gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
@@ -131,7 +142,6 @@ void ACassTeraCharacter::BeginPlay()
 		gameTimerwidget = MyController->gameTimerwidget;
 		mainUI = MyController->mainUI;
 	}
-
 }
 
 void ACassTeraCharacter::Tick(float DeltaSeconds)
@@ -345,12 +355,12 @@ void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 }
 
 
-void ACassTeraCharacter::ServerRPC_Throw()
+void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 {
 
 }
 
-void ACassTeraCharacter::MultiRPC_Throw(FHitResult HitInfo, bool bFire)
+void ACassTeraCharacter::MultiRPC_Throw_Implementation(FHitResult HitInfo, bool bFire)
 {
 
 }

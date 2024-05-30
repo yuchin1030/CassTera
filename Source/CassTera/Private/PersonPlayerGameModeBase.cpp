@@ -3,12 +3,13 @@
 
 #include "PersonPlayerGameModeBase.h"
 #include "PersonPlayerController.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/GameStateBase.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h>
 
-//APersonPlayerGameModeBase::APersonPlayerGameModeBase(const  FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-//{
-//	PlayerControllerClass = APersonPlayerController::StaticClass();
-//}
+APersonPlayerGameModeBase::APersonPlayerGameModeBase()
+{
+	PlayerControllerClass = APersonPlayerController::StaticClass();
+}
 
 //UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController(AController* InController)
 //{

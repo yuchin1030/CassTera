@@ -4,19 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "GameFramework/GameMode.h"
 #include "PersonPlayerGameModeBase.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class CASSTERA_API APersonPlayerGameModeBase : public AGameMode
+UCLASS(minimalapi)
+class APersonPlayerGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
 public:
-	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+
+	APersonPlayerGameModeBase();
+	virtual UClass* GetDefaultPawnClassForController_Implementation(class AController* InController) override;
 
 	
 };

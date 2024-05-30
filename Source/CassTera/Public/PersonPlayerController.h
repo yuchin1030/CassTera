@@ -18,12 +18,17 @@ public:
 	// 생성자
 	APersonPlayerController(const FObjectInitializer & ObjectInitializer);
 
-	FORCEINLINE UClass * GetPlayerPawnClass(){return MyPawnClass;}
+	FORCEINLINE UClass * GetPlayerPawnClass() {return MyPawnClass;}
 
 protected:
 	virtual void BeginPlay() override;
+
+
 	
 	// 올바른 폰 클래스 클라이언트 측 반환
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DefinePawnClass();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_DefinePawnClass();
 

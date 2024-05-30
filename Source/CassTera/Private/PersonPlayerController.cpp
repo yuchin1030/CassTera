@@ -6,6 +6,7 @@
 #include <../../../../../../../Source/Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 APersonPlayerController::APersonPlayerController(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	// 값 초기화
 	SeakPlayerPawn = nullptr;
@@ -19,7 +20,21 @@ void APersonPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MultiRPC_DefinePawnClass();
+	//ServerRPC_DefinePawnClass();
+	int32 number = FMath::RandRange(0, 100);
+	if (rate < number)
+	{
+		ServerRPC_SetPawn(SeakPlayerPawn);
+	}
+	else
+	{
+		ServerRPC_SetPawn(HidePlayerPawn);
+	}
+}
+
+void APersonPlayerController::ServerRPC_DefinePawnClass_Implementation()
+{
+	//MultiRPC_DefinePawnClass();
 }
 
 void APersonPlayerController::MultiRPC_DefinePawnClass_Implementation()
@@ -35,18 +50,11 @@ void APersonPlayerController::MultiRPC_DefinePawnClass_Implementation()
 		int32 number = FMath::RandRange(0, 100);
 		if (rate < number)
 		{
-			if (TextStrings[0].Contains(TEXT("SeakPlayer")))
-			{
-				ServerRPC_SetPawn(SeakPlayerPawn);
-
-				return;
-			}
+			ServerRPC_SetPawn(SeakPlayerPawn);
 		}
 		else
 		{
 			ServerRPC_SetPawn(HidePlayerPawn);
-
-			return;
 		}
 	}
 }
@@ -55,8 +63,25 @@ void APersonPlayerController::ServerRPC_SetPawn_Implementation(TSubclassOf<APawn
 {
 	MyPawnClass = InPawnClass;
 
+	APawn* prevPawn = GetPawn();
+
+	//AActor* spt = GetWorld()->GetAuthGameMode()->FindPlayerStart(this);
+	//FActorSpawnParameters params;
+	//params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//
+	//auto* newPawn = GetWorld()->SpawnActor<APawn>(MyPawnClass, spt->GetActorTransform(), params);
+	//Possess(newPawn);
+	//
+
+	UnPossess();
+
+	if (prevPawn)
+		prevPawn->Destroy();
+
 	//시간 내에 서버에 PawnClass를 가져오지 못한 경우를 대비한다
+	UE_LOG(LogTemp, Warning, TEXT("%s"), MyPawnClass);
 	GetWorld()->GetAuthGameMode()->RestartPlayer(this);
+
 }
 
 bool APersonPlayerController::ServerRPC_SetPawn_Validate(TSubclassOf<APawn> InPawnClass)
