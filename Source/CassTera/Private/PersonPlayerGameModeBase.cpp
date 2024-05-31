@@ -25,6 +25,8 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 		{
 			DefaultPawnClass = SeakPlayerPawn;
 			curSeaker++;
+			
+			
 		}
 		else
 		{

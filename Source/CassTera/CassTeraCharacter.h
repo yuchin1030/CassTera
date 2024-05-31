@@ -75,6 +75,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	TSubclassOf<class UUserWidget> WBP_mainUI;
 
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	TSubclassOf<class AStartLocation> BP_startLocation;
+
 	UFUNCTION()
 	void AddMainUI();
 

@@ -24,6 +24,7 @@
 #include "CassTeraPlayerController.h"
 #include "PersonPlayerController.h"
 #include "HidePlayer.h"
+#include "StartLocation.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -99,6 +100,20 @@ void ACassTeraCharacter::BeginPlay()
 			Subsystem->RemoveMappingContext(DefaultMappingContext);
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+	}
+	
+	// 술래 시작 위치 설정
+	TArray<AActor*> actorArray;
+	// TsubClass 형식의 BP_startLocation을 배열에 담는다
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BP_startLocation, actorArray);
+
+	// 배열의 크기가 0 이상이라면, BP_startLocation이 있다는 뜻이 된다
+	if (actorArray.Num() > 0)
+	{		
+		// 월드에 하나만 배치되어 있으므로, 배열의 0번 인덱스의 위치를 받아와서, 플레이어를 스폰한다
+		SetActorLocation(actorArray[0]->GetActorLocation());
+
+		// 만약, 여러 개가 배치되어 있다면, tag를 이용해서 찾을 수 있다.
 	}
 }
 
