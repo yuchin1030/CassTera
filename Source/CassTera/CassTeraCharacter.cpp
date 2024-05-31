@@ -88,6 +88,18 @@ void ACassTeraCharacter::BeginPlay()
 		AddMainUI();
 	}
 
+	auto pc = Cast<APlayerController>(Controller);
+	if (pc)
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
+		{
+			// clearMappingContext를 쓰면 기존에 스폰되어 있던 캐릭터의 imc까지 날라가는듯..
+			// RemoveMappingContext(내가 만든 imc) 를 쓰면 원하는 거 하나만 지워줌..
+			// 혹시 내가 가지고 있는 imc가 남아있을 수 있으니, 안전하게 같은 이름을 가진 친구가 있다면 지우고, 새로 imc 추가한다.
+			Subsystem->RemoveMappingContext(DefaultMappingContext);
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
 }
 
 void ACassTeraCharacter::PossessedBy(AController* NewController)
@@ -101,7 +113,7 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 	AddMainUI();
 
 	//Add Input Mapping Context
-	ServerRPC_IMC();
+	//ServerRPC_IMC();
 
 	//if (IsLocallyControlled())
 	//{
@@ -341,12 +353,12 @@ void ACassTeraCharacter::MultiRPC_IMC_Implementation()
 				Subsystem->AddMappingContext(DefaultMappingContext, 0);
 			}
 		}*/
-		auto pc = Cast<APersonPlayerController>(Controller);
+		auto pc = Cast<APlayerController>(Controller);
 		if (pc)
 		{
 			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
 			{
-				Subsystem->ClearAllMappings();
+				Subsystem->RemoveMappingContext(DefaultMappingContext);
 				Subsystem->AddMappingContext(DefaultMappingContext, 0);
 			}
 		}

@@ -24,21 +24,21 @@ void APersonPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//ServerRPC_DefinePawnClass();
-	int32 number = FMath::RandRange(0, 100);
-	if (rate < number)
-	{
-		ServerRPC_SetPawn(SeakPlayerPawn);
+	////ServerRPC_DefinePawnClass();
+	//int32 number = FMath::RandRange(0, 100);
+	//if (rate < number)
+	//{
+	//	ServerRPC_SetPawn(SeakPlayerPawn);
 
-	}
-	else
-	{
-		ServerRPC_SetPawn(HidePlayerPawn);
-	}
-	/*if (IsLocalController()) 
-	{
+	//}
+	//else
+	//{
+	//	ServerRPC_SetPawn(HidePlayerPawn);
+	//}
+	///*if (IsLocalController()) 
+	//{
 
-	}*/
+	//}*/
 	if (HasAuthority())
 	{
 		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());

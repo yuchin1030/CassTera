@@ -8,22 +8,59 @@
 
 APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 {
+	// 틱이 돌도록 설정해야 된다.
+	PrimaryActorTick.bCanEverTick = true;
+
 	PlayerControllerClass = APersonPlayerController::StaticClass();
+	
 }
 
-
-UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
-{	
-	// 플레이어 컨트롤러에서 폰을 가져오기 위한 기능 재정의
-	APersonPlayerController* pc = Cast<APersonPlayerController>(InController);
-
-	/*UKismetSystemLibrary::PrintString(GetWorld(), FString::Printf(TEXT("Controller : %s \nClass : %s"), InController->GetActorNameOrLabel(), pc->GetPlayerPawnClass()->GetFName()));*/
-
-	if (pc != nullptr)
+void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+	// 현재 술래 숫자가 최대 술래 숫자보다 작다면
+	if (curSeaker < maxSeaker)
 	{
-		return pc->GetPlayerPawnClass();
+		// 랜덤으로 역할을 배정한다
+		if (playerRate < FMath::RandRange(0, 100))
+		{
+			DefaultPawnClass = SeakPlayerPawn;
+			curSeaker++;
+		}
+		else
+		{
+			DefaultPawnClass = HidePlayerPawn;
+		}
+	}
+	// 그렇지 않다면, 
+	else
+	{
+		// 숨는 역할만 배정한다.
+		DefaultPawnClass = HidePlayerPawn;
 	}
 
-	// 컨트롤러가 없다면 기본 폰을 사용한다
-	return DefaultPawnClass;
+	Super::PostLogin(NewPlayer);
+
 }
+
+void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	UE_LOG(LogTemp, Warning, TEXT("%d"), curSeaker);
+}
+
+//UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
+//{	
+//	// 플레이어 컨트롤러에서 폰을 가져오기 위한 기능 재정의
+//	APersonPlayerController* pc = Cast<APersonPlayerController>(InController);
+//
+//	/*UKismetSystemLibrary::PrintString(GetWorld(), FString::Printf(TEXT("Controller : %s \nClass : %s"), InController->GetActorNameOrLabel(), pc->GetPlayerPawnClass()->GetFName()));*/
+//
+//	if (pc != nullptr)
+//	{
+//		return pc->GetPlayerPawnClass();
+//	}
+//
+//	// 컨트롤러가 없다면 기본 폰을 사용한다
+//	return DefaultPawnClass;
+//}
