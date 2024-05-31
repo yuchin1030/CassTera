@@ -28,6 +28,13 @@ void AGrenade::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		playerChar = Cast<ACassTeraCharacter>(*ActorItr);
+		if(playerChar) {
+			break;
+		}
+	}
 	//Bomb();
 }
 
@@ -94,7 +101,7 @@ void AGrenade::Bomb()
 								
 				// playerChar = Cast<ACassTeraCharacter>(GetOwner());
 
-				playerChar = Cast<ACassTeraCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+				//playerChar = Cast<ACassTeraCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 				// enemy 가 맞으면
 				if (enemy)

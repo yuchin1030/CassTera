@@ -48,7 +48,7 @@ void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
-	UE_LOG(LogTemp, Warning, TEXT("%d"), curSeaker);
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), curSeaker);
 }
 
 //UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

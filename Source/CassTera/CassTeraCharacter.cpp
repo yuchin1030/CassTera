@@ -415,7 +415,8 @@ void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing)
 
 void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
 {
-	
+	bThrowing = false;
+
 	MultiRPC_ThrowFin(bThrowing);
 
 }
@@ -424,9 +425,9 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 {
 	bThrowing = _bThrowing;
 
-	if (grenade != nullptr && bThrowing)
+	if (grenade != nullptr && !bThrowing)
 	{
-		bThrowing = false;
+		
 
 		PlayAnimMontage(throwMontage);
 
