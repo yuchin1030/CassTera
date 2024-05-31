@@ -14,6 +14,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
 #include "PersonPlayerController.h"
+#include "GameTimerWidget.h"
+
 
 AHidePlayer::AHidePlayer()
 {
@@ -87,8 +89,23 @@ void AHidePlayer::BeginPlay()
 	if(HasAuthority())
 	{ 
 		RandomMesh();
+
+	}
+	auto pc = Cast<APersonPlayerController>(Controller);
+	FString myname = GetName();
+	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
+	{
+		pc->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+		if (pc->gameTimerwidget != nullptr)
+		{
+			pc->gameTimerwidget->AddToViewport();
+		}
 	}
 
+	if (pc)
+	{
+		gameTimerwidget = pc->gameTimerwidget;
+	}
 	
 	
 	currentHP = maxHP;
@@ -278,8 +295,7 @@ void AHidePlayer::OnTakeDamage()
 	}
 	if (currentHP <= 0)
 	{
-		bDie = true;
-		Die();
+		ServerRPC_Die();
 	}
 }
 
@@ -459,5 +475,16 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 			}
 		}
 	}
+}
+
+void AHidePlayer::ServerRPC_Die_Implementation()
+{
+	MultiRPC_Die();
+}
+
+void AHidePlayer::MultiRPC_Die_Implementation()
+{
+	bDie = true;
+	Die();
 }
 

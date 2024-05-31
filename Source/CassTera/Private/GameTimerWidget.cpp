@@ -8,6 +8,7 @@
 #include "../CassTeraCharacter.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include "Components/ProgressBar.h"
+#include "Net/UnrealNetwork.h"
 
 void UGameTimerWidget::NativePreConstruct()
 {
@@ -25,6 +26,7 @@ void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 	}
 	
 }
+
 
 void UGameTimerWidget::DecreaseTime()
 {
