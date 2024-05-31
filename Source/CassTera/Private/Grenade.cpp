@@ -8,6 +8,8 @@
 #include <TestEnemyy.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 #include "../CassTeraCharacter.h"
+#include "HidePlayer.h"
+#include <../../../../../../../Source/Runtime/Engine/Public/EngineUtils.h>
 
 AGrenade::AGrenade()
 {
@@ -48,11 +50,13 @@ void AGrenade::BeforeBomb(ACassTeraCharacter* pc)
 	if (pc != nullptr)
 	{
 		FVector throwDir = GetActorForwardVector() * 2 + GetActorUpVector();
-		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
-		//FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(pc->GetActorLocation(), bombLoc);
 
-		float speed = 500;
-		meshComp->SetPhysicsLinearVelocity(throwDir * speed);
+		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
+		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(pc->GetActorLocation(), bombLoc);
+
+		float speed = 1000;
+		//meshComp->AddImpulse(throwDir);
+		meshComp->SetPhysicsLinearVelocity(newVel * speed);
 
 		Bomb();
 	}
@@ -71,17 +75,62 @@ void AGrenade::Bomb()
 		params.AddIgnoredActor(this);
 
 		bool bHit = GetWorld()->OverlapMultiByObjectType(hitsArr, bombLoc, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(500), params);
+		
+		/*if (bHit)
+		{*/
+			DrawDebugSphere(GetWorld(), bombLoc, 500, 16, FColor::Blue, false, 5, 0, 5);
 
-		DrawDebugSphere(GetWorld(), bombLoc, 500, 16, FColor::Blue, false, 5, 0, 5);
-		for (int i = 0; i < hitsArr.Num(); i++)
-		{
-			auto* enemy = Cast<ATestEnemyy>(hitsArr[i].GetActor());
-			if (enemy)
+			
+//			ACassTeraCharacter* playerChar = nullptr;
+//			for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+//			{
+//				playerChar = Cast<ACassTeraCharacter>(*ActorItr);
+//// 				enemy = Cast<AHidePlayer>(*ActorItr);
+//			}
+
+			for (int i = 0; i < hitsArr.Num(); i++)
 			{
-				enemy->OnDamaged(1);
+				auto* enemy = Cast<AHidePlayer>(hitsArr[i].GetActor());
+								
+				// playerChar = Cast<ACassTeraCharacter>(GetOwner());
 
-			}
-		}
+				playerChar = Cast<ACassTeraCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+				// enemy 가 맞으면
+				if (enemy)
+				{
+					enemy->OnTakeDamage();
+
+					// 죽으면
+					if (enemy->bDie)
+					{
+						if (playerChar)
+						{
+							playerChar->ShowKillUI();
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("Can't find player (Showkillui)"));
+						}
+					}
+				}
+				else
+				{
+					if (playerChar)
+					{
+						playerChar->NotEnemyResult();
+						UE_LOG(LogTemp, Warning, TEXT(""));
+
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Can't find player(notenemyresult)"));
+					}
+					
+				}
+ 			}
+		//}
+		
 			
 		spawnedBombVFX = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, bombLoc);	//
 
