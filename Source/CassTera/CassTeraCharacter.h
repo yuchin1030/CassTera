@@ -99,7 +99,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	class UAnimMontage* throwMontage;
 
+	UFUNCTION()
+	void ShowKillUI();
 
+	UFUNCTION()
+	void NotEnemyResult();
 	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
@@ -122,17 +126,34 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Fire(FHitResult HitInfo, bool bFire);
 
+
+
+	// ==========================================================================
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_IMC();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_IMC();
 
-// 	UFUNCTION(Server, Reliable)
-// 	void ServerRPC_Throw();
-// 
-// 	UFUNCTION(NetMulticast, Reliable)
-// 	void MultiRPC_Throw(FHitResult HitInfo, bool bFire);
+
+
+	// ==========================================================================
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Throw();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Throw(bool _bThrowing);
+
+
+
+	// ==========================================================================
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ThrowFin();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_ThrowFin(bool _bThrowing);
+
+
 
 protected:
 

@@ -299,6 +299,7 @@ void AHidePlayer::OnResetCamera()
 void AHidePlayer::OnTakeDamage()
 {
 	currentHP = currentHP-1;
+	UE_LOG(LogTemp, Warning, TEXT("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
 	if (hitVFX != nullptr)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), hitVFX, GetActorLocation());

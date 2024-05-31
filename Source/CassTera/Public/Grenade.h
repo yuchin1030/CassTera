@@ -39,4 +39,10 @@ public:
 	void BeforeBomb(class ACassTeraCharacter* pc);
 
 	void Bomb();
+
+	UPROPERTY()
+	class ACassTeraCharacter* playerChar;
+
+
+
 };

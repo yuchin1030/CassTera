@@ -115,21 +115,6 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 	//Add Input Mapping Context
 	//ServerRPC_IMC();
 
-	//if (IsLocallyControlled())
-	//{
-	//	gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
-	//	mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
-
-	//	if (gameTimerwidget != nullptr)
-	//	{
-	//		gameTimerwidget->AddToViewport();
-	//	}
-
-	//	if (mainUI != nullptr)
-	//	{
-	//		mainUI->AddToViewport();
-	//	}
-	//}
 
 
 
@@ -280,8 +265,6 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 
 void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool bFire)
 {
-	//gameTimerwidget = pc->gameTimerwidget;
-	//mainUI = pc->mainUI;
 
 	PlayAnimMontage(FireMontage);
 
@@ -301,36 +284,13 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 			// 죽으면
 			if (enemy->bDie)
 			{
-				// 킬 이미지, 텍스트 UI 띄우기
-				if (mainUI)
-					mainUI->ShowKillContent();
+				ShowKillUI();
 			}
 		}
 		else
 		{
-			if (gameTimerwidget != nullptr)
-			{
-				// 더블 클릭해서 시간 감소 버그 방지용 변수
-				if (bDecreasing)
-					return;
-
-				bDecreasing = true;
-
-				gameTimerwidget->DecreaseTime();
-				mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
-
-				FTimerHandle visibleHandler;
-				GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
-
-					mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
-					GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
-					bDecreasing = false;
-					}, 0.5f, false);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Fail222222"));
-			}
+			// enemy 아니면 시간 감소
+			NotEnemyResult();	
 		}
 	}
 }
@@ -370,7 +330,66 @@ void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 	if (bFiring || bThrowing)
 		return;
 
+	ServerRPC_Throw();
+}
+
+void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
+{
+	ServerRPC_ThrowFin();
+
+}
+
+void ACassTeraCharacter::ShowKillUI()
+{
+	// 킬 이미지, 텍스트 UI 띄우기
+	if (mainUI)
+		mainUI->ShowKillContent();
+}
+
+void ACassTeraCharacter::NotEnemyResult()
+{
+	UE_LOG(LogTemp, Warning, TEXT("2222222222"));
+
+	if (gameTimerwidget != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
+
+		// 더블 클릭해서 시간 감소 버그 방지용 변수
+		if (bDecreasing)
+			return;
+
+		bDecreasing = true;
+
+		gameTimerwidget->DecreaseTime();
+		mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
+
+		FTimerHandle visibleHandler;
+		GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
+
+			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
+
+			GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
+
+			bDecreasing = false;
+			}, 0.5f, false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Fail222222"));
+	}
+}
+
+
+void ACassTeraCharacter::ServerRPC_Throw_Implementation()
+{
 	bThrowing = true;
+
+	MultiRPC_Throw(bThrowing);
+}
+
+void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing)
+{
+	bThrowing = _bThrowing;
 
 	gun->SetVisibility(false);
 
@@ -379,13 +398,21 @@ void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 	grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Weapon_L");
 }
 
-void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
+void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
 {
-	/*if (bMoving == true)
-		return;*/
+	
+	MultiRPC_ThrowFin(bThrowing);
+
+}
+
+void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
+{
+	bThrowing = _bThrowing;
 
 	if (grenade != nullptr && bThrowing)
 	{
+		bThrowing = false;
+
 		PlayAnimMontage(throwMontage);
 
 		gun->SetVisibility(true);
@@ -393,23 +420,5 @@ void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 		grenade->BeforeBomb(this);
 
 	}
-
-	bThrowing = false;
-	/*FTimerHandle animDelayHandler;
-	GetWorldTimerManager().SetTimer(animDelayHandler, [&]() {
-		
-	}, 2.2f, false);*/
-	
 }
-
-
-//void ACassTeraCharacter::ServerRPC_Throw_Implementation()
-//{
-//
-//}
-//
-//void ACassTeraCharacter::MultiRPC_Throw_Implementation(FHitResult HitInfo, bool bFire)
-//{
-//
-//}
 
