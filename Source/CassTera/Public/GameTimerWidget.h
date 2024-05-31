@@ -18,6 +18,7 @@ public:
 	virtual void NativePreConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta =(BindWidget))
 	class UTextBlock* txt_Minute;
 

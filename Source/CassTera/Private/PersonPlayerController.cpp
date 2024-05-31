@@ -122,16 +122,11 @@ void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation()
 
 void APersonPlayerController::ServerRPC_ChangeToPlayer_Implementation()
 {
-// 	for (TActorIterator<AHidePlayer> iter(GetWorld()); iter; ++iter)
-// 	{
-// 		auto* hideplayer = *iter;
-		auto* hidePlayer = origin;
-		if (hidePlayer->Controller == nullptr)
-		{
-			Possess(hidePlayer);
-
-		}
-/*	}*/
+	auto* hidePlayer = origin;
+	if (hidePlayer->Controller == nullptr)
+	{
+		Possess(hidePlayer);
+	}
 }
 
 void APersonPlayerController::ChangeToPlayer()

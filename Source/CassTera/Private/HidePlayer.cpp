@@ -14,6 +14,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
 #include "PersonPlayerController.h"
+#include "GameTimerWidget.h"
+
 
 AHidePlayer::AHidePlayer()
 {
@@ -87,18 +89,22 @@ void AHidePlayer::BeginPlay()
 	if(HasAuthority())
 	{ 
 		RandomMesh();
+
 	}
-	auto pc = Cast<APlayerController>(Controller);
+	auto pc = Cast<APersonPlayerController>(Controller);
+	FString myname = GetName();
+	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
+	{
+		pc->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+		if (pc->gameTimerwidget != nullptr)
+		{
+			pc->gameTimerwidget->AddToViewport();
+		}
+	}
+
 	if (pc)
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
-		{
-			// clearMappingContext를 쓰면 기존에 스폰되어 있던 캐릭터의 imc까지 날라가는듯..
-			// RemoveMappingContext(내가 만든 imc) 를 쓰면 원하는 거 하나만 지워줌..
-			// 혹시 내가 가지고 있는 imc가 남아있을 수 있으니, 안전하게 같은 이름을 가진 친구가 있다면 지우고, 새로 imc 추가한다.
-			Subsystem->RemoveMappingContext(imc_hidingPlayer);
-			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
-		}
+		gameTimerwidget = pc->gameTimerwidget;
 	}
 	
 	
@@ -109,7 +115,7 @@ void AHidePlayer::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	//ServerRPC_MakeIMC();
+	ServerRPC_MakeIMC();
 	
 }
 
@@ -289,8 +295,7 @@ void AHidePlayer::OnTakeDamage()
 	}
 	if (currentHP <= 0)
 	{
-		bDie = true;
-		Die();
+		ServerRPC_Die();
 	}
 }
 
@@ -465,10 +470,21 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 		{
 			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
 			{
-				Subsystem->RemoveMappingContext(imc_hidingPlayer);
+				Subsystem->ClearAllMappings();
 				Subsystem->AddMappingContext(imc_hidingPlayer, 0);
 			}
 		}
 	}
+}
+
+void AHidePlayer::ServerRPC_Die_Implementation()
+{
+	MultiRPC_Die();
+}
+
+void AHidePlayer::MultiRPC_Die_Implementation()
+{
+	bDie = true;
+	Die();
 }
 

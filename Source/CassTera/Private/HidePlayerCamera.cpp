@@ -11,6 +11,7 @@
 #include "Components/BoxComponent.h"
 #include "EngineUtils.h"
 #include "PersonPlayerController.h"
+#include "GameTimerWidget.h"
 
 AHidePlayerCamera::AHidePlayerCamera()
 {
@@ -33,6 +34,7 @@ AHidePlayerCamera::AHidePlayerCamera()
 void AHidePlayerCamera::BeginPlay()
 {
 	Super::BeginPlay();
+
 
 }
 

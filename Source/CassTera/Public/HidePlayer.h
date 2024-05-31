@@ -100,6 +100,12 @@ public:
 	UPROPERTY(Replicated)
 	FVector MeshScale;
 
+	UPROPERTY()
+	class UGameTimerWidget* gameTimerwidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = HidePlayer)
+	TSubclassOf<class UUserWidget> WBP_gameTimerWidget;
+
 
 	UFUNCTION()
 	void OnIAMove(const FInputActionValue& value);
@@ -156,4 +162,15 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_MakeIMC();
+
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Die();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Die();
+
+
+
+
 };
