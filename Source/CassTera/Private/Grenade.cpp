@@ -47,11 +47,12 @@ void AGrenade::BeforeBomb(ACassTeraCharacter* pc)
 
 	if (pc != nullptr)
 	{
+		FVector throwDir = GetActorForwardVector() * 2 + GetActorUpVector();
 		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
-		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(pc->GetActorLocation(), bombLoc);
+		//FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(pc->GetActorLocation(), bombLoc);
 
-		float speed = 950;
-		meshComp->SetPhysicsLinearVelocity(newVel * speed);
+		float speed = 500;
+		meshComp->SetPhysicsLinearVelocity(throwDir * speed);
 
 		Bomb();
 	}

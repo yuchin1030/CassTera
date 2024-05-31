@@ -23,6 +23,7 @@
 #include <Kismet/KismetMathLibrary.h>
 #include "CassTeraPlayerController.h"
 #include "PersonPlayerController.h"
+#include "HidePlayer.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -82,13 +83,22 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-
+	if (false == HasAuthority())
+	{
+		AddMainUI();
+	}
 
 }
 
 void ACassTeraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+
+	//if (IsLocallyControlled())
+	//{
+	//	AddMainUI();
+	//}
+	AddMainUI();
 
 	//Add Input Mapping Context
 	ServerRPC_IMC();
@@ -110,30 +120,7 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 	//}
 
 
-	// 내가 조작하는 주인공만 UI를 생성하고싶다.
-	//MyController = Cast<ACassTeraPlayerController>(Controller);
-	auto pc = Cast<APersonPlayerController>(Controller);
-	FString myname = GetName();
-	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
-	{
-		pc->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
-		pc->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
 
-		if (pc->gameTimerwidget != nullptr)
-		{
-			pc->gameTimerwidget->AddToViewport();
-		}
-
-		if (pc->mainUI != nullptr)
-		{
-			pc->mainUI->AddToViewport();
-		}
-	}
-	if (pc)
-	{
-		gameTimerwidget = pc->gameTimerwidget;
-		mainUI = pc->mainUI;
-	}
 }
 
 void ACassTeraCharacter::Tick(float DeltaSeconds)
@@ -218,6 +205,36 @@ void ACassTeraCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ACassTeraCharacter::AddMainUI()
+{
+	// 내가 조작하는 주인공만 UI를 생성하고싶다.
+	//MyController = Cast<ACassTeraPlayerController>(Controller);
+	auto* pc = Cast<APersonPlayerController>(Controller);
+
+	//FString myname = GetName();
+
+	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
+	{
+		pc->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+		pc->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
+
+		if (pc->gameTimerwidget != nullptr)
+		{
+			pc->gameTimerwidget->AddToViewport();
+		}
+
+		if (pc->mainUI != nullptr)
+		{
+			pc->mainUI->AddToViewport();
+		}
+	}
+	if (pc)
+	{
+		gameTimerwidget = pc->gameTimerwidget;
+		mainUI = pc->mainUI;
+	}
+}
+
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
 	if (bThrowing || bFiring)
@@ -251,6 +268,9 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 
 void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool bFire)
 {
+	//gameTimerwidget = pc->gameTimerwidget;
+	//mainUI = pc->mainUI;
+
 	PlayAnimMontage(FireMontage);
 
 	if (bFire)
@@ -259,18 +279,19 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 		//DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
 
 		// enemy 가 맞으면
-		if (HitInfo.GetActor()->IsA<ATestEnemyy>())
+		if (HitInfo.GetActor()->IsA<AHidePlayer>())
 		{
-			ATestEnemyy* enemy = Cast<ATestEnemyy>(HitInfo.GetActor());
+			AHidePlayer* enemy = Cast<AHidePlayer>(HitInfo.GetActor());
 
 			// 에너미 데미지 -1
-			enemy->OnDamaged(1);
+			enemy->OnTakeDamage();
 
 			// 죽으면
-			if (enemy->enemyHP == 0)
+			if (enemy->bDie)
 			{
 				// 킬 이미지, 텍스트 UI 띄우기
-				mainUI->ShowKillContent();
+				if (mainUI)
+					mainUI->ShowKillContent();
 			}
 		}
 		else

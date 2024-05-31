@@ -69,6 +69,17 @@ public:
 	UPROPERTY()
 	class UMainUI* mainUI;
 
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	TSubclassOf<class UUserWidget> WBP_gameTimerWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = MySettings)
+	TSubclassOf<class UUserWidget> WBP_mainUI;
+
+	UFUNCTION()
+	void AddMainUI();
+
+
+
 
 	void Fire(const FInputActionValue& Value);
 	void FireFin(const FInputActionValue& Value);
@@ -89,11 +100,7 @@ public:
 	class UAnimMontage* throwMontage;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = MySettings)
-	TSubclassOf<class UUserWidget> WBP_gameTimerWidget;
-
-	UPROPERTY(EditDefaultsOnly, Category = MySettings)
-	TSubclassOf<class UUserWidget> WBP_mainUI;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	bool bIsNotEnemy = false;
