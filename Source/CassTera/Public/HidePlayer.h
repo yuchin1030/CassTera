@@ -124,13 +124,7 @@ public:
 	void OnResetCamera();
 	bool bChangeCam = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HidePlayer")
-	TSubclassOf<class AHidePlayerCamera> watcingCam_bp;
-
-	UPROPERTY()
-	class AHidePlayerCamera* watchingCam;
-
-	class AHidePlayerController* PlayerController;
+	class APersonPlayerController* PlayerController;
 
 
 

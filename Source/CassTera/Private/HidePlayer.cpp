@@ -13,7 +13,7 @@
 #include "HidePlayerCamera.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
-#include "HidePlayerController.h"
+#include "PersonPlayerController.h"
 
 AHidePlayer::AHidePlayer()
 {
@@ -253,13 +253,10 @@ void AHidePlayer::OnChangeCamera()
 	}
 	bChangeCam = true;
 
-	FVector loc = GetActorLocation() + FVector(0, 50, 50);
-	FActorSpawnParameters params;
-	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
-	if (watchingCam)
-	{
-		PlayerController->ServerRPC_ChangeToSpectator(watchingCam);
+	PlayerController = Cast<APersonPlayerController>(Controller);
+ 	if (PlayerController)
+ 	{
+		PlayerController->ServerRPC_ChangeToSpectator();
 	}
 }
 
@@ -452,7 +449,7 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 	if (IsLocallyControlled())
 	{
 		//PlayerController = Cast<AHidePlayerController>(Controller);
-		auto pc = Cast<APlayerController>(Controller);
+		auto pc = Cast<APersonPlayerController>(Controller);
 		if (pc)
 		{
 			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))

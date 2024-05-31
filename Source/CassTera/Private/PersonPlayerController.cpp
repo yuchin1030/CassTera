@@ -4,6 +4,10 @@
 #include "PersonPlayerController.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h>
 #include <../../../../../../../Source/Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "HidePlayer.h"
+#include "HidePlayerCamera.h"
+#include "EngineUtils.h"
+#include "PersonPlayerGameModeBase.h"
 
 APersonPlayerController::APersonPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -35,7 +39,10 @@ void APersonPlayerController::BeginPlay()
 	{
 
 	}*/
-
+	if (HasAuthority())
+	{
+		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+	}
 }
 
 
@@ -95,6 +102,41 @@ void APersonPlayerController::ServerRPC_SetPawn_Implementation(TSubclassOf<APawn
 bool APersonPlayerController::ServerRPC_SetPawn_Validate(TSubclassOf<APawn> InPawnClass)
 {
 	return true;
+}
+
+void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation()
+{
+	origin = GetPawn();
+
+	UnPossess();
+	FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
+	FActorSpawnParameters params;
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
+	spectator = Cast<AHidePlayerCamera>(watchingCam);
+	if (spectator != nullptr)
+	{
+		Possess(spectator);
+	}
+}
+
+void APersonPlayerController::ServerRPC_ChangeToPlayer_Implementation()
+{
+// 	for (TActorIterator<AHidePlayer> iter(GetWorld()); iter; ++iter)
+// 	{
+// 		auto* hideplayer = *iter;
+		auto* hidePlayer = origin;
+		if (hidePlayer->Controller == nullptr)
+		{
+			Possess(hidePlayer);
+
+		}
+/*	}*/
+}
+
+void APersonPlayerController::ChangeToPlayer()
+{
+	ServerRPC_ChangeToPlayer();
 }
 
 void  APersonPlayerController::GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps)  const

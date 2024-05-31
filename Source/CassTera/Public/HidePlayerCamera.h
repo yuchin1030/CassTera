@@ -20,6 +20,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void PossessedBy(AController* NewController) override;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer")
 	class UCameraComponent* camera;
@@ -46,15 +48,21 @@ public:
 	UFUNCTION()
 	void OnIAChangeCamera(const FInputActionValue& value);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HidePlayer")
-	TSubclassOf<class AHidePlayer> player_bp;
+
+
 	class AHidePlayer* player;
 
 	UPROPERTY()
 	bool bDie = false;
 
-	class AHidePlayerController* PlayerController;
+	class APersonPlayerController* PlayerController;
 	
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeCamera();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_MakeIMC();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_MakeIMC();
 };

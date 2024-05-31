@@ -10,7 +10,7 @@
 #include "HidePlayer.h"
 #include "Components/BoxComponent.h"
 #include "EngineUtils.h"
-#include "HidePlayerController.h"
+#include "PersonPlayerController.h"
 
 AHidePlayerCamera::AHidePlayerCamera()
 {
@@ -34,14 +34,6 @@ void AHidePlayerCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerController = Cast<AHidePlayerController>(Controller);
-	if (PlayerController)
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
-		}
-	}
 }
 
 void AHidePlayerCamera::Tick(float DeltaTime)
@@ -69,6 +61,13 @@ void AHidePlayerCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(ia_changeCam, ETriggerEvent::Started, this, &AHidePlayerCamera::OnIAChangeCamera);
 
 	}
+}
+
+void AHidePlayerCamera::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	ServerRPC_MakeIMC();
 }
 
 void AHidePlayerCamera::OnIAMove(const FInputActionValue& value)
@@ -101,9 +100,32 @@ void AHidePlayerCamera::OnIAChangeCamera(const FInputActionValue& value)
 
 void AHidePlayerCamera::ServerRPC_ChangeCamera_Implementation()
 {
-	PlayerController = Cast<AHidePlayerController>(Controller);
+	PlayerController = Cast<APersonPlayerController>(Controller);
 
 	PlayerController->ChangeToPlayer();
 	Destroy();
+}
+
+void AHidePlayerCamera::ServerRPC_MakeIMC_Implementation()
+{
+	MultiRPC_MakeIMC();
+
+}
+
+void AHidePlayerCamera::MultiRPC_MakeIMC_Implementation()
+{
+	if (IsLocallyControlled())
+	{
+		//PlayerController = Cast<AHidePlayerController>(Controller);
+		auto pc = Cast<APlayerController>(Controller);
+		if (pc)
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
+			{
+				Subsystem->ClearAllMappings();
+				Subsystem->AddMappingContext(imc_hidingPlayer, 0);
+			}
+		}
+	}
 }
 

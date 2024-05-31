@@ -60,5 +60,30 @@ protected:
 	UPROPERTY()
 	int32 rate = 50;
 
-	
+
+public:
+	//숨는 플레이어 관전모드로 바꾸기
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ChangeToSpectator();
+	//숨는 플레이어 관전모드->숨는 폰으로 바꾸기(서버)
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ChangeToPlayer();
+	//바꾸기 실제함수
+	UFUNCTION()
+	void ChangeToPlayer();
+
+	class AHidePlayerCamera* spectator;
+	class AHidePlayer* originPlayer;
+
+	UPROPERTY()
+	class APersonPlayerGameModeBase* gm; 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HidePlayer")
+	TSubclassOf<class AHidePlayerCamera> watcingCam_bp;
+	UPROPERTY()
+	class AHidePlayerCamera* watchingCam;
+
+	UPROPERTY()
+	class APawn* origin;
+
 };
