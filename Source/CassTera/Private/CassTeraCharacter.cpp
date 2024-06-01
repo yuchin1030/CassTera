@@ -227,23 +227,31 @@ void ACassTeraCharacter::AddMainUI()
 
 	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
 	{
-		pc->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
+		pc->ServerRPC_AddTimerUI();
 		pc->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
-
-		if (pc->gameTimerwidget != nullptr)
-		{
-			pc->gameTimerwidget->AddToViewport();
-		}
+// 
+// 		if (pc->gameTimerwidget != nullptr)
+// 		{
+// 			pc->gameTimerwidget->AddToViewport();
+// 
+// 		}
 
 		if (pc->mainUI != nullptr)
 		{
 			pc->mainUI->AddToViewport();
 		}
 	}
-	if (pc)
+
+}
+
+void ACassTeraCharacter::AttachTimerUI()
+{
+	auto* pc = Cast<APersonPlayerController>(Controller);
+
+	if (pc->gameTimerwidget)
 	{
 		gameTimerwidget = pc->gameTimerwidget;
-		mainUI = pc->mainUI;
+		gameTimerwidget->AddToViewport();
 	}
 }
 

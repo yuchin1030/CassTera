@@ -5,7 +5,7 @@
 #include <../../../../../../../Source/Runtime/UMG/Public/Components/TextBlock.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetTextLibrary.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h>
-#include "../CassTeraCharacter.h"
+#include "CassTeraCharacter.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include "Components/ProgressBar.h"
 #include "Net/UnrealNetwork.h"

@@ -20,9 +20,17 @@ public:
 
 	FORCEINLINE UClass * GetPlayerPawnClass() {return MyPawnClass;}
 
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<class UUserWidget> WBP_gameTimerWidget;
 
 	UPROPERTY()
 	class UGameTimerWidget* gameTimerwidget;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_AddTimerUI();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_AddTimerUI();
 
 	UPROPERTY()
 	class UMainUI* mainUI;
@@ -72,8 +80,12 @@ public:
 	UFUNCTION()
 	void ChangeToPlayer();
 
+	UPROPERTY()
 	class AHidePlayerCamera* spectator;
+	UPROPERTY()
 	class AHidePlayer* originPlayer;
+	UPROPERTY()
+	class ACassTeraCharacter* seekPlayer;
 
 	UPROPERTY()
 	class APersonPlayerGameModeBase* gm; 

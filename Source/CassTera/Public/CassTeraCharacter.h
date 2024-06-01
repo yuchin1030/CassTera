@@ -81,6 +81,8 @@ public:
 	UFUNCTION()
 	void AddMainUI();
 
+	void AttachTimerUI();
+
 
 
 

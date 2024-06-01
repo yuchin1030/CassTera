@@ -6,6 +6,7 @@
 #include <../../../../../../../Source/Runtime/Engine/Public/Net/UnrealNetwork.h>
 #include "HidePlayer.h"
 #include "HidePlayerCamera.h"
+#include "GameTimerWidget.h"
 #include "EngineUtils.h"
 #include "PersonPlayerGameModeBase.h"
 
@@ -18,6 +19,28 @@ APersonPlayerController::APersonPlayerController(const FObjectInitializer& Objec
 
 	// 폰 클래스가 복제되었는지 확인
 	bReplicates = true;
+}
+
+void APersonPlayerController::ServerRPC_AddTimerUI_Implementation()
+{
+	MultiRPC_AddTimerUI();
+}
+
+void APersonPlayerController::MultiRPC_AddTimerUI_Implementation()
+{
+	gameTimerwidget = Cast<UGameTimerWidget>(WBP_gameTimerWidget);
+	
+	seekPlayer = Cast<ACassTeraCharacter>(GetWorld());
+	if(seekPlayer)
+	{
+// 		seekPlayer->AttachTimerUI();
+	}
+	originPlayer = Cast<AHidePlayer>(GetWorld());
+	if (originPlayer)
+	{
+		originPlayer->MuiltRPC_AttachUI();
+	}
+	
 }
 
 void APersonPlayerController::BeginPlay()
@@ -43,6 +66,7 @@ void APersonPlayerController::BeginPlay()
 	{
 		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 	}
+	ServerRPC_AddTimerUI();
 }
 
 

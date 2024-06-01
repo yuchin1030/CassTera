@@ -2,7 +2,7 @@
 
 
 #include "PersonPlayerAnimInstance.h"
-#include "../CassTeraCharacter.h"
+#include "CassTeraCharacter.h"
 
 void UPersonPlayerAnimInstance::NativeInitializeAnimation()
 {

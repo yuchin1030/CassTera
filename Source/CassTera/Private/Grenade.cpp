@@ -7,7 +7,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <TestEnemyy.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
-#include "../CassTeraCharacter.h"
+#include "CassTeraCharacter.h"
 #include "HidePlayer.h"
 #include <../../../../../../../Source/Runtime/Engine/Public/EngineUtils.h>
 

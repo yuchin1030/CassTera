@@ -101,10 +101,10 @@ public:
 	FVector MeshScale;
 
 	UPROPERTY()
-	class UGameTimerWidget* gameTimerwidget;
+	class UGameTimerWidget* playerGameTimerwidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = HidePlayer)
-	TSubclassOf<class UUserWidget> WBP_gameTimerWidget;
+	TSubclassOf<class UUserWidget> WBP_PlayergameTimerWidget;
 
 
 	UFUNCTION()
@@ -169,6 +169,12 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Die();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_AttachUI();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MuiltRPC_AttachUI();
 
 
 

@@ -91,22 +91,16 @@ void AHidePlayer::BeginPlay()
 		RandomMesh();
 
 	}
-	auto pc = Cast<APersonPlayerController>(Controller);
 	FString myname = GetName();
-	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
-	{
-		pc->gameTimerwidget = CreateWidget<UGameTimerWidget>(GetWorld(), WBP_gameTimerWidget);
-		if (pc->gameTimerwidget != nullptr)
-		{
-			pc->gameTimerwidget->AddToViewport();
-		}
-	}
 
-	if (pc)
-	{
-		gameTimerwidget = pc->gameTimerwidget;
+	PlayerController = Cast<APersonPlayerController>(Controller);
+	
 
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
+	if (PlayerController)
+	{
+// 		playerGameTimerwidget = PlayerController->gameTimerwidget;
+
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			// clearMappingContext를 쓰면 기존에 스폰되어 있던 캐릭터의 imc까지 날라가는듯..
 			// RemoveMappingContext(내가 만든 imc) 를 쓰면 원하는 거 하나만 지워줌..
@@ -114,7 +108,7 @@ void AHidePlayer::BeginPlay()
 			Subsystem->RemoveMappingContext(imc_hidingPlayer);
 			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
 		}
-
+		ServerRPC_AttachUI();
 	}
 	
 	
@@ -280,7 +274,6 @@ void AHidePlayer::OnChangeCamera()
 	}
 	bChangeCam = true;
 
-	PlayerController = Cast<APersonPlayerController>(Controller);
  	if (PlayerController)
  	{
 		PlayerController->ServerRPC_ChangeToSpectator();
@@ -299,7 +292,7 @@ void AHidePlayer::OnResetCamera()
 void AHidePlayer::OnTakeDamage()
 {
 	currentHP = currentHP-1;
-	//UE_LOG(LogTemp, Warning, TEXT("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+
 	if (hitVFX != nullptr)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), hitVFX, GetActorLocation());
@@ -475,11 +468,9 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 {
 	if (IsLocallyControlled())
 	{
-		//PlayerController = Cast<AHidePlayerController>(Controller);
-		auto pc = Cast<APersonPlayerController>(Controller);
-		if (pc)
+		if (PlayerController)
 		{
-			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pc->GetLocalPlayer()))
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 			{
 				Subsystem->ClearAllMappings();
 				Subsystem->AddMappingContext(imc_hidingPlayer, 0);
@@ -497,5 +488,19 @@ void AHidePlayer::MultiRPC_Die_Implementation()
 {
 	bDie = true;
 	Die();
+}
+
+void AHidePlayer::ServerRPC_AttachUI_Implementation()
+{
+	PlayerController->ServerRPC_AddTimerUI();
+}
+
+void AHidePlayer::MuiltRPC_AttachUI_Implementation()
+{
+	if (PlayerController->gameTimerwidget)
+	{
+		playerGameTimerwidget = PlayerController->gameTimerwidget;
+		playerGameTimerwidget->AddToViewport();
+	}
 }
 
