@@ -6,6 +6,7 @@
 #include <../../../../../../../Source/Runtime/Engine/Public/Net/UnrealNetwork.h>
 #include "HidePlayer.h"
 #include "HidePlayerCamera.h"
+#include "CassTeraCharacter.h"
 #include "GameTimerWidget.h"
 #include "EngineUtils.h"
 #include "PersonPlayerGameModeBase.h"
@@ -21,27 +22,16 @@ APersonPlayerController::APersonPlayerController(const FObjectInitializer& Objec
 	bReplicates = true;
 }
 
-void APersonPlayerController::ServerRPC_AddTimerUI_Implementation()
-{
-	MultiRPC_AddTimerUI();
-}
 
-void APersonPlayerController::MultiRPC_AddTimerUI_Implementation()
-{
-	gameTimerwidget = Cast<UGameTimerWidget>(WBP_gameTimerWidget);
-	
-	seekPlayer = Cast<ACassTeraCharacter>(GetWorld());
-	if(seekPlayer)
-	{
-// 		seekPlayer->AttachTimerUI();
-	}
-	originPlayer = Cast<AHidePlayer>(GetWorld());
-	if (originPlayer)
-	{
-		originPlayer->MuiltRPC_AttachUI();
-	}
-	
-}
+// void APersonPlayerController::ServerRPC_CreateTimerUI_Implementation()
+// {
+// 	MultiRPC_CreateTimerUI();
+// }
+// 
+// void APersonPlayerController::MultiRPC_CreateTimerUI_Implementation()
+// {
+// 	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(),WBP_gameTimerWidget));
+// }
 
 void APersonPlayerController::BeginPlay()
 {
@@ -66,7 +56,6 @@ void APersonPlayerController::BeginPlay()
 	{
 		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 	}
-	ServerRPC_AddTimerUI();
 }
 
 

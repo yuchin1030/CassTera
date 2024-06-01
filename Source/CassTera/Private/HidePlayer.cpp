@@ -15,6 +15,7 @@
 #include "Components/CapsuleComponent.h"
 #include "PersonPlayerController.h"
 #include "GameTimerWidget.h"
+#include "CassTeraCharacter.h"
 
 
 AHidePlayer::AHidePlayer()
@@ -108,7 +109,11 @@ void AHidePlayer::BeginPlay()
 			Subsystem->RemoveMappingContext(imc_hidingPlayer);
 			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
 		}
-		ServerRPC_AttachUI();
+	}
+	if (IsLocallyControlled())
+	{
+	ServerRPC_AttachUI();
+
 	}
 	
 	
@@ -492,14 +497,16 @@ void AHidePlayer::MultiRPC_Die_Implementation()
 
 void AHidePlayer::ServerRPC_AttachUI_Implementation()
 {
-	PlayerController->ServerRPC_AddTimerUI();
+	MultiRPC_AttachUI();
 }
 
-void AHidePlayer::MuiltRPC_AttachUI_Implementation()
+void AHidePlayer::MultiRPC_AttachUI_Implementation()
 {
-	if (PlayerController->gameTimerwidget)
+	auto* pc = Cast<APersonPlayerController>(Controller);
+	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
+	if (pc->gameTimerwidget)
 	{
-		playerGameTimerwidget = PlayerController->gameTimerwidget;
+		playerGameTimerwidget = pc->gameTimerwidget;
 		playerGameTimerwidget->AddToViewport();
 	}
 }

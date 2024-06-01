@@ -84,11 +84,10 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	if (false == HasAuthority())
-	{
-		AddMainUI();
-	}
-
+ 	if (false == HasAuthority())
+ 	{
+ 		AddMainUI();
+ 	}
 	auto pc = Cast<APlayerController>(Controller);
 	if (pc)
 	{
@@ -221,13 +220,23 @@ void ACassTeraCharacter::AddMainUI()
 {
 	// 내가 조작하는 주인공만 UI를 생성하고싶다.
 	//MyController = Cast<ACassTeraPlayerController>(Controller);
-	auto* pc = Cast<APersonPlayerController>(Controller);
+	auto pc = Cast<APersonPlayerController>(Controller);
+	if (IsLocallyControlled())
+	{
 
+	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+	if (pc->gameTimerwidget)
+	{
+		gameTimerwidget = pc->gameTimerwidget;
+		gameTimerwidget -> AddToViewport();
+		
+
+	}
+	}
 	//FString myname = GetName();
 
 	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
 	{
-		pc->ServerRPC_AddTimerUI();
 		pc->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
 // 
 // 		if (pc->gameTimerwidget != nullptr)
@@ -242,17 +251,6 @@ void ACassTeraCharacter::AddMainUI()
 		}
 	}
 
-}
-
-void ACassTeraCharacter::AttachTimerUI()
-{
-	auto* pc = Cast<APersonPlayerController>(Controller);
-
-	if (pc->gameTimerwidget)
-	{
-		gameTimerwidget = pc->gameTimerwidget;
-		gameTimerwidget->AddToViewport();
-	}
 }
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)

@@ -132,8 +132,6 @@ public:
 
 	class APersonPlayerController* PlayerController;
 
-
-
 	UFUNCTION()
 	void OnTakeDamage();
 
@@ -174,7 +172,7 @@ public:
 	void ServerRPC_AttachUI();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MuiltRPC_AttachUI();
+	void MultiRPC_AttachUI();
 
 
 

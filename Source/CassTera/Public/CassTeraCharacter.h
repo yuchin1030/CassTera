@@ -81,10 +81,6 @@ public:
 	UFUNCTION()
 	void AddMainUI();
 
-	void AttachTimerUI();
-
-
-
 
 	void Fire(const FInputActionValue& Value);
 	void FireFin(const FInputActionValue& Value);

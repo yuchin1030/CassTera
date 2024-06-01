@@ -20,20 +20,22 @@ public:
 
 	FORCEINLINE UClass * GetPlayerPawnClass() {return MyPawnClass;}
 
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<class UUserWidget> WBP_gameTimerWidget;
-
 	UPROPERTY()
 	class UGameTimerWidget* gameTimerwidget;
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_AddTimerUI();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_AddTimerUI();
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UGameTimerWidget> WBP_gameTimerWidget;
 
 	UPROPERTY()
 	class UMainUI* mainUI;
+
+// 	UFUNCTION(Server, Reliable)
+// 	void ServerRPC_CreateTimerUI();
+// 
+// 	
+// 	UFUNCTION(NetMulticast, Reliable)
+// 	void MultiRPC_CreateTimerUI();
+
 
 protected:
 	virtual void BeginPlay() override;
