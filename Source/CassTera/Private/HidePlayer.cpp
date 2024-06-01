@@ -503,7 +503,7 @@ void AHidePlayer::ServerRPC_AttachUI_Implementation()
 void AHidePlayer::MultiRPC_AttachUI_Implementation()
 {
 	auto* pc = Cast<APersonPlayerController>(Controller);
-	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
+//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
 	if (pc->gameTimerwidget)
 	{
 		playerGameTimerwidget = pc->gameTimerwidget;

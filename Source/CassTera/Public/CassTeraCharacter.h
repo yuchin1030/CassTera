@@ -118,6 +118,13 @@ public:
 
 	bool bThrowing;
 
+	// ==========================================================================
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_AddTimerUI();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_AddTimerUI();
+
 
 
 	// ==========================================================================

@@ -55,6 +55,8 @@ void APersonPlayerController::BeginPlay()
 	if (HasAuthority())
 	{
 		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+		gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+
 	}
 }
 
