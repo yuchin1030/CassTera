@@ -83,12 +83,13 @@ void ACassTeraCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-	ServerRPC_AddTimerUI();
 
- 	if (false == HasAuthority())
+
+ 	if (IsLocallyControlled())
  	{
- 		AddMainUI();
+	ServerRPC_AddMainUI();
  	}
+	ServerRPC_AddTimerUI();
 	auto pc = Cast<APlayerController>(Controller);
 	if (pc)
 	{
@@ -102,6 +103,7 @@ void ACassTeraCharacter::BeginPlay()
 		}
 	}
 	
+
 	// 술래 시작 위치 설정
 	TArray<AActor*> actorArray;
 	// TsubClass 형식의 BP_startLocation을 배열에 담는다
@@ -125,7 +127,7 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 	//{
 	//	AddMainUI();
 	//}
-	AddMainUI();
+//	AddMainUI();
 
 	//Add Input Mapping Context
 	//ServerRPC_IMC();
@@ -221,24 +223,13 @@ void ACassTeraCharacter::AddMainUI()
 {
 	// 내가 조작하는 주인공만 UI를 생성하고싶다.
 	//MyController = Cast<ACassTeraPlayerController>(Controller);
-	auto pc = Cast<APersonPlayerController>(Controller);
+	auto* pc = Cast<APersonPlayerController>(Controller);
 
-	//FString myname = GetName();
-
-//	if (IsLocallyControlled() && (pc && nullptr == pc->gameTimerwidget))
-	if(IsLocallyControlled())
+	//	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+	if (pc->mainUI)
 	{
-		pc->mainUI = CreateWidget<UMainUI>(GetWorld(), WBP_mainUI);
-// 		if (pc->gameTimerwidget != nullptr)
-// 		{
-// 			pc->gameTimerwidget->AddToViewport();
-// 
-// 		}
-
-		if (pc->mainUI != nullptr)
-		{
-			pc->mainUI->AddToViewport();
-		}
+		mainUI = pc->mainUI;
+		mainUI->AddToViewport();
 	}
 
 }
@@ -290,7 +281,7 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 			AHidePlayer* enemy = Cast<AHidePlayer>(HitInfo.GetActor());
 
 			// 에너미 데미지 -1
-			enemy->OnTakeDamage();
+			enemy->ServerRPC_Damaged();
 
 			// 죽으면
 			if (enemy->bDie)
@@ -301,7 +292,8 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 		else
 		{
 			// enemy 아니면 시간 감소
-			NotEnemyResult();	
+			ServerRPC_WorngShot();
+			//	NotEnemyResult();	
 		}
 	}
 }
@@ -390,21 +382,37 @@ void ACassTeraCharacter::NotEnemyResult()
 	}
 }
 
-void ACassTeraCharacter::MultiRPC_AddTimerUI_Implementation()
+void ACassTeraCharacter::MultiRPC_WorngShot_Implementation()
 {
+	NotEnemyResult();
+}
+
+void ACassTeraCharacter::ServerRPC_WorngShot_Implementation()
+{
+	MultiRPC_WorngShot();
+}
+
+void ACassTeraCharacter::ClientRPC_AddTimerUI_Implementation()
+{
+	if(IsLocallyControlled())
+	{
 	auto* pc = Cast<APersonPlayerController>(Controller);
 
 		//	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 		if (pc->gameTimerwidget)
 		{
 			gameTimerwidget = pc->gameTimerwidget;
-			gameTimerwidget->AddToViewport();
+			if (IsLocallyControlled())
+			{
+				gameTimerwidget->AddToViewport();
+			}
 		}
+	}
 }
 
 void ACassTeraCharacter::ServerRPC_AddTimerUI_Implementation()
 {
-	MultiRPC_AddTimerUI();
+	ClientRPC_AddTimerUI();
 }
 
 void ACassTeraCharacter::ServerRPC_Throw_Implementation()
@@ -450,3 +458,12 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 	}
 }
 
+void ACassTeraCharacter::ServerRPC_AddMainUI_Implementation()
+{
+	ClientRPC_AddMainUI();
+}
+
+void ACassTeraCharacter::ClientRPC_AddMainUI_Implementation()
+{
+	AddMainUI();
+}

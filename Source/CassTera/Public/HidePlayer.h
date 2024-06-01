@@ -171,8 +171,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_AttachUI();
 
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_AttachUI();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Damaged();
+
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_AttachUI();
+	void MultiRPC_Damaged();
 
 
 

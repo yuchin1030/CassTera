@@ -8,6 +8,7 @@
 #include "HidePlayerCamera.h"
 #include "CassTeraCharacter.h"
 #include "GameTimerWidget.h"
+#include "MainUI.h"
 #include "EngineUtils.h"
 #include "PersonPlayerGameModeBase.h"
 
@@ -56,6 +57,8 @@ void APersonPlayerController::BeginPlay()
 	{
 		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 		gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+
+		mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
 
 	}
 }

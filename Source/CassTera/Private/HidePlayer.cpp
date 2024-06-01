@@ -55,7 +55,7 @@ AHidePlayer::AHidePlayer()
 	bReplicates = true;
 
 	// 랜덤 매시로 로드
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh0(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/BlackBoard.BlackBoard'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh0(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/BlackBoard/BlackBoard.BlackBoard'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh1(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Chair.Chair'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh2(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Chalk.Chalk'"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>mesh3(TEXT("/Script/Engine.StaticMesh'/Game/Bohyun/Meshs/Desk.Desk'"));
@@ -90,8 +90,8 @@ void AHidePlayer::BeginPlay()
 	if(HasAuthority())
 	{ 
 		RandomMesh();
-
 	}
+	ServerRPC_AttachUI();
 	FString myname = GetName();
 
 	PlayerController = Cast<APersonPlayerController>(Controller);
@@ -110,11 +110,10 @@ void AHidePlayer::BeginPlay()
 			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
 		}
 	}
-	if (IsLocallyControlled())
-	{
-	ServerRPC_AttachUI();
+//	if (IsLocallyControlled())
+//	{
 
-	}
+//	}
 	
 	
 	currentHP = maxHP;
@@ -497,17 +496,29 @@ void AHidePlayer::MultiRPC_Die_Implementation()
 
 void AHidePlayer::ServerRPC_AttachUI_Implementation()
 {
-	MultiRPC_AttachUI();
+	ClientRPC_AttachUI();
 }
 
-void AHidePlayer::MultiRPC_AttachUI_Implementation()
+void AHidePlayer::ClientRPC_AttachUI_Implementation()
 {
-	auto* pc = Cast<APersonPlayerController>(Controller);
-//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
-	if (pc->gameTimerwidget)
-	{
-		playerGameTimerwidget = pc->gameTimerwidget;
-		playerGameTimerwidget->AddToViewport();
+	if (IsLocallyControlled())
+{
+		auto* pc = Cast<APersonPlayerController>(Controller);
+	//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
+		if (pc->gameTimerwidget)
+		{
+			playerGameTimerwidget = pc->gameTimerwidget;
+			playerGameTimerwidget->AddToViewport();
+		}
 	}
 }
 
+void AHidePlayer::ServerRPC_Damaged_Implementation()
+{
+	MultiRPC_Damaged();
+}
+
+void AHidePlayer::MultiRPC_Damaged_Implementation()
+{
+	OnTakeDamage();
+}

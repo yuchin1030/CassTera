@@ -120,10 +120,23 @@ public:
 
 	// ==========================================================================
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_AddTimerUI();
+	void ServerRPC_WorngShot();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_AddTimerUI();
+	void MultiRPC_WorngShot();
+
+	// ==========================================================================
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_AddTimerUI();
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_AddTimerUI();
+
+	UFUNCTION(Server,Reliable)
+	void ServerRPC_AddMainUI();
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_AddMainUI();
 
 
 

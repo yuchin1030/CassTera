@@ -29,6 +29,9 @@ public:
 	UPROPERTY()
 	class UMainUI* mainUI;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UMainUI> WBP_MainUI;
+
 // 	UFUNCTION(Server, Reliable)
 // 	void ServerRPC_CreateTimerUI();
 // 
