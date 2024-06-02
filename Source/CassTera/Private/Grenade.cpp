@@ -82,10 +82,11 @@ void AGrenade::Bomb()
 		params.AddIgnoredActor(this);
 
 		bool bHit = GetWorld()->OverlapMultiByObjectType(hitsArr, bombLoc, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(500), params);
+			
+		DrawDebugSphere(GetWorld(), bombLoc, 500, 16, FColor::Blue, false, 5, 0, 5);
 		
-		/*if (bHit)
-		{*/
-			DrawDebugSphere(GetWorld(), bombLoc, 500, 16, FColor::Blue, false, 5, 0, 5);
+		if (bHit)
+		{
 
 			
 //			ACassTeraCharacter* playerChar = nullptr;
@@ -121,23 +122,23 @@ void AGrenade::Bomb()
 						}
 					}
 				}
-				else
-				{
-					if (playerChar)
-					{
-						playerChar->NotEnemyResult();
-						UE_LOG(LogTemp, Warning, TEXT(""));
-
-					}
-					else
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Can't find player(notenemyresult)"));
-					}
-					
-				}
- 			}
-		//}
 		
+ 			}
+		}
+		else
+		{
+			if (playerChar)
+			{
+				playerChar->NotEnemyResult();
+				UE_LOG(LogTemp, Warning, TEXT(""));
+
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Can't find player(notenemyresult)"));
+			}
+
+		}
 			
 		spawnedBombVFX = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, bombLoc);	//
 

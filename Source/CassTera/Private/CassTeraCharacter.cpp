@@ -354,6 +354,8 @@ void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
 
 void ACassTeraCharacter::ShowKillUI()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ssssssssss"));
+
 	// 킬 이미지, 텍스트 UI 띄우기
 	if (mainUI)
 		mainUI->ShowKillContent();
