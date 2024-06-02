@@ -136,7 +136,14 @@ void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation(AHidePl
 	
 	if (origin != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("null"));
+		MultiRPC_ChangeToSpectator(origin);
+	}
+}
 
+void APersonPlayerController::MultiRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer)
+{
+	origin = hidePlayer;
 	UnPossess();
 	FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
 	FActorSpawnParameters params;
@@ -144,10 +151,9 @@ void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation(AHidePl
 	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
 	spectator = Cast<AHidePlayerCamera>(watchingCam);
 
-		if (spectator != nullptr)
-		{
-			Possess(spectator);
-		}
+	if (spectator != nullptr)
+	{
+		Possess(spectator);
 	}
 }
 
