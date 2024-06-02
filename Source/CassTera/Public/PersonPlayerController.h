@@ -77,10 +77,12 @@ protected:
 public:
 	//숨는 플레이어 관전모드로 바꾸기
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_ChangeToSpectator();
+	void ServerRPC_ChangeToSpectator(AHidePlayer* hidePlayer);
+
 	//숨는 플레이어 관전모드->숨는 폰으로 바꾸기(서버)
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeToPlayer();
+
 	//바꾸기 실제함수
 	UFUNCTION()
 	void ChangeToPlayer();
@@ -88,9 +90,9 @@ public:
 	UPROPERTY()
 	class AHidePlayerCamera* spectator;
 	UPROPERTY()
-	class AHidePlayer* originPlayer;
-	UPROPERTY()
 	class ACassTeraCharacter* seekPlayer;
+	UPROPERTY()
+	class AHidePlayer* origin;
 
 	UPROPERTY()
 	class APersonPlayerGameModeBase* gm; 
@@ -100,7 +102,10 @@ public:
 	UPROPERTY()
 	class AHidePlayerCamera* watchingCam;
 
+//	UPROPERTY()
+//	class APawn* origin;
+
 	UPROPERTY()
-	class APawn* origin;
+	bool bHidePlayerDie;
 
 };

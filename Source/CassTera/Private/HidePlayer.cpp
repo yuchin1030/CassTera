@@ -280,7 +280,7 @@ void AHidePlayer::OnChangeCamera()
 
  	if (PlayerController)
  	{
-		PlayerController->ServerRPC_ChangeToSpectator();
+		PlayerController->ServerRPC_ChangeToSpectator(this);
 	}
 }
 
@@ -312,6 +312,13 @@ void AHidePlayer::Die()
 	if (dieVFX != nullptr)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
+	}
+	PlayerController = Cast<APersonPlayerController>(Controller);
+	if (PlayerController)
+	{
+		bChangeCam = true;
+
+		PlayerController->ServerRPC_ChangeToSpectator(this);
 	}
 }
 
@@ -485,13 +492,15 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 
 void AHidePlayer::ServerRPC_Die_Implementation()
 {
+
+	ClientRPC_Die();
 	MultiRPC_Die();
 }
 
 void AHidePlayer::MultiRPC_Die_Implementation()
 {
-	bDie = true;
 	Die();
+	Destroy();
 }
 
 void AHidePlayer::ServerRPC_AttachUI_Implementation()
@@ -522,3 +531,10 @@ void AHidePlayer::MultiRPC_Damaged_Implementation()
 {
 	OnTakeDamage();
 }
+
+void AHidePlayer::ClientRPC_Die_Implementation()
+{
+	bDie = true;
+	Die();
+}
+

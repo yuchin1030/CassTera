@@ -103,7 +103,10 @@ void AHidePlayerCamera::OnIAChangeCamera(const FInputActionValue& value)
 void AHidePlayerCamera::ServerRPC_ChangeCamera_Implementation()
 {
 	PlayerController = Cast<APersonPlayerController>(Controller);
-
+	if (PlayerController->bHidePlayerDie == true)
+	{
+		return;
+	}
 	PlayerController->ChangeToPlayer();
 	Destroy();
 }

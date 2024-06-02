@@ -53,14 +53,14 @@ void APersonPlayerController::BeginPlay()
 	//{
 
 	//}*/
-	if (HasAuthority())
-	{
+//	if (HasAuthority())
+//	{
 		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 		gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 
 		mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
 
-	}
+//	}
 }
 
 
@@ -122,9 +122,20 @@ bool APersonPlayerController::ServerRPC_SetPawn_Validate(TSubclassOf<APawn> InPa
 	return true;
 }
 
-void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation()
-{
-	origin = GetPawn();
+void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer)
+{ 
+	origin = hidePlayer;
+	if (bHidePlayerDie == true)
+	{
+		return;
+	}
+	if (hidePlayer != nullptr && hidePlayer->bDie == true)
+	{
+		bHidePlayerDie = true;
+	}
+	
+	if (origin != nullptr)
+	{
 
 	UnPossess();
 	FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
@@ -132,14 +143,20 @@ void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation()
 	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
 	spectator = Cast<AHidePlayerCamera>(watchingCam);
-	if (spectator != nullptr)
-	{
-		Possess(spectator);
+
+		if (spectator != nullptr)
+		{
+			Possess(spectator);
+		}
 	}
 }
 
 void APersonPlayerController::ServerRPC_ChangeToPlayer_Implementation()
 {
+	if (bHidePlayerDie == true)
+	{
+		return;
+	}
 	auto* hidePlayer = origin;
 	if (hidePlayer->Controller == nullptr)
 	{
