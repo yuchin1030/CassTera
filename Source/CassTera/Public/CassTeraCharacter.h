@@ -94,6 +94,9 @@ public:
 	UPROPERTY()
 	class AGrenade* grenade;
 
+	UPROPERTY()
+	int32 grenadeCount = 4;
+
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	class UAnimMontage* FireMontage;
 

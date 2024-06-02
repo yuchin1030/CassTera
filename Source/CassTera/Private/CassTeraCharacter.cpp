@@ -430,7 +430,12 @@ void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 {
 	bThrowing = true;
 
-	MultiRPC_Throw(bThrowing);
+	grenadeCount--;
+
+	if (grenadeCount >= 0)
+	{
+		MultiRPC_Throw(bThrowing);
+	}
 }
 
 void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing)
@@ -446,9 +451,13 @@ void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing)
 
 void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
 {
-	bThrowing = false;
+	if (grenadeCount >= 0)
+	{
+		bThrowing = false;
 
-	MultiRPC_ThrowFin(bThrowing);
+		MultiRPC_ThrowFin(bThrowing);
+
+	}
 
 }
 
