@@ -160,6 +160,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeCamera();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulitRPC_ChangeCamera();
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ResetCamera();
 

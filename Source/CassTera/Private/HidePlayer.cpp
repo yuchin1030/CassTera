@@ -478,6 +478,11 @@ void AHidePlayer::MultiRPC_UnLockLocation_Implementation()
 
 void AHidePlayer::ServerRPC_ChangeCamera_Implementation()
 {
+	MulitRPC_ChangeCamera();
+}
+
+void AHidePlayer::MulitRPC_ChangeCamera_Implementation()
+{
 	OnChangeCamera();
 }
 
