@@ -77,6 +77,14 @@ public:
 	UPROPERTY(Replicated)
 	FRotator lockRot;
 
+	UPROPERTY()
+	class ACassTeraCharacter* seekPlayer;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_WrongShot();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_WrongShot();
 
 	bool bDie;
 
@@ -183,7 +191,10 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Damaged();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SetTimer();
 
-
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_SetTimer();
 
 };

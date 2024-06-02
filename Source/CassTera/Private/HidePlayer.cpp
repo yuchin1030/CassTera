@@ -115,8 +115,7 @@ void AHidePlayer::BeginPlay()
 
 //	}
 	
-	
-	currentHP = maxHP;
+
 }
 
 void AHidePlayer::PossessedBy(AController* NewController)
@@ -143,6 +142,9 @@ void AHidePlayer::Tick(float DeltaTime)
 		AddControllerYawInput(deltaRotation.Yaw);
 		AddControllerPitchInput(deltaRotation.Pitch);
 	}
+	
+
+
 }
 
 void AHidePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -179,6 +181,20 @@ void AHidePlayer::OnRep_SetMesh()
 	meshComp->SetStaticMesh(newMesh);
 	meshComp->SetRelativeLocationAndRotation(meshLoc,meshRot);
 	meshComp->SetRelativeScale3D(MeshScale);
+}
+
+void AHidePlayer::ServerRPC_WrongShot_Implementation()
+{
+	MultiRPC_WrongShot();
+}
+
+void AHidePlayer::MultiRPC_WrongShot_Implementation()
+{
+	if (playerGameTimerwidget)
+	{
+
+	playerGameTimerwidget->ServerRPC_DecreaseTime();
+	}
 }
 
 void AHidePlayer::OnIAMove(const FInputActionValue& value)
@@ -518,6 +534,7 @@ void AHidePlayer::ClientRPC_AttachUI_Implementation()
 		{
 			playerGameTimerwidget = pc->gameTimerwidget;
 			playerGameTimerwidget->AddToViewport();
+			ServerRPC_SetTimer();
 		}
 	}
 }
@@ -538,3 +555,17 @@ void AHidePlayer::ClientRPC_Die_Implementation()
 	Die();
 }
 
+void AHidePlayer::ServerRPC_SetTimer_Implementation()
+{
+	MultiRPC_SetTimer();
+}
+
+void AHidePlayer::MultiRPC_SetTimer_Implementation()
+{
+
+	currentHP = maxHP;
+	if (playerGameTimerwidget)
+	{
+		playerGameTimerwidget->SetTimer();
+	}
+}

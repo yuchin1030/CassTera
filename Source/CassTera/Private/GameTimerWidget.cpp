@@ -19,12 +19,17 @@ void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (bClearTimer == false)
-	{
-		bClearTimer = true;
-		GetWorld()->GetTimerManager().SetTimer(timerHandler, this, &UGameTimerWidget::Timer, 1.0f, false);
-	}
-	
+	SetTimer();
+}
+
+void UGameTimerWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UGameTimerWidget, seconds);
+	DOREPLIFETIME(UGameTimerWidget, minute);
+	DOREPLIFETIME(UGameTimerWidget, minusSeconds);
+	DOREPLIFETIME(UGameTimerWidget, totalSeconds);
+	DOREPLIFETIME(UGameTimerWidget, pgPercent);
 }
 
 
@@ -49,8 +54,6 @@ void UGameTimerWidget::DecreaseTime()
 	{
 		seconds -= minusSeconds;
 	}
-
-	
 }
 
 void UGameTimerWidget::Timer()
@@ -86,4 +89,33 @@ void UGameTimerWidget::Timer()
 	//GetWorld()->GetTimerManager().ClearTimer(timerHandler);
 
 	bClearTimer = false;
+}
+
+void UGameTimerWidget::SetTimer()
+{
+	if (bClearTimer == false)
+	{
+		bClearTimer = true;
+		GetWorld()->GetTimerManager().SetTimer(timerHandler, this, &UGameTimerWidget::ServerRPC_Timer, 1.0f, false);
+	}
+}
+
+void UGameTimerWidget::ServerRPC_Timer_Implementation()
+{
+	MultiRPC_Timer();
+}
+
+void UGameTimerWidget::MultiRPC_Timer_Implementation()
+{
+	Timer();
+}
+
+void UGameTimerWidget::ServerRPC_DecreaseTime_Implementation()
+{
+	ClientRPC_DecreaseTime();
+}
+
+void UGameTimerWidget::ClientRPC_DecreaseTime_Implementation()
+{
+	DecreaseTime();
 }

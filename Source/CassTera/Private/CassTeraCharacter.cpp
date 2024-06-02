@@ -25,6 +25,7 @@
 #include "PersonPlayerController.h"
 #include "HidePlayer.h"
 #include "StartLocation.h"
+#include "EngineUtils.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -117,6 +118,7 @@ void ACassTeraCharacter::BeginPlay()
 
 		// 만약, 여러 개가 배치되어 있다면, tag를 이용해서 찾을 수 있다.
 	}
+
 }
 
 void ACassTeraCharacter::PossessedBy(AController* NewController)
@@ -140,6 +142,8 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 void ACassTeraCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -278,13 +282,13 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 		// enemy 가 맞으면
 		if (HitInfo.GetActor()->IsA<AHidePlayer>())
 		{
-			AHidePlayer* enemy = Cast<AHidePlayer>(HitInfo.GetActor());
+			enemyPlayer = Cast<AHidePlayer>(HitInfo.GetActor());
 
 			// 에너미 데미지 -1
-			enemy->ServerRPC_Damaged();
+			enemyPlayer->ServerRPC_Damaged();
 
 			// 죽으면
-			if (enemy->bDie)
+			if (enemyPlayer->bDie)
 			{
 				ShowKillUI();
 			}
@@ -293,6 +297,12 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 		{
 			// enemy 아니면 시간 감소
 			ServerRPC_WorngShot();
+			
+			for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it) 
+			{
+				enemyPlayer = *it;
+				enemyPlayer->ServerRPC_WrongShot();
+			}
 			//	NotEnemyResult();	
 		}
 	}
@@ -363,7 +373,7 @@ void ACassTeraCharacter::NotEnemyResult()
 
 		bDecreasing = true;
 
-		gameTimerwidget->DecreaseTime();
+		gameTimerwidget->ServerRPC_DecreaseTime();
 		mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
 
 		FTimerHandle visibleHandler;
@@ -405,6 +415,7 @@ void ACassTeraCharacter::ClientRPC_AddTimerUI_Implementation()
 			if (IsLocallyControlled())
 			{
 				gameTimerwidget->AddToViewport();
+				ServerRPC_SetTimer();
 			}
 		}
 	}
@@ -466,4 +477,17 @@ void ACassTeraCharacter::ServerRPC_AddMainUI_Implementation()
 void ACassTeraCharacter::ClientRPC_AddMainUI_Implementation()
 {
 	AddMainUI();
+}
+
+void ACassTeraCharacter::ServerRPC_SetTimer_Implementation()
+{
+	MultiRPC_SetTimer();
+}
+
+void ACassTeraCharacter::MultiRPC_SetTimer_Implementation()
+{
+	if (gameTimerwidget)
+	{
+		gameTimerwidget->SetTimer();
+	}
 }

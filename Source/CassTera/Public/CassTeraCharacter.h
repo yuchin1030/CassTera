@@ -105,7 +105,9 @@ public:
 
 	UFUNCTION()
 	void NotEnemyResult();
-	
+
+	UPROPERTY()
+	class AHidePlayer* enemyPlayer;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	bool bIsNotEnemy = false;
@@ -131,6 +133,13 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_AddTimerUI();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SetTimer();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_SetTimer();
+
 
 	UFUNCTION(Server,Reliable)
 	void ServerRPC_AddMainUI();
