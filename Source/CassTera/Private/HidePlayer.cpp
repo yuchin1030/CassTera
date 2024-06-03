@@ -174,7 +174,7 @@ void AHidePlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AHidePlayer, MeshScale);
 	DOREPLIFETIME(AHidePlayer, lockLoc);
 	DOREPLIFETIME(AHidePlayer, lockRot);
-	DOREPLIFETIME(AHidePlayer, bDie);
+	//DOREPLIFETIME(AHidePlayer, bDie);
 
 }
 
@@ -541,7 +541,9 @@ void AHidePlayer::ServerRPC_Damaged_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SERVER_DMG"));
 
-	ClientRPC_Damaged();
+	currentHP = currentHP - 1;
+
+	ClientRPC_Damaged(currentHP);
 	MultiRPC_Damaged();
 }
 
@@ -557,11 +559,11 @@ void AHidePlayer::MultiRPC_Damaged_Implementation()
 	}
 }
 
-void AHidePlayer::ClientRPC_Damaged_Implementation()
+void AHidePlayer::ClientRPC_Damaged_Implementation(int32 _currentHP)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Client_DMG"));
 
-	currentHP = currentHP - 1;
+	currentHP = _currentHP;
 
 	if (currentHP <= 0)
 	{
@@ -584,7 +586,7 @@ void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)
 {
 	bDie = _bDie;
 
-	UE_LOG(LogTemp, Warning, TEXT("CLIENT_DIE"));
+	UE_LOG(LogTemp, Warning, TEXT("server bool : %d"), bDie);
 
 	Die();
 }
