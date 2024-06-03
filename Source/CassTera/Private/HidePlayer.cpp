@@ -521,6 +521,7 @@ void AHidePlayer::ServerRPC_Die_Implementation()
 
 	ClientRPC_Die();
 	//MultiRPC_Die();
+	Destroy();
 }
 
 void AHidePlayer::MultiRPC_Die_Implementation()
@@ -552,7 +553,7 @@ void AHidePlayer::ClientRPC_AttachUI_Implementation()
 void AHidePlayer::ServerRPC_Damaged_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SERVER_DMG"));
-
+	ClientRPC_Damaged();
 	MultiRPC_Damaged();
 }
 
@@ -560,7 +561,22 @@ void AHidePlayer::MultiRPC_Damaged_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("MULTI_DMG"));
 
-	OnTakeDamage();
+	//OnTakeDamage();
+
+	if (hitVFX != nullptr)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), hitVFX, GetActorLocation());
+	}
+}
+
+void AHidePlayer::ClientRPC_Damaged_Implementation()
+{
+	currentHP = currentHP - 1;
+
+	if (currentHP <= 0)
+	{
+		ServerRPC_Die();
+	}
 }
 
 void AHidePlayer::ClientRPC_Die_Implementation()
@@ -569,7 +585,7 @@ void AHidePlayer::ClientRPC_Die_Implementation()
 
 	bDie = true;
 	Die();
-	Destroy();
+	//Destroy();
 }
 
 void AHidePlayer::ServerRPC_SetTimer_Implementation()

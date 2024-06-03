@@ -267,12 +267,7 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 	bool bFire = GetWorld()->LineTraceSingleByChannel(HitInfo, start, end, ECC_Visibility, params);
 
 	MultiRPC_Fire(HitInfo, bFire);
-}
-
-void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool bFire)
-{
-
-	PlayAnimMontage(FireMontage);
+	//PlayAnimMontage(FireMontage);
 
 	if (bFire)
 	{
@@ -299,8 +294,8 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 		{
 			// enemy 아니면 시간 감소
 			ServerRPC_WorngShot();
-			
-			for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it) 
+
+			for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 			{
 				enemyPlayer = *it;
 				enemyPlayer->ServerRPC_WrongShot();
@@ -308,6 +303,47 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 			//	NotEnemyResult();	
 		}
 	}
+}
+
+void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool bFire)
+{
+
+	PlayAnimMontage(FireMontage);
+
+	//if (bFire)
+	//{
+	//	//DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
+	//	//DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
+	//	UE_LOG(LogTemp, Warning, TEXT("FIRE"));
+
+	//	// enemy 가 맞으면
+	//	if (HitInfo.GetActor()->IsA<AHidePlayer>())
+	//	{
+	//		enemyPlayer = Cast<AHidePlayer>(HitInfo.GetActor());
+
+	//		// 에너미 데미지 -1
+	//		enemyPlayer->ServerRPC_Damaged();
+	//		UE_LOG(LogTemp, Warning, TEXT("ENEMY"));
+
+	//		// 죽으면
+	//		if (enemyPlayer->bDie)
+	//		{
+	//			ServerRPC_KillUI();
+	//		}
+	//	}
+	//	else
+	//	{
+	//		// enemy 아니면 시간 감소
+	//		ServerRPC_WorngShot();
+	//		
+	//		for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it) 
+	//		{
+	//			enemyPlayer = *it;
+	//			enemyPlayer->ServerRPC_WrongShot();
+	//		}
+	//		//	NotEnemyResult();	
+	//	}
+	//}
 }
 
 
@@ -406,14 +442,14 @@ void ACassTeraCharacter::ServerRPC_WorngShot_Implementation()
 	MultiRPC_WorngShot();
 }
 
-void ACassTeraCharacter::MultiRPC_KillUI_Implementation()
+void ACassTeraCharacter::ClientRPC_KillUI_Implementation()
 {
 	ShowKillUI();
 }
 
 void ACassTeraCharacter::ServerRPC_KillUI_Implementation()
 {
-	MultiRPC_KillUI();
+	ClientRPC_KillUI();
 }
 
 void ACassTeraCharacter::ClientRPC_AddTimerUI_Implementation()

@@ -190,8 +190,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_Damaged();
 
-	UFUNCTION(Client, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Damaged();
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_Damaged();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_SetTimer();
