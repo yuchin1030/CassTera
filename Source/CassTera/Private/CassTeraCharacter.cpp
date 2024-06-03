@@ -285,9 +285,13 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			enemyPlayer->ServerRPC_Damaged();
 			UE_LOG(LogTemp, Warning, TEXT("ENEMY"));
 
+			UE_LOG(LogTemp, Warning, TEXT("bool : %d"), enemyPlayer->bDie);
+
 			// Á×À¸¸é
 			if (enemyPlayer->bDie)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("bool : %d"), enemyPlayer->bDie);
+				//enemyPlayer->ServerRPC_Die();
 				ServerRPC_KillUI();
 			}
 		}

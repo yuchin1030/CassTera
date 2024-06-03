@@ -174,7 +174,7 @@ void AHidePlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AHidePlayer, MeshScale);
 	DOREPLIFETIME(AHidePlayer, lockLoc);
 	DOREPLIFETIME(AHidePlayer, lockRot);
-
+	DOREPLIFETIME(AHidePlayer, bDie);
 
 }
 
@@ -331,10 +331,6 @@ void AHidePlayer::Die()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("die : %d"), currentHP);
 
-	if (dieVFX != nullptr)
-	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
-	}
 	PlayerController = Cast<APersonPlayerController>(Controller);
 	if (PlayerController)
 	{
@@ -517,20 +513,9 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 	}
 }
 
-void AHidePlayer::ServerRPC_Die_Implementation()
-{
-	UE_LOG(LogTemp, Warning, TEXT("SERVER_DIE"));
 
-	ClientRPC_Die();
-	//MultiRPC_Die();
-	Destroy();
-}
 
-void AHidePlayer::MultiRPC_Die_Implementation()
-{
-	Die();
-	Destroy();
-}
+
 
 void AHidePlayer::ServerRPC_AttachUI_Implementation()
 {
@@ -555,6 +540,7 @@ void AHidePlayer::ClientRPC_AttachUI_Implementation()
 void AHidePlayer::ServerRPC_Damaged_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SERVER_DMG"));
+
 	ClientRPC_Damaged();
 	MultiRPC_Damaged();
 }
@@ -573,6 +559,8 @@ void AHidePlayer::MultiRPC_Damaged_Implementation()
 
 void AHidePlayer::ClientRPC_Damaged_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Client_DMG"));
+
 	currentHP = currentHP - 1;
 
 	if (currentHP <= 0)
@@ -581,13 +569,36 @@ void AHidePlayer::ClientRPC_Damaged_Implementation()
 	}
 }
 
-void AHidePlayer::ClientRPC_Die_Implementation()
+void AHidePlayer::ServerRPC_Die_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CLIENT_DIE"));
+	UE_LOG(LogTemp, Warning, TEXT("SERVER_DIE"));
 
 	bDie = true;
-	Die();
+
+	ClientRPC_Die(bDie);
+	MultiRPC_Die();
 	//Destroy();
+}
+
+void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)
+{
+	bDie = _bDie;
+
+	UE_LOG(LogTemp, Warning, TEXT("CLIENT_DIE"));
+
+	Die();
+}
+
+void AHidePlayer::MultiRPC_Die_Implementation()
+{
+	
+
+	//Die();
+	if (dieVFX != nullptr)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
+	}
+	Destroy();
 }
 
 void AHidePlayer::ServerRPC_SetTimer_Implementation()
