@@ -5,6 +5,8 @@
 #include "PersonPlayerController.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/GameStateBase.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h>
+#include "Objects.h"
+#include <../../../../../../../Source/Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 {
@@ -42,6 +44,16 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 
 	Super::PostLogin(NewPlayer);
 
+	if (Objects_BP != nullptr)
+	{
+		Objects = Cast<AObjects>(Objects_BP);
+
+		if (Objects != nullptr)
+		{
+			Objects->RandomSpawn();
+			
+		}
+	}
 }
 
 void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
@@ -49,6 +61,14 @@ void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	
 	//UE_LOG(LogTemp, Warning, TEXT("%d"), curSeaker);
+}
+
+
+void APersonPlayerGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APersonPlayerGameModeBase, Objects);
 }
 
 //UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

@@ -31,4 +31,8 @@ public:
 
 	// 랜덤으로 숫자 뽑기
 	int32 rate = 40;
+
+	// 랜덤으로 오브젝트 스폰
+	UFUNCTION()
+	void RandomSpawn();
 };

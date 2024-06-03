@@ -23,6 +23,9 @@ public:
 
 	virtual void Tick( float DeltaSeconds ) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+
 	// 사용할 첫 번째 폰 유형
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category ="MySettings")
 	TSubclassOf<APawn> SeakPlayerPawn;
@@ -40,5 +43,11 @@ public:
 
 	// 현재 술래 숫자
 	int32 curSeaker = 0;
+
+	// 랜덤 메시 배치
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings")
+	TSubclassOf<class AObjects> Objects_BP;
+	UPROPERTY(EditDefaultsOnly, Replicated)
+	class AObjects* Objects;
 };
 
