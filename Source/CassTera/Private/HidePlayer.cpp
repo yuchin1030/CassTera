@@ -16,6 +16,8 @@
 #include "PersonPlayerController.h"
 #include "GameTimerWidget.h"
 #include "CassTeraCharacter.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/Materials/MaterialInstance.h>
+#include <../../../../../../../Source/Runtime/Engine/Classes/Materials/Material.h>
 
 
 AHidePlayer::AHidePlayer()

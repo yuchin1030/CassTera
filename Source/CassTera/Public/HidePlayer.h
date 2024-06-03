@@ -113,8 +113,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = HidePlayer)
 	TSubclassOf<class UUserWidget> WBP_PlayergameTimerWidget;
-
-
 	UFUNCTION()
 	void OnIAMove(const FInputActionValue& value);
 	UFUNCTION()
