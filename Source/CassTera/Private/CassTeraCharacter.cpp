@@ -278,6 +278,7 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 	{
 		//DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
 		//DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
+		UE_LOG(LogTemp, Warning, TEXT("FIRE"));
 
 		// enemy 가 맞으면
 		if (HitInfo.GetActor()->IsA<AHidePlayer>())
@@ -286,11 +287,12 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 
 			// 에너미 데미지 -1
 			enemyPlayer->ServerRPC_Damaged();
+			UE_LOG(LogTemp, Warning, TEXT("ENEMY"));
 
 			// 죽으면
 			if (enemyPlayer->bDie)
 			{
-				ShowKillUI();
+				ServerRPC_KillUI();
 			}
 		}
 		else
@@ -402,6 +404,16 @@ void ACassTeraCharacter::MultiRPC_WorngShot_Implementation()
 void ACassTeraCharacter::ServerRPC_WorngShot_Implementation()
 {
 	MultiRPC_WorngShot();
+}
+
+void ACassTeraCharacter::MultiRPC_KillUI_Implementation()
+{
+	ShowKillUI();
+}
+
+void ACassTeraCharacter::ServerRPC_KillUI_Implementation()
+{
+	MultiRPC_KillUI();
 }
 
 void ACassTeraCharacter::ClientRPC_AddTimerUI_Implementation()

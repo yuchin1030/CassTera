@@ -190,7 +190,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_Damaged();
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Client, Reliable)
 	void MultiRPC_Damaged();
 
 	UFUNCTION(Server, Reliable)
