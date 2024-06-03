@@ -129,7 +129,7 @@ void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation(AHidePl
 	{
 		return;
 	}
-	if (hidePlayer != nullptr && hidePlayer->bDie == true)
+	if (origin->bDie == true)
 	{
 		bHidePlayerDie = true;
 	}
