@@ -115,7 +115,7 @@ void AHidePlayer::BeginPlay()
 
 //	}
 	
-
+	
 }
 
 void AHidePlayer::PossessedBy(AController* NewController)
@@ -515,7 +515,7 @@ void AHidePlayer::ServerRPC_Die_Implementation()
 {
 
 	ClientRPC_Die();
-	MultiRPC_Die();
+	//MultiRPC_Die();
 }
 
 void AHidePlayer::MultiRPC_Die_Implementation()
@@ -558,6 +558,7 @@ void AHidePlayer::ClientRPC_Die_Implementation()
 {
 	bDie = true;
 	Die();
+	Destroy();
 }
 
 void AHidePlayer::ServerRPC_SetTimer_Implementation()
