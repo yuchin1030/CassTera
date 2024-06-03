@@ -130,6 +130,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_WorngShot();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_KillUI();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_KillUI();
 	// ==========================================================================
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_AddTimerUI();
