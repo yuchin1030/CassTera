@@ -85,11 +85,12 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-
  	if (IsLocallyControlled())
  	{
 	ServerRPC_AddMainUI();
+	ServerRPC_DisableOutLiner();
  	}
+
 	ServerRPC_AddTimerUI();
 	auto pc = Cast<APlayerController>(Controller);
 	if (pc)
@@ -549,4 +550,23 @@ void ACassTeraCharacter::MultiRPC_SetTimer_Implementation()
 	{
 		gameTimerwidget->SetTimer();
 	}
+}
+
+void ACassTeraCharacter::ServerRPC_DisableOutLiner_Implementation()
+{
+	ClientRPC_DisableOutLiner();
+}
+
+void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
+{
+	for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
+	{
+		AHidePlayer* hidePlayer = *it;
+
+		if (hidePlayer)
+		{
+			hidePlayer->meshComp->SetOverlayMaterial(nullptr);
+		}
+	}
+	
 }

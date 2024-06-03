@@ -123,6 +123,13 @@ public:
 
 	bool bThrowing;
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DisableOutLiner();
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_DisableOutLiner();
+
+
 	// ==========================================================================
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_WorngShot();
