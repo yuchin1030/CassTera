@@ -86,6 +86,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_WrongShot();
 
+	UPROPERTY(Replicated)
 	bool bDie;
 
 	FVector MovementVector;
@@ -174,7 +175,7 @@ public:
 	void ServerRPC_Die();
 
 	UFUNCTION(Client, Reliable)
-	void ClientRPC_Die();
+	void ClientRPC_Die(bool _bDie);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Die();
@@ -198,5 +199,6 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_SetTimer();
+
 
 };
