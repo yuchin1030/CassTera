@@ -42,6 +42,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void OnPossess(APawn* aPawn) override;
 	
 
 
@@ -77,7 +79,7 @@ protected:
 public:
 	//숨는 플레이어 관전모드로 바꾸기
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_ChangeToSpectator(AHidePlayer* hidePlayer);
+	void ServerRPC_ChangeToSpectator(AHidePlayer* hidePlayer, bool isOldPawnDestroy = false);
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_ChangeToSpectator(AHidePlayer* hidePlayer);
 

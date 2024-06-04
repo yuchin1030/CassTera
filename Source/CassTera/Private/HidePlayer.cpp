@@ -273,6 +273,17 @@ void AHidePlayer::LockLocation()
 
 void AHidePlayer::OnIAChangeCamera(const FInputActionValue& value)
 {
+	if (ChangeCameraLock)
+	{
+		return;
+	}
+	ChangeCameraLock = true;
+
+	FTimerHandle h1;
+	GetWorldTimerManager().SetTimer(h1, [&]() {
+		ChangeCameraLock = false;
+	}, 0.2f, false);
+
 	if (!bLockLocation)
 	{
 		return;
@@ -280,27 +291,19 @@ void AHidePlayer::OnIAChangeCamera(const FInputActionValue& value)
 
 	if (bChangeCam)
 	{
-		ServerRPC_ResetCamera();
+		PlayerController->ServerRPC_ChangeToPlayer();
+		bChangeCam = false;
 	}
 	else
 	{
-		ServerRPC_ChangeCamera();
+		PlayerController->ServerRPC_ChangeToSpectator(this, false);
+		bChangeCam = true;
 	}
 	
 }
 
 void AHidePlayer::OnChangeCamera()
 {
-	if (bChangeCam)
-	{
-		return;
-	}
-	bChangeCam = true;
-
- 	if (PlayerController)
- 	{
-		PlayerController->ServerRPC_ChangeToSpectator(this);
-	}
 }
 
 void AHidePlayer::OnResetCamera()
@@ -324,7 +327,7 @@ void AHidePlayer::OnTakeDamage()
 	}
 	if (currentHP <= 0)
 	{
-		ServerRPC_Die();
+		Die();
 	}
 }
 
@@ -332,10 +335,15 @@ void AHidePlayer::Die()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("die : %d"), currentHP);
 // 	PlayerController = Cast<APersonPlayerController>(Controller);
+	if (dieVFX != nullptr)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
+	}
+
 	if (PlayerController)
 	{
 		bChangeCam = true;
-		PlayerController->ServerRPC_ChangeToSpectator(this);
+		PlayerController->ServerRPC_ChangeToSpectator(this, true);
 	}
 }
 
@@ -566,36 +574,24 @@ void AHidePlayer::ClientRPC_Damaged_Implementation(int32 _currentHP)
 
 	if (currentHP <= 0)
 	{
-		ServerRPC_Die();
+		bDie = true;
+		Die();
 	}
 }
 
 void AHidePlayer::ServerRPC_Die_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SERVER_DIE"));
-
-	bDie = true;
-	ClientRPC_Die(bDie);
-	MultiRPC_Die();
-	//Destroy();
 }
 
 void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)
 {
-	bDie = _bDie;
 
-	UE_LOG(LogTemp, Warning, TEXT("server bool : %d"), bDie);
-	Die();
 }
 
 void AHidePlayer::MultiRPC_Die_Implementation()
 {
 	//Die();
-	if (dieVFX != nullptr)
-	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
-	}
-	Destroy();
+	//Destroy();
 }
 
 void AHidePlayer::ServerRPC_SetTimer_Implementation()

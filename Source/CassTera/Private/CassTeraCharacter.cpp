@@ -85,9 +85,14 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+
+	if (false == HasAuthority())
+	{
+		AddMainUI();
+	}
  	if (IsLocallyControlled())
  	{
-	ServerRPC_AddMainUI();
+	//ServerRPC_AddMainUI();
 	ServerRPC_DisableOutLiner();
  	}
 
@@ -126,18 +131,7 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	//if (IsLocallyControlled())
-	//{
-	//	AddMainUI();
-	//}
-//	AddMainUI();
-
-	//Add Input Mapping Context
-	//ServerRPC_IMC();
-
-
-
-
+	AddMainUI();
 }
 
 void ACassTeraCharacter::Tick(float DeltaSeconds)
@@ -231,7 +225,7 @@ void ACassTeraCharacter::AddMainUI()
 	auto* pc = Cast<APersonPlayerController>(Controller);
 
 	//	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
-	if (pc->mainUI)
+	if (pc && pc->mainUI)
 	{
 		mainUI = pc->mainUI;
 		mainUI->AddToViewport();
@@ -254,6 +248,7 @@ void ACassTeraCharacter::FireFin(const FInputActionValue& Value)
 	bFiring = false;
 }
 
+// 여기는 서버
 void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 {
 	// 총 쏘면서 수류탄 동시에 하지 못하게 하는 변수

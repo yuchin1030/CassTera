@@ -65,6 +65,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "HidePlayer|VFX")
 	class UNiagaraSystem* dieVFX;
 
+	bool ChangeCameraLock = false;
+
+
 	UPROPERTY(ReplicatedUsing=OnRep_SetMesh)
 	class UStaticMesh* newMesh;
 

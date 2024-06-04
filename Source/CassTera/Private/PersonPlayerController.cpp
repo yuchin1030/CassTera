@@ -17,7 +17,7 @@ APersonPlayerController::APersonPlayerController(const FObjectInitializer& Objec
 	// 값 초기화
 	SeakPlayerPawn = nullptr;
 	HidePlayerPawn = nullptr;
-	
+
 
 	// 폰 클래스가 복제되었는지 확인
 	bReplicates = true;
@@ -55,12 +55,19 @@ void APersonPlayerController::BeginPlay()
 	//}*/
 //	if (HasAuthority())
 //	{
-		gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
-		gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 
-		mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
+	//	}
+}
 
-//	}
+void APersonPlayerController::OnPossess(APawn* aPawn)
+{
+	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+	mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
+
+	Super::OnPossess(aPawn);
+
+	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+
 }
 
 
@@ -107,11 +114,11 @@ void APersonPlayerController::ServerRPC_SetPawn_Implementation(TSubclassOf<APawn
 	//auto* newPawn = GetWorld()->SpawnActor<APawn>(MyPawnClass, spt->GetActorTransform(), params);
 	//Possess(newPawn);
 	//
-	/*	
+	/*
 	if (prevPawn)
 		prevPawn->Destroy();*/
 
-	//시간 내에 서버에 PawnClass를 가져오지 못한 경우를 대비한다
+		//시간 내에 서버에 PawnClass를 가져오지 못한 경우를 대비한다
 	UE_LOG(LogTemp, Warning, TEXT("%s"), MyPawnClass);
 	GetWorld()->GetAuthGameMode()->RestartPlayer(this);
 
@@ -122,55 +129,61 @@ bool APersonPlayerController::ServerRPC_SetPawn_Validate(TSubclassOf<APawn> InPa
 	return true;
 }
 
-void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer)
-{ 
+void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer, bool isOldPawnDestroy = false)
+{
+	origin = Cast<AHidePlayer>(hidePlayer);
 	if (bHidePlayerDie == true)
 	{
 		return;
 	}
-	
-	
-	if (hidePlayer->bDie == true)
-	{
-		bHidePlayerDie = true;
-	}
 
-	
-// 	if (origin != nullptr)
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("null"));
-// 		//MultiRPC_ChangeToSpectator(origin);
-// 		UnPossess();
-// 		FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
-// 		FActorSpawnParameters params;
-// 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-// 		watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
-// 		spectator = Cast<AHidePlayerCamera>(watchingCam);
-// 
-// 		if (spectator != nullptr)
-// 		{
-// 			Possess(spectator);
-// 		}
-	ClientRPC_ChangeToSpectator(hidePlayer);
+	if (origin != nullptr)
+	{
+		if (origin->bDie == true)
+		{
+			bHidePlayerDie = true;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("null"));
+		//MultiRPC_ChangeToSpectator(origin);
+		UnPossess();
+		FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
+		FActorSpawnParameters params;
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
+		spectator = Cast<AHidePlayerCamera>(watchingCam);
+
+		if (spectator != nullptr)
+		{
+			Possess(spectator);
+		}
+
+		if (isOldPawnDestroy)
+		{
+			hidePlayer->Destroy();
+		}
+
+	}
+	//ClientRPC_ChangeToSpectator(origin);
 
 }
 // 일단 안씀
 void APersonPlayerController::ClientRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer)
 {
-	origin = hidePlayer;
-// 
+	//origin = hidePlayer;
+	//// 
 
-	UnPossess();
-	FVector loc = hidePlayer->GetActorLocation() + FVector(0, 50, 50);
-	FActorSpawnParameters params;
-	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
-	spectator = Cast<AHidePlayerCamera>(watchingCam);
+	//UnPossess();
+	//FVector loc = hidePlayer->GetActorLocation() + FVector(0, 50, 50);
+	//FActorSpawnParameters params;
+	//params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
+	//spectator = Cast<AHidePlayerCamera>(watchingCam);
 
-	if (spectator != nullptr)
-	{
-		Possess(spectator);
-	}
+	//if (spectator != nullptr)
+	//{
+	//	Possess(spectator);
+	//}
 }
 
 void APersonPlayerController::ServerRPC_ChangeToPlayer_Implementation()
