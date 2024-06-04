@@ -57,7 +57,6 @@ void APersonPlayerController::BeginPlay()
 	//}*/
 //	if (HasAuthority())
 //	{
-<<<<<<< Updated upstream
 
 	//	}
 }
@@ -71,7 +70,6 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 
 	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 
-=======
 	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 
@@ -82,8 +80,6 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 	
 	
 		
-//	}
->>>>>>> Stashed changes
 }
 
 void APersonPlayerController::Tick(float DeltaTime)

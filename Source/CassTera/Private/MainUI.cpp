@@ -4,6 +4,9 @@
 #include "MainUI.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "CassTeraCharacter.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetTextLibrary.h>
+#include <../../../../../../../Source/Runtime/Engine/Public/EngineUtils.h>
 
 void UMainUI::NativeConstruct()
 {
@@ -11,6 +14,13 @@ void UMainUI::NativeConstruct()
 	img_Kill->SetVisibility(ESlateVisibility::Hidden);
 	txt_Kill->SetVisibility(ESlateVisibility::Hidden);
 
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		playerChar = Cast<ACassTeraCharacter>(*ActorItr);
+		if (playerChar) {
+			break;
+		}
+	}
 }
 
 void UMainUI::ShowKillContent()
@@ -26,4 +36,10 @@ void UMainUI::ShowKillContent()
 		GetWorld()->GetTimerManager().ClearTimer(visibleKillHandler);
 
 	}, 1.0f, false);
+}
+
+void UMainUI::ShowGrenadeCount()
+{
+	txt_GrenadeCount->SetText(UKismetTextLibrary::Conv_IntToText(playerChar->grenadeCount, false, true));
+
 }

@@ -26,7 +26,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
 	class UTextBlock* txt_Kill;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UImage* img_Grenade;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UTextBlock* txt_GrenadeCount;
+
+	UPROPERTY()
+	class ACassTeraCharacter* playerChar;
+
 	UFUNCTION()
 	void ShowKillContent();
+
+	UFUNCTION()
+	void ShowGrenadeCount();
 
 };

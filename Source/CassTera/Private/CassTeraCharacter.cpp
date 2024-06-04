@@ -86,16 +86,13 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-<<<<<<< Updated upstream
 
 	if (false == HasAuthority())
 	{
 		AddMainUI();
 	}
-=======
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
->>>>>>> Stashed changes
  	if (IsLocallyControlled())
  	{
 	//ServerRPC_AddMainUI();
@@ -497,6 +494,8 @@ void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing)
 {
 	bThrowing = _bThrowing;
+
+	mainUI->ShowGrenadeCount();
 
 	gun->SetVisibility(false);
 
