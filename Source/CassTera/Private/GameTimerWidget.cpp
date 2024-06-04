@@ -9,17 +9,20 @@
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include "Components/ProgressBar.h"
 #include "Net/UnrealNetwork.h"
+#include "CassteraGameState.h"
 
-void UGameTimerWidget::NativePreConstruct()
+void UGameTimerWidget::NativeConstruct()
 {
-	Super::NativePreConstruct();
+	Super::NativeConstruct();
+
+	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 }
 
 void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	SetTimer();
+	//SetTimer();
 }
 
 void UGameTimerWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -58,23 +61,30 @@ void UGameTimerWidget::DecreaseTime()
 
 void UGameTimerWidget::Timer()
 {
-	// 프로그래스바 타이머
-	pgPercent += (1.0f / totalSeconds);
-	pg_Timer->SetPercent(pgPercent);
+	//// 프로그래스바 타이머
+	//pgPercent += (1.0f / totalSeconds);
 
-	// 숫자 타이머
-	if (minute >= 0 && seconds > 0)
-	{
-		seconds -= 1;
-	}
-	else if (minute > 0 && seconds == 0)
-	{
-		minute -= 1;
-		seconds = 59;
-	}
+	//// 숫자 타이머
+	//if (minute >= 0 && seconds > 0)
+	//{
+	//	seconds -= 1;
+	//}
+	//else if (minute > 0 && seconds == 0)
+	//{
+	//	minute -= 1;
+	//	seconds = 59;
+	//}
+	if (pg_Timer)
+		pg_Timer->SetPercent(gs->pgPercent);
 
-	txt_Minute->SetText(UKismetTextLibrary::Conv_IntToText(minute, false, true, 2, 2));
-	txt_Second->SetText(UKismetTextLibrary::Conv_IntToText(seconds, false, true, 2, 2));
+	if (txt_Minute)
+	{
+		txt_Minute->SetText(UKismetTextLibrary::Conv_IntToText(gs->minute, false, true, 2, 2));
+	}
+	if (txt_Second)
+		txt_Second->SetText(UKismetTextLibrary::Conv_IntToText(gs->seconds, false, true, 2, 2));
+	
+
 
 	//totalSeconds -= 1;
 
@@ -88,27 +98,27 @@ void UGameTimerWidget::Timer()
 
 	//GetWorld()->GetTimerManager().ClearTimer(timerHandler);
 
-	bClearTimer = false;
+	//bClearTimer = false;
 }
 
-void UGameTimerWidget::SetTimer()
-{
-	if (bClearTimer == false)
-	{
-		bClearTimer = true;
-		GetWorld()->GetTimerManager().SetTimer(timerHandler, this, &UGameTimerWidget::ServerRPC_Timer, 1.0f, false);
-	}
-}
-
-void UGameTimerWidget::ServerRPC_Timer_Implementation()
-{
-	MultiRPC_Timer();
-}
-
-void UGameTimerWidget::MultiRPC_Timer_Implementation()
-{
-	Timer();
-}
+//void UGameTimerWidget::SetTimer()
+//{
+//	if (bClearTimer == false)
+//	{
+//		bClearTimer = true;
+//		GetWorld()->GetTimerManager().SetTimer(timerHandler, this, &UGameTimerWidget::ServerRPC_Timer, 1.0f, false);
+//	}
+//}
+//
+//void UGameTimerWidget::ServerRPC_Timer_Implementation()
+//{
+//	MultiRPC_Timer();
+//}
+//
+//void UGameTimerWidget::MultiRPC_Timer_Implementation()
+//{
+//	Timer();
+//}
 
 void UGameTimerWidget::ServerRPC_DecreaseTime_Implementation()
 {

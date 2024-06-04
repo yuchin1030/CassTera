@@ -15,10 +15,13 @@ class CASSTERA_API UGameTimerWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativePreConstruct() override;
+	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+
+	UPROPERTY()
+	class ACassteraGameState* gs;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta =(BindWidget))
 	class UTextBlock* txt_Minute;
@@ -55,11 +58,11 @@ public:
 	UFUNCTION()
 	void Timer();
 	 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_Timer();
+	//UFUNCTION(Server, Reliable)
+	//void ServerRPC_Timer();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_Timer();
+	//UFUNCTION(NetMulticast, Reliable)
+	//void MultiRPC_Timer();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DecreaseTime();
@@ -67,6 +70,6 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_DecreaseTime();
 
-	UFUNCTION()
-	void SetTimer();
+	//UFUNCTION()
+	//void SetTimer();
 };

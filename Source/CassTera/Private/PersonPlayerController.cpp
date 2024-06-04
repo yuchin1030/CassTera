@@ -11,6 +11,8 @@
 #include "MainUI.h"
 #include "EngineUtils.h"
 #include "PersonPlayerGameModeBase.h"
+#include "CassteraGameState.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 APersonPlayerController::APersonPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -55,6 +57,7 @@ void APersonPlayerController::BeginPlay()
 	//}*/
 //	if (HasAuthority())
 //	{
+<<<<<<< Updated upstream
 
 	//	}
 }
@@ -68,6 +71,31 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 
 	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 
+=======
+	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+
+	mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
+
+	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	
+	
+		
+//	}
+>>>>>>> Stashed changes
+}
+
+void APersonPlayerController::Tick(float DeltaTime)
+{
+	if (gs)
+	{
+		if (HasAuthority() && IsLocalController())
+		{
+			gs->SetTimer();
+			
+		}
+	}
 }
 
 

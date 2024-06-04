@@ -93,7 +93,7 @@ void AHidePlayer::BeginPlay()
 	{ 
 		RandomMesh();
 	}
-	ServerRPC_AttachUI();
+	//ServerRPC_AttachUI();
 	FString myname = GetName();
 
 	PlayerController = Cast<APersonPlayerController>(Controller);
@@ -539,7 +539,7 @@ void AHidePlayer::ClientRPC_AttachUI_Implementation()
 		{
 			playerGameTimerwidget = pc->gameTimerwidget;
 			playerGameTimerwidget->AddToViewport();
-			ServerRPC_SetTimer();
+			//ServerRPC_SetTimer();
 		}
 	}
 }
@@ -594,17 +594,17 @@ void AHidePlayer::MultiRPC_Die_Implementation()
 	//Destroy();
 }
 
-void AHidePlayer::ServerRPC_SetTimer_Implementation()
-{
-	MultiRPC_SetTimer();
-}
-
-void AHidePlayer::MultiRPC_SetTimer_Implementation()
-{
-
-	currentHP = maxHP;
-	if (playerGameTimerwidget)
-	{
-		playerGameTimerwidget->SetTimer();
-	}
-}
+//void AHidePlayer::ServerRPC_SetTimer_Implementation()
+//{
+//	MultiRPC_SetTimer();
+//}
+//
+//void AHidePlayer::MultiRPC_SetTimer_Implementation()
+//{
+//
+//	currentHP = maxHP;
+//	if (playerGameTimerwidget)
+//	{
+//		playerGameTimerwidget->SetTimer();
+//	}
+//}

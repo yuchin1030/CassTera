@@ -47,7 +47,9 @@ class ACassTeraCharacter : public ACharacter
 public:
 
 	ACassTeraCharacter();
+
 	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	class UStaticMeshComponent* gun;
 
@@ -123,6 +125,12 @@ public:
 
 	bool bThrowing;
 
+	UPROPERTY()
+	class ACassteraGameState* gs;
+
+
+
+
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DisableOutLiner();
 
@@ -143,17 +151,17 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_KillUI();
 	// ==========================================================================
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_AddTimerUI();
+	//UFUNCTION(Server, Reliable)
+	//void ServerRPC_AddTimerUI();
 
-	UFUNCTION(Client, Reliable)
-	void ClientRPC_AddTimerUI();
+	//UFUNCTION(Client, Reliable)
+	//void ClientRPC_AddTimerUI();
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_SetTimer();
+	//UFUNCTION(Server, Reliable)
+	//void ServerRPC_SetTimer();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_SetTimer();
+	//UFUNCTION(NetMulticast, Reliable)
+	//void MultiRPC_SetTimer();
 
 
 	UFUNCTION(Server,Reliable)

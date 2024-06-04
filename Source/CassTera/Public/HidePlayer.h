@@ -197,11 +197,11 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_Damaged(int32 _currentHP);
 
-	UFUNCTION(Server, Reliable)
+	/*UFUNCTION(Server, Reliable)
 	void ServerRPC_SetTimer();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_SetTimer();
+	void MultiRPC_SetTimer();*/
 
 
 };

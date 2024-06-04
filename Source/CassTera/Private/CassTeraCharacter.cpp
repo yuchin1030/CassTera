@@ -26,6 +26,7 @@
 #include "HidePlayer.h"
 #include "StartLocation.h"
 #include "EngineUtils.h"
+#include "CassteraGameState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -85,18 +86,23 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+<<<<<<< Updated upstream
 
 	if (false == HasAuthority())
 	{
 		AddMainUI();
 	}
+=======
+	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+>>>>>>> Stashed changes
  	if (IsLocallyControlled())
  	{
 	//ServerRPC_AddMainUI();
 	ServerRPC_DisableOutLiner();
  	}
 
-	ServerRPC_AddTimerUI();
+	//ServerRPC_AddTimerUI();
 	auto pc = Cast<APlayerController>(Controller);
 	if (pc)
 	{
@@ -403,7 +409,7 @@ void ACassTeraCharacter::NotEnemyResult()
 {
 	UE_LOG(LogTemp, Warning, TEXT("2222222222"));
 
-	if (gameTimerwidget != nullptr)
+	if (gs->timerWidget != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
 
@@ -413,7 +419,7 @@ void ACassTeraCharacter::NotEnemyResult()
 
 		bDecreasing = true;
 
-		gameTimerwidget->ServerRPC_DecreaseTime();
+		//gameTimerwidget->ServerRPC_DecreaseTime();
 		mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
 
 		FTimerHandle visibleHandler;
@@ -452,29 +458,29 @@ void ACassTeraCharacter::ServerRPC_KillUI_Implementation()
 	ClientRPC_KillUI();
 }
 
-void ACassTeraCharacter::ClientRPC_AddTimerUI_Implementation()
-{
-	if(IsLocallyControlled())
-	{
-	auto* pc = Cast<APersonPlayerController>(Controller);
-
-		//	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
-		if (pc->gameTimerwidget)
-		{
-			gameTimerwidget = pc->gameTimerwidget;
-			if (IsLocallyControlled())
-			{
-				gameTimerwidget->AddToViewport();
-				ServerRPC_SetTimer();
-			}
-		}
-	}
-}
-
-void ACassTeraCharacter::ServerRPC_AddTimerUI_Implementation()
-{
-	ClientRPC_AddTimerUI();
-}
+//void ACassTeraCharacter::ClientRPC_AddTimerUI_Implementation()
+//{
+//	if(IsLocallyControlled())
+//	{
+//	auto* pc = Cast<APersonPlayerController>(Controller);
+//
+//		//	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+//		if (pc->gameTimerwidget)
+//		{
+//			gameTimerwidget = pc->gameTimerwidget;
+//			if (IsLocallyControlled())
+//			{
+//				gameTimerwidget->AddToViewport();
+//				//ServerRPC_SetTimer();
+//			}
+//		}
+//	}
+//}
+//
+//void ACassTeraCharacter::ServerRPC_AddTimerUI_Implementation()
+//{
+//	ClientRPC_AddTimerUI();
+//}
 
 void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 {
@@ -538,18 +544,18 @@ void ACassTeraCharacter::ClientRPC_AddMainUI_Implementation()
 	AddMainUI();
 }
 
-void ACassTeraCharacter::ServerRPC_SetTimer_Implementation()
-{
-	MultiRPC_SetTimer();
-}
-
-void ACassTeraCharacter::MultiRPC_SetTimer_Implementation()
-{
-	if (gameTimerwidget)
-	{
-		gameTimerwidget->SetTimer();
-	}
-}
+//void ACassTeraCharacter::ServerRPC_SetTimer_Implementation()
+//{
+//	MultiRPC_SetTimer();
+//}
+//
+//void ACassTeraCharacter::MultiRPC_SetTimer_Implementation()
+//{
+//	if (gameTimerwidget)
+//	{
+//		gameTimerwidget->SetTimer();
+//	}
+//}
 
 void ACassTeraCharacter::ServerRPC_DisableOutLiner_Implementation()
 {

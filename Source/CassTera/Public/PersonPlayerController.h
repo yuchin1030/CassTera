@@ -38,15 +38,17 @@ public:
 // 	
 // 	UFUNCTION(NetMulticast, Reliable)
 // 	void MultiRPC_CreateTimerUI();
-
+	
 
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void OnPossess(APawn* aPawn) override;
 	
+	virtual void Tick(float DeltaTime);
 
-
+	UPROPERTY()
+	ACassteraGameState* gs;
 	
 	// 올바른 폰 클래스 클라이언트 측 반환
 	UFUNCTION(Server, Reliable)
