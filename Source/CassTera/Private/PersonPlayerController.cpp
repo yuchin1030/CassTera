@@ -124,39 +124,44 @@ bool APersonPlayerController::ServerRPC_SetPawn_Validate(TSubclassOf<APawn> InPa
 
 void APersonPlayerController::ServerRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer)
 { 
-	origin = hidePlayer;
 	if (bHidePlayerDie == true)
 	{
 		return;
 	}
-	if (origin->bDie == true)
+	
+	
+	if (hidePlayer->bDie == true)
 	{
 		bHidePlayerDie = true;
 	}
-	
-	if (origin != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("null"));
-		//MultiRPC_ChangeToSpectator(origin);
-		UnPossess();
-		FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
-		FActorSpawnParameters params;
-		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
-		spectator = Cast<AHidePlayerCamera>(watchingCam);
 
-		if (spectator != nullptr)
-		{
-			Possess(spectator);
-		}
-	}
+	
+// 	if (origin != nullptr)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("null"));
+// 		//MultiRPC_ChangeToSpectator(origin);
+// 		UnPossess();
+// 		FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
+// 		FActorSpawnParameters params;
+// 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+// 		watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);
+// 		spectator = Cast<AHidePlayerCamera>(watchingCam);
+// 
+// 		if (spectator != nullptr)
+// 		{
+// 			Possess(spectator);
+// 		}
+	ClientRPC_ChangeToSpectator(hidePlayer);
+
 }
 // ÀÏ´Ü ¾È¾¸
-void APersonPlayerController::MultiRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer)
+void APersonPlayerController::ClientRPC_ChangeToSpectator_Implementation(AHidePlayer* hidePlayer)
 {
 	origin = hidePlayer;
+// 
+
 	UnPossess();
-	FVector loc = origin->GetActorLocation() + FVector(0, 50, 50);
+	FVector loc = hidePlayer->GetActorLocation() + FVector(0, 50, 50);
 	FActorSpawnParameters params;
 	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	watchingCam = GetWorld()->SpawnActor<AHidePlayerCamera>(watcingCam_bp, loc, FRotator::ZeroRotator, params);

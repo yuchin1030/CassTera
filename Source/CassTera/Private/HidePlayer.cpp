@@ -286,6 +286,7 @@ void AHidePlayer::OnIAChangeCamera(const FInputActionValue& value)
 	{
 		ServerRPC_ChangeCamera();
 	}
+	
 }
 
 void AHidePlayer::OnChangeCamera()
@@ -330,12 +331,10 @@ void AHidePlayer::OnTakeDamage()
 void AHidePlayer::Die()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("die : %d"), currentHP);
-
-	PlayerController = Cast<APersonPlayerController>(Controller);
+// 	PlayerController = Cast<APersonPlayerController>(Controller);
 	if (PlayerController)
 	{
 		bChangeCam = true;
-
 		PlayerController->ServerRPC_ChangeToSpectator(this);
 	}
 }
@@ -576,7 +575,6 @@ void AHidePlayer::ServerRPC_Die_Implementation()
 	UE_LOG(LogTemp, Warning, TEXT("SERVER_DIE"));
 
 	bDie = true;
-
 	ClientRPC_Die(bDie);
 	MultiRPC_Die();
 	//Destroy();
@@ -587,14 +585,11 @@ void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)
 	bDie = _bDie;
 
 	UE_LOG(LogTemp, Warning, TEXT("server bool : %d"), bDie);
-
 	Die();
 }
 
 void AHidePlayer::MultiRPC_Die_Implementation()
 {
-	
-
 	//Die();
 	if (dieVFX != nullptr)
 	{

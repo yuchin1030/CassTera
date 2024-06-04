@@ -78,8 +78,8 @@ public:
 	//숨는 플레이어 관전모드로 바꾸기
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeToSpectator(AHidePlayer* hidePlayer);
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_ChangeToSpectator(AHidePlayer* hidePlayer);
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_ChangeToSpectator(AHidePlayer* hidePlayer);
 
 	//숨는 플레이어 관전모드->숨는 폰으로 바꾸기(서버)
 	UFUNCTION(Server, Reliable)
