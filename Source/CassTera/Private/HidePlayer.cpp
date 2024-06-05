@@ -517,7 +517,6 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 	}
 }
 
-<<<<<<< HEAD
 void AHidePlayer::ServerRPC_AttachUI_Implementation()
 {
 	ClientRPC_AttachUI();
@@ -537,31 +536,7 @@ void AHidePlayer::ClientRPC_AttachUI_Implementation()
 		}
 	}
 }
-=======
 
-
-
-
-//void AHidePlayer::ServerRPC_AttachUI_Implementation()
-//{
-//	ClientRPC_AttachUI();
-//}
-//
-//void AHidePlayer::ClientRPC_AttachUI_Implementation()
-//{
-//	if (IsLocallyControlled())
-//{
-//		auto* pc = Cast<APersonPlayerController>(Controller);
-//	//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
-//		if (pc->gameTimerwidget)
-//		{
-//			playerGameTimerwidget = pc->gameTimerwidget;
-//			playerGameTimerwidget->AddToViewport();
-//			//ServerRPC_SetTimer();
-//		}
-//	}
-//}
->>>>>>> b6ea272a4b3f30c2c1e1fa90f5acbfa72e61d09f
 
 void AHidePlayer::ServerRPC_Damaged_Implementation()
 {

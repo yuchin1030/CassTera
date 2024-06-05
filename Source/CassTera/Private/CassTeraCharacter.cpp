@@ -416,23 +416,14 @@ void ACassTeraCharacter::NotEnemyResult()
 
 		bDecreasing = true;
 
-<<<<<<< HEAD
-		//gameTimerwidget->ServerRPC_DecreaseTime();
-// 		mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
-=======
 		gs->ServerRPC_DecreaseTime();
->>>>>>> b6ea272a4b3f30c2c1e1fa90f5acbfa72e61d09f
 
 		if (mainUI)
 		{
 			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
 
-<<<<<<< HEAD
-// 			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
-=======
 			FTimerHandle visibleHandler;
 			GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
->>>>>>> b6ea272a4b3f30c2c1e1fa90f5acbfa72e61d09f
 
 				mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
 
