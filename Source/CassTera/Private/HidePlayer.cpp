@@ -92,8 +92,13 @@ void AHidePlayer::BeginPlay()
 	if(HasAuthority())
 	{ 
 		RandomMesh();
+		//APersonPlayerGameModeBase* gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+		//if (gm)
+		//{
+		//	//gm->hidePlayerCount--;
+		//	UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), gm->hidePlayerCount);
+		//}
 	}
-	//ServerRPC_AttachUI();
 	FString myname = GetName();
 
 	PlayerController = Cast<APersonPlayerController>(Controller);
@@ -101,8 +106,6 @@ void AHidePlayer::BeginPlay()
 
 	if (PlayerController)
 	{
-// 		playerGameTimerwidget = PlayerController->gameTimerwidget;
-
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			// clearMappingContext를 쓰면 기존에 스폰되어 있던 캐릭터의 imc까지 날라가는듯..
@@ -111,13 +114,7 @@ void AHidePlayer::BeginPlay()
 			Subsystem->RemoveMappingContext(imc_hidingPlayer);
 			Subsystem->AddMappingContext(imc_hidingPlayer, 0);
 		}
-	}
-//	if (IsLocallyControlled())
-//	{
-
-//	}
-	
-	
+	}	
 }
 
 void AHidePlayer::PossessedBy(AController* NewController)
@@ -185,19 +182,19 @@ void AHidePlayer::OnRep_SetMesh()
 	meshComp->SetRelativeScale3D(MeshScale);
 }
 
-void AHidePlayer::ServerRPC_WrongShot_Implementation()
-{
-	MultiRPC_WrongShot();
-}
+//void AHidePlayer::ServerRPC_WrongShot_Implementation()
+//{
+//	MultiRPC_WrongShot();
+//}
 
-void AHidePlayer::MultiRPC_WrongShot_Implementation()
-{
-	if (playerGameTimerwidget)
-	{
-
-	playerGameTimerwidget->ServerRPC_DecreaseTime();
-	}
-}
+//void AHidePlayer::MultiRPC_WrongShot_Implementation()
+//{
+//	//if (playerGameTimerwidget)
+//	//{
+//
+//	//playerGameTimerwidget->ServerRPC_DecreaseTime();
+//	//}
+//}
 
 void AHidePlayer::OnIAMove(const FInputActionValue& value)
 {
@@ -335,11 +332,11 @@ void AHidePlayer::Die()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("die : %d"), currentHP);
 // 	PlayerController = Cast<APersonPlayerController>(Controller);
+	ServerRPC_Die();
 	if (dieVFX != nullptr)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
 	}
-
 	if (PlayerController)
 	{
 		bChangeCam = true;
@@ -520,10 +517,7 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 	}
 }
 
-
-
-
-
+<<<<<<< HEAD
 void AHidePlayer::ServerRPC_AttachUI_Implementation()
 {
 	ClientRPC_AttachUI();
@@ -543,6 +537,31 @@ void AHidePlayer::ClientRPC_AttachUI_Implementation()
 		}
 	}
 }
+=======
+
+
+
+
+//void AHidePlayer::ServerRPC_AttachUI_Implementation()
+//{
+//	ClientRPC_AttachUI();
+//}
+//
+//void AHidePlayer::ClientRPC_AttachUI_Implementation()
+//{
+//	if (IsLocallyControlled())
+//{
+//		auto* pc = Cast<APersonPlayerController>(Controller);
+//	//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
+//		if (pc->gameTimerwidget)
+//		{
+//			playerGameTimerwidget = pc->gameTimerwidget;
+//			playerGameTimerwidget->AddToViewport();
+//			//ServerRPC_SetTimer();
+//		}
+//	}
+//}
+>>>>>>> b6ea272a4b3f30c2c1e1fa90f5acbfa72e61d09f
 
 void AHidePlayer::ServerRPC_Damaged_Implementation()
 {
@@ -581,6 +600,11 @@ void AHidePlayer::ClientRPC_Damaged_Implementation(int32 _currentHP)
 
 void AHidePlayer::ServerRPC_Die_Implementation()
 {
+	APersonPlayerGameModeBase* gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (gm)
+	{
+		gm->DecreaseHidePlayerCount();
+	}
 }
 
 void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)

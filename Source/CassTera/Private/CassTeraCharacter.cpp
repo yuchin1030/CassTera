@@ -87,16 +87,16 @@ void ACassTeraCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
-	if (false == HasAuthority())
+	/*if (false == HasAuthority())
 	{
 		AddMainUI();
-	}
+	}*/
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
  	if (IsLocallyControlled())
  	{
-	//ServerRPC_AddMainUI();
-	ServerRPC_DisableOutLiner();
+		ServerRPC_AddMainUI();
+		ServerRPC_DisableOutLiner();
  	}
 
 	//ServerRPC_AddTimerUI();
@@ -298,11 +298,11 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			// enemy 아니면 시간 감소
 			ServerRPC_WorngShot();
 
-			for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
+			/*for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 			{
 				enemyPlayer = *it;
 				enemyPlayer->ServerRPC_WrongShot();
-			}
+			}*/
 			//	NotEnemyResult();	
 		}
 	}
@@ -416,18 +416,32 @@ void ACassTeraCharacter::NotEnemyResult()
 
 		bDecreasing = true;
 
+<<<<<<< HEAD
 		//gameTimerwidget->ServerRPC_DecreaseTime();
-		mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
+// 		mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
+=======
+		gs->ServerRPC_DecreaseTime();
+>>>>>>> b6ea272a4b3f30c2c1e1fa90f5acbfa72e61d09f
 
-		FTimerHandle visibleHandler;
-		GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
+		if (mainUI)
+		{
+			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
 
-			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
+<<<<<<< HEAD
+// 			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
+=======
+			FTimerHandle visibleHandler;
+			GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
+>>>>>>> b6ea272a4b3f30c2c1e1fa90f5acbfa72e61d09f
 
-			GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
+				mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
 
-			bDecreasing = false;
+				GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
+				
+				bDecreasing = false;
 			}, 0.5f, false);
+		}
+			
 	}
 	else
 	{

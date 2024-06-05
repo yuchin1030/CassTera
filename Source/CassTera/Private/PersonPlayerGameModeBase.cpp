@@ -7,6 +7,7 @@
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h>
 #include "Objects.h"
 #include <../../../../../../../Source/Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "EngineUtils.h"
 
 APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 {
@@ -14,7 +15,22 @@ APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	PlayerControllerClass = APersonPlayerController::StaticClass();
-	
+
+}
+
+void APersonPlayerGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//// 월드에 있는 모든 hidePlayer 찾아서 배열에 저장 
+	//for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
+	//{
+	//	if (it)
+	//	{
+	//		UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
+	//	}
+	//}
+	//hidePlayerCount = hidePlayers.Num();
 }
 
 void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
@@ -27,8 +43,8 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 		{
 			DefaultPawnClass = SeakPlayerPawn;
 			curSeaker++;
-			
-			
+
+
 		}
 		else
 		{
@@ -51,15 +67,17 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 		if (Objects != nullptr)
 		{
 			Objects->RandomSpawn();
-			
+
 		}
 	}
+
+
 }
 
 void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+
 	//UE_LOG(LogTemp, Warning, TEXT("%d"), curSeaker);
 }
 
@@ -69,6 +87,12 @@ void APersonPlayerGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APersonPlayerGameModeBase, Objects);
+}
+
+void APersonPlayerGameModeBase::DecreaseHidePlayerCount()
+{
+	hidePlayerCount = hidePlayerCount - 1;
+	UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
 }
 
 //UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

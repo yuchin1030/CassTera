@@ -19,6 +19,8 @@ public:
 	APersonPlayerGameModeBase();
 	//virtual UClass* GetDefaultPawnClassForController_Implementation(class AController* InController) override;
 
+	virtual void BeginPlay() override;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void Tick( float DeltaSeconds ) override;
@@ -49,5 +51,17 @@ public:
 	TSubclassOf<class AObjects> Objects_BP;
 	UPROPERTY(EditDefaultsOnly, Replicated)
 	class AObjects* Objects;
+
+	UPROPERTY()
+	int32 hidePlayerCount;
+	
+	UPROPERTY()
+	TArray<class AHidePlayer*> hidePlayers;
+
+	UPROPERTY()
+	class AHidePlayer* hidePlayer;
+
+	UFUNCTION()
+	void DecreaseHidePlayerCount();
 };
 

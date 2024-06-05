@@ -16,8 +16,7 @@ class CASSTERA_API UGameTimerWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 
 	UPROPERTY()
@@ -32,19 +31,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
 	class UProgressBar* pg_Timer;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite, Category = MySettings)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	int32 seconds = 0;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite, Category = MySettings)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	int32 minute = 3;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite, Category = MySettings)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	int minusSeconds = 9;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite, Category = MySettings)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	float totalSeconds = 180.0f;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite, Category = MySettings)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	float pgPercent = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
@@ -64,12 +63,10 @@ public:
 	//UFUNCTION(NetMulticast, Reliable)
 	//void MultiRPC_Timer();
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_DecreaseTime();
+	//UFUNCTION(Server, Reliable)
+	//void ServerRPC_DecreaseTime();
 
-	UFUNCTION(Client, Reliable)
-	void ClientRPC_DecreaseTime();
+	//UFUNCTION(Client, Reliable)
+	//void ClientRPC_DecreaseTime();
 
-	//UFUNCTION()
-	//void SetTimer();
 };
