@@ -63,12 +63,12 @@ void APersonPlayerController::BeginPlay()
 
 void APersonPlayerController::OnPossess(APawn* aPawn)
 {
-	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
-	mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
+	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+	//mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
 
 	Super::OnPossess(aPawn);
 
-	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+	//gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 
 	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
@@ -88,9 +88,9 @@ void APersonPlayerController::Tick(float DeltaTime)
 	{
 		if (HasAuthority() && IsLocalController())
 		{
-			gs->SetTimer();
-			
+			gs->ServerRPC_CalculateTime();
 		}
+		
 	}
 }
 

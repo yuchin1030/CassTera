@@ -11,61 +11,89 @@ void ACassteraGameState::BeginPlay()
 	timerWidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 	timerWidget->AddToViewport();
 	UE_LOG(LogTemp, Warning, TEXT("start"));
-
-	//timerWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void ACassteraGameState::Tick(float DeltaTime)
+void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
 {
-	//SetTimer();
-}
-
-void ACassteraGameState::SetTimer()
-{
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), bClearTimer);
-
-	if (bClearTimer == false)
+	if (!(minute == 0 && seconds <= 30))
 	{
-		bClearTimer = true;
-		//UE_LOG(LogTemp, Warning, TEXT("%d"), bClearTimer);
-
-
-		GetWorld()->GetTimerManager().SetTimer(timerHandler, this, &ACassteraGameState::ServerRPC_CalculateTime, 1.0f, true);
+		pgPercent += (1.0f / totalSeconds * minusSeconds);
+		
 	}
+
+	if (minute > 0 && seconds < 10)
+	{
+		minute -= 1;
+		seconds += 51;
+	}
+	else if (minute == 0 && seconds < 10)
+	{
+		seconds = 0;
+	}
+	else if (!(minute == 0 && seconds <= 30))	// 버닝타임 제외하고는 모두 10초씩 차감
+	{
+		seconds -= minusSeconds;
+	}
+
+	ClientRPC_DecreaseTime(minute, seconds, minusSeconds, pgPercent, totalSeconds);
+}
+
+void ACassteraGameState::ClientRPC_DecreaseTime_Implementation(int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds)
+{
+	minute = _minute;
+	seconds = _seconds;
+	minusSeconds = _minusSeconds;
+	pgPercent = _pgPercent;
+	totalSeconds = _totalSeconds;
+
+	timerWidget->Timer();
 }
 
 void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%d, %d"), minute, seconds);
-
-	// 프로그래스바 타이머
-	pgPercent += (1.0f / totalSeconds);
-	// pg_Timer->SetPercent(pgPercent);
-
-	// 숫자 타이머
-	if (minute >= 0 && seconds > 0)
+	if (bClearTimer == false)
 	{
-		seconds -= 1;
-	}
-	else if (minute > 0 && seconds == 0)
-	{
-		minute -= 1;
-		seconds = 59;
+		bClearTimer = true;
+
+		GetWorld()->GetTimerManager().SetTimer(timerHandler, [&]() {
+			UE_LOG(LogTemp, Warning, TEXT("%d, %d"), minute, seconds);
+
+			// 프로그래스바 타이머
+			pgPercent += (1.0f / totalSeconds);
+			// pg_Timer->SetPercent(pgPercent);
+
+			// 숫자 타이머
+			if (minute >= 0 && seconds > 0)
+			{
+				seconds -= 1;
+			}
+			else if (minute > 0 && seconds == 0)
+			{
+				minute -= 1;
+				seconds = 59;
+			}
+
+			MultiRPC_CalculateTime(bClearTimer, minute, seconds, pgPercent, totalSeconds);
+		}, 1.0f, true);
 	}
 
-	MultiRPC_CalculateTime();
-	//txt_Minute->SetText(UKismetTextLibrary::Conv_IntToText(minute, false, true, 2, 2));
-	//txt_Second->SetText(UKismetTextLibrary::Conv_IntToText(seconds, false, true, 2, 2));
+
+
 	
 }
 
-void ACassteraGameState::MultiRPC_CalculateTime_Implementation()
+void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer, int32 _minute, int32 _seconds, float _pgPercent, float _totalSeconds)
 {
-	if (timerWidget)
-	{
-		//timerWidget->SetVisibility(ESlateVisibility::Visible);
+	bClearTimer = _bClearTimer;
+	minute = _minute;
+	seconds = _seconds;
+	pgPercent = _pgPercent;
+	totalSeconds = _totalSeconds;
 
+	if (timerWidget) {
+	
 		timerWidget->Timer();
+		UE_LOG(LogTemp, Warning, TEXT("timer"));
 	}
 	else
 	{

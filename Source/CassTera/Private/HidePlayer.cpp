@@ -185,19 +185,19 @@ void AHidePlayer::OnRep_SetMesh()
 	meshComp->SetRelativeScale3D(MeshScale);
 }
 
-void AHidePlayer::ServerRPC_WrongShot_Implementation()
-{
-	MultiRPC_WrongShot();
-}
+//void AHidePlayer::ServerRPC_WrongShot_Implementation()
+//{
+//	MultiRPC_WrongShot();
+//}
 
-void AHidePlayer::MultiRPC_WrongShot_Implementation()
-{
-	if (playerGameTimerwidget)
-	{
-
-	playerGameTimerwidget->ServerRPC_DecreaseTime();
-	}
-}
+//void AHidePlayer::MultiRPC_WrongShot_Implementation()
+//{
+//	//if (playerGameTimerwidget)
+//	//{
+//
+//	//playerGameTimerwidget->ServerRPC_DecreaseTime();
+//	//}
+//}
 
 void AHidePlayer::OnIAMove(const FInputActionValue& value)
 {
@@ -524,25 +524,25 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 
 
 
-void AHidePlayer::ServerRPC_AttachUI_Implementation()
-{
-	ClientRPC_AttachUI();
-}
-
-void AHidePlayer::ClientRPC_AttachUI_Implementation()
-{
-	if (IsLocallyControlled())
-{
-		auto* pc = Cast<APersonPlayerController>(Controller);
-	//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
-		if (pc->gameTimerwidget)
-		{
-			playerGameTimerwidget = pc->gameTimerwidget;
-			playerGameTimerwidget->AddToViewport();
-			//ServerRPC_SetTimer();
-		}
-	}
-}
+//void AHidePlayer::ServerRPC_AttachUI_Implementation()
+//{
+//	ClientRPC_AttachUI();
+//}
+//
+//void AHidePlayer::ClientRPC_AttachUI_Implementation()
+//{
+//	if (IsLocallyControlled())
+//{
+//		auto* pc = Cast<APersonPlayerController>(Controller);
+//	//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
+//		if (pc->gameTimerwidget)
+//		{
+//			playerGameTimerwidget = pc->gameTimerwidget;
+//			playerGameTimerwidget->AddToViewport();
+//			//ServerRPC_SetTimer();
+//		}
+//	}
+//}
 
 void AHidePlayer::ServerRPC_Damaged_Implementation()
 {
