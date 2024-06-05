@@ -83,11 +83,11 @@ public:
 	UPROPERTY()
 	class ACassTeraCharacter* seekPlayer;
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_WrongShot();
+	//UFUNCTION(Server, Reliable)
+	//void ServerRPC_WrongShot();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_WrongShot();
+	//UFUNCTION(NetMulticast, Reliable)
+	//void MultiRPC_WrongShot();
 
 	UPROPERTY()
 	bool bDie;
@@ -183,11 +183,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Die();
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_AttachUI();
+	//UFUNCTION(Server, Reliable)
+	//void ServerRPC_AttachUI();
 
-	UFUNCTION(Client, Reliable)
-	void ClientRPC_AttachUI();
+	//UFUNCTION(Client, Reliable)
+	//void ClientRPC_AttachUI();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_Damaged();

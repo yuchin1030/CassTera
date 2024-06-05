@@ -87,16 +87,16 @@ void ACassTeraCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
-	if (false == HasAuthority())
+	/*if (false == HasAuthority())
 	{
 		AddMainUI();
-	}
+	}*/
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
  	if (IsLocallyControlled())
  	{
-	//ServerRPC_AddMainUI();
-	ServerRPC_DisableOutLiner();
+		ServerRPC_AddMainUI();
+		ServerRPC_DisableOutLiner();
  	}
 
 	//ServerRPC_AddTimerUI();
@@ -110,6 +110,9 @@ void ACassTeraCharacter::BeginPlay()
 			// 혹시 내가 가지고 있는 imc가 남아있을 수 있으니, 안전하게 같은 이름을 가진 친구가 있다면 지우고, 새로 imc 추가한다.
 			Subsystem->RemoveMappingContext(DefaultMappingContext);
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+
+			// 사물 숨을동안(10초) 못 움직임
+			ChangePersonPlayerMovement();
 		}
 	}
 	
@@ -298,11 +301,11 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			// enemy 아니면 시간 감소
 			ServerRPC_WorngShot();
 
-			for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
+			/*for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 			{
 				enemyPlayer = *it;
 				enemyPlayer->ServerRPC_WrongShot();
-			}
+			}*/
 			//	NotEnemyResult();	
 		}
 	}
@@ -416,22 +419,43 @@ void ACassTeraCharacter::NotEnemyResult()
 
 		bDecreasing = true;
 
-		//gameTimerwidget->ServerRPC_DecreaseTime();
-		mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
+		gs->ServerRPC_DecreaseTime();
 
-		FTimerHandle visibleHandler;
-		GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
+		if (mainUI)
+		{
+			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
 
-			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
+			FTimerHandle visibleHandler;
+			GetWorld()->GetTimerManager().SetTimer(visibleHandler, [&]() {
 
-			GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
+				mainUI->img_RedCH->SetVisibility(ESlateVisibility::Hidden);
 
-			bDecreasing = false;
+				GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
+				
+				bDecreasing = false;
 			}, 0.5f, false);
+		}
+			
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Fail222222"));
+	}
+}
+
+void ACassTeraCharacter::ChangePersonPlayerMovement()
+{
+	if (mainUI)
+	{
+		mainUI->HideStartUI();
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+		FTimerHandle changeMoveHandler;
+		GetWorld()->GetTimerManager().SetTimer(changeMoveHandler, [&]() {
+
+			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			mainUI->ShowStartUI();
+		}, 10.0f, false);
 	}
 }
 

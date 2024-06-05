@@ -43,3 +43,15 @@ void UMainUI::ShowGrenadeCount()
 	txt_GrenadeCount->SetText(UKismetTextLibrary::Conv_IntToText(playerChar->grenadeCount, false, true));
 
 }
+
+void UMainUI::HideStartUI()
+{
+	img_ShowFirst->SetVisibility(ESlateVisibility::Visible);
+	txt_ShowFirst->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainUI::ShowStartUI()
+{
+	img_ShowFirst->SetVisibility(ESlateVisibility::Hidden);
+	txt_ShowFirst->SetVisibility(ESlateVisibility::Hidden);
+}

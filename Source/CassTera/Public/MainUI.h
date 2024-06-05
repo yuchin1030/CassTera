@@ -32,6 +32,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
 	class UTextBlock* txt_GrenadeCount;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UImage* img_ShowFirst;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UTextBlock* txt_ShowFirst;
+
 	UPROPERTY()
 	class ACassTeraCharacter* playerChar;
 
@@ -41,4 +47,9 @@ public:
 	UFUNCTION()
 	void ShowGrenadeCount();
 
+	UFUNCTION()
+	void HideStartUI();
+
+	UFUNCTION()
+	void ShowStartUI();
 };

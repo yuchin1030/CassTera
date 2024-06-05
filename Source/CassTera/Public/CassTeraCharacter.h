@@ -111,6 +111,9 @@ public:
 	UFUNCTION()
 	void NotEnemyResult();
 
+	UFUNCTION()
+	void ChangePersonPlayerMovement();
+
 	UPROPERTY()
 	class AHidePlayer* enemyPlayer;
 

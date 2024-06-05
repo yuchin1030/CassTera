@@ -63,14 +63,13 @@ void APersonPlayerController::BeginPlay()
 
 void APersonPlayerController::OnPossess(APawn* aPawn)
 {
-	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
-	mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
+	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+	//mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
 
 	Super::OnPossess(aPawn);
 
 	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 
-	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 
 	mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
@@ -78,7 +77,14 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
 	
-	
+	if (auto* p = Cast<AHidePlayer>(GetPawn()))
+	{
+		gm->hidePlayers.Add(p);
+		gm->hidePlayerCount = gm->hidePlayers.Num();
+
+		UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), gm->hidePlayerCount);
+	}
+
 		
 }
 
@@ -88,9 +94,9 @@ void APersonPlayerController::Tick(float DeltaTime)
 	{
 		if (HasAuthority() && IsLocalController())
 		{
-			gs->SetTimer();
-			
+			gs->ServerRPC_CalculateTime();
 		}
+		
 	}
 }
 

@@ -17,16 +17,24 @@ class CASSTERA_API ACassteraGameState : public AGameStateBase
 public:
 
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CalculateTime();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_CalculateTime();
+	void MultiRPC_CalculateTime(bool _bClearTimer, int32 _minute, int32 _seconds, float _pgPercent, float _totalSeconds);
 
-	UFUNCTION()
-	void SetTimer();
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DecreaseTime();
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_DecreaseTime(int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DecreaseHidePlayerCount();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_DecreaseHidePlayerCount(int32 _hidePlayerCount);
 
 	UPROPERTY()
 	FTimerHandle timerHandler;
@@ -38,6 +46,9 @@ public:
 
 	UPROPERTY()
 	int32 minute = 3;
+
+	UPROPERTY()
+	int32 hidePlayerCount = 0;
 
 	UPROPERTY()
 	int minusSeconds = 9;

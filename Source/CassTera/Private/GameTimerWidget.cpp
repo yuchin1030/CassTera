@@ -10,70 +10,61 @@
 #include "Components/ProgressBar.h"
 #include "Net/UnrealNetwork.h"
 #include "CassteraGameState.h"
+#include "PersonPlayerGameModeBase.h"
 
 void UGameTimerWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 }
 
-void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
+//void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+//{
+//	Super::NativeTick(MyGeometry, InDeltaTime);
+//
+//	//SetTimer();
+//}
 
-	//SetTimer();
-}
-
-void UGameTimerWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UGameTimerWidget, seconds);
-	DOREPLIFETIME(UGameTimerWidget, minute);
-	DOREPLIFETIME(UGameTimerWidget, minusSeconds);
-	DOREPLIFETIME(UGameTimerWidget, totalSeconds);
-	DOREPLIFETIME(UGameTimerWidget, pgPercent);
-}
+//void UGameTimerWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//	DOREPLIFETIME(UGameTimerWidget, seconds);
+//	DOREPLIFETIME(UGameTimerWidget, minute);
+//	DOREPLIFETIME(UGameTimerWidget, minusSeconds);
+//	DOREPLIFETIME(UGameTimerWidget, totalSeconds);
+//	DOREPLIFETIME(UGameTimerWidget, pgPercent);
+//}
 
 
 void UGameTimerWidget::DecreaseTime()
 {
-	if (!(minute == 0 && seconds <= 30))
-	{
-		pgPercent += (1.0f / totalSeconds * minusSeconds);
-		pg_Timer->SetPercent(pgPercent);
-	}
+	pg_Timer->SetPercent(pgPercent);
 
-	if (minute > 0 && seconds < 10)
-	{
-		minute -= 1;
-		seconds += 51;
-	}
-	else if (minute == 0 && seconds < 10)
-	{
-		seconds = 0;
-	}
-	else if (!(minute == 0 && seconds <= 30))	// 버닝타임 제외하고는 모두 10초씩 차감
-	{
-		seconds -= minusSeconds;
-	}
+	//if (!(minute == 0 && seconds <= 30))
+	//{
+	//	pgPercent += (1.0f / totalSeconds * minusSeconds);
+	//	pg_Timer->SetPercent(pgPercent);
+	//}
+
+	//if (minute > 0 && seconds < 10)
+	//{
+	//	minute -= 1;
+	//	seconds += 51;
+	//}
+	//else if (minute == 0 && seconds < 10)
+	//{
+	//	seconds = 0;
+	//}
+	//else if (!(minute == 0 && seconds <= 30))	// 버닝타임 제외하고는 모두 10초씩 차감
+	//{
+	//	seconds -= minusSeconds;
+	//}
 }
 
 void UGameTimerWidget::Timer()
 {
-	//// 프로그래스바 타이머
-	//pgPercent += (1.0f / totalSeconds);
-
-	//// 숫자 타이머
-	//if (minute >= 0 && seconds > 0)
-	//{
-	//	seconds -= 1;
-	//}
-	//else if (minute > 0 && seconds == 0)
-	//{
-	//	minute -= 1;
-	//	seconds = 59;
-	//}
 	if (pg_Timer)
 		pg_Timer->SetPercent(gs->pgPercent);
 
@@ -83,49 +74,19 @@ void UGameTimerWidget::Timer()
 	}
 	if (txt_Second)
 		txt_Second->SetText(UKismetTextLibrary::Conv_IntToText(gs->seconds, false, true, 2, 2));
-	
 
-
-	//totalSeconds -= 1;
-
-	//FString minute = FString::FromInt((int)(totalSeconds / 60));
-	//FString seconds = FString::FromInt((int)(totalSeconds % 60));
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *minute);
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *seconds);
-
-	//txt_Minute->SetText(FText::FromString(minute));
-	//txt_Second->SetText(FText::FromString(seconds));
-
-	//GetWorld()->GetTimerManager().ClearTimer(timerHandler);
-
-	//bClearTimer = false;
+// 	if (txt_hidePlayerCount)
+// 	{
+// 		txt_hidePlayerCount->SetText(UKismetTextLibrary::Conv_IntToText(gm->hidePlayerCount, false, true, 2, 2));
+// 	}
 }
 
-//void UGameTimerWidget::SetTimer()
+//void UGameTimerWidget::ServerRPC_DecreaseTime_Implementation()
 //{
-//	if (bClearTimer == false)
-//	{
-//		bClearTimer = true;
-//		GetWorld()->GetTimerManager().SetTimer(timerHandler, this, &UGameTimerWidget::ServerRPC_Timer, 1.0f, false);
-//	}
+//	ClientRPC_DecreaseTime();
 //}
 //
-//void UGameTimerWidget::ServerRPC_Timer_Implementation()
+//void UGameTimerWidget::ClientRPC_DecreaseTime_Implementation()
 //{
-//	MultiRPC_Timer();
+//	DecreaseTime();
 //}
-//
-//void UGameTimerWidget::MultiRPC_Timer_Implementation()
-//{
-//	Timer();
-//}
-
-void UGameTimerWidget::ServerRPC_DecreaseTime_Implementation()
-{
-	ClientRPC_DecreaseTime();
-}
-
-void UGameTimerWidget::ClientRPC_DecreaseTime_Implementation()
-{
-	DecreaseTime();
-}
