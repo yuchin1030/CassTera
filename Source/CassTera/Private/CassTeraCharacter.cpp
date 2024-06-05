@@ -110,6 +110,9 @@ void ACassTeraCharacter::BeginPlay()
 			// 혹시 내가 가지고 있는 imc가 남아있을 수 있으니, 안전하게 같은 이름을 가진 친구가 있다면 지우고, 새로 imc 추가한다.
 			Subsystem->RemoveMappingContext(DefaultMappingContext);
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+
+			// 사물 숨을동안(10초) 못 움직임
+			ChangePersonPlayerMovement();
 		}
 	}
 	
@@ -437,6 +440,22 @@ void ACassTeraCharacter::NotEnemyResult()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Fail222222"));
+	}
+}
+
+void ACassTeraCharacter::ChangePersonPlayerMovement()
+{
+	if (mainUI)
+	{
+		mainUI->HideStartUI();
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+		FTimerHandle changeMoveHandler;
+		GetWorld()->GetTimerManager().SetTimer(changeMoveHandler, [&]() {
+
+			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			mainUI->ShowStartUI();
+		}, 10.0f, false);
 	}
 }
 
