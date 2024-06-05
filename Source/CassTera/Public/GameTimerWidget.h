@@ -22,11 +22,17 @@ public:
 	UPROPERTY()
 	class ACassteraGameState* gs;
 
+	UPROPERTY()
+	class APersonPlayerGameModeBase* gm;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta =(BindWidget))
 	class UTextBlock* txt_Minute;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
 	class UTextBlock* txt_Second;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
+	class UTextBlock* txt_hidePlayerCount;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings, meta = (BindWidget))
 	class UProgressBar* pg_Timer;

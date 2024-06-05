@@ -49,6 +49,16 @@ void ACassteraGameState::ClientRPC_DecreaseTime_Implementation(int32 _minute, in
 	timerWidget->Timer();
 }
 
+void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
+{
+	
+}
+
+void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _hidePlayerCount)
+{
+	
+}
+
 void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 {
 	if (bClearTimer == false)

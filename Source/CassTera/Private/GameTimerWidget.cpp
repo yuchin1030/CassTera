@@ -10,12 +10,14 @@
 #include "Components/ProgressBar.h"
 #include "Net/UnrealNetwork.h"
 #include "CassteraGameState.h"
+#include "PersonPlayerGameModeBase.h"
 
 void UGameTimerWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 }
 
 //void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -72,6 +74,11 @@ void UGameTimerWidget::Timer()
 	}
 	if (txt_Second)
 		txt_Second->SetText(UKismetTextLibrary::Conv_IntToText(gs->seconds, false, true, 2, 2));
+
+// 	if (txt_hidePlayerCount)
+// 	{
+// 		txt_hidePlayerCount->SetText(UKismetTextLibrary::Conv_IntToText(gm->hidePlayerCount, false, true, 2, 2));
+// 	}
 }
 
 //void UGameTimerWidget::ServerRPC_DecreaseTime_Implementation()
