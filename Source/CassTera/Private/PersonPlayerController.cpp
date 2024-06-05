@@ -68,7 +68,7 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 
 	Super::OnPossess(aPawn);
 
-	//gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
 
 	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 

@@ -92,12 +92,6 @@ void AHidePlayer::BeginPlay()
 	if(HasAuthority())
 	{ 
 		RandomMesh();
-		//APersonPlayerGameModeBase* gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
-		//if (gm)
-		//{
-		//	//gm->hidePlayerCount--;
-		//	UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), gm->hidePlayerCount);
-		//}
 	}
 	FString myname = GetName();
 
@@ -517,25 +511,25 @@ void AHidePlayer::MultiRPC_MakeIMC_Implementation()
 	}
 }
 
-void AHidePlayer::ServerRPC_AttachUI_Implementation()
-{
-	ClientRPC_AttachUI();
-}
-
-void AHidePlayer::ClientRPC_AttachUI_Implementation()
-{
-	if (IsLocallyControlled())
-{
-		auto* pc = Cast<APersonPlayerController>(Controller);
-	//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
-		if (pc->gameTimerwidget)
-		{
-			playerGameTimerwidget = pc->gameTimerwidget;
-			playerGameTimerwidget->AddToViewport();
-			//ServerRPC_SetTimer();
-		}
-	}
-}
+// void AHidePlayer::ServerRPC_AttachUI_Implementation()
+// {
+// // 	ClientRPC_AttachUI();
+// }
+// 
+// void AHidePlayer::ClientRPC_AttachUI_Implementation()
+// {
+// // 	if (IsLocallyControlled())
+// // {
+// // 		auto* pc = Cast<APersonPlayerController>(Controller);
+// // 	//	playerGameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_PlayergameTimerWidget));
+// // 		if (pc->gameTimerwidget)
+// // 		{
+// // 			playerGameTimerwidget = pc->gameTimerwidget;
+// // 			playerGameTimerwidget->AddToViewport();
+// // 			//ServerRPC_SetTimer();
+// // 		}
+// // 	}
+// }
 
 
 void AHidePlayer::ServerRPC_Damaged_Implementation()
