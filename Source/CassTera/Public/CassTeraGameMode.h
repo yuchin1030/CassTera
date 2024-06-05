@@ -13,6 +13,11 @@ class ACassTeraGameMode : public AGameModeBase
 
 public:
 	ACassTeraGameMode();
+
+	virtual void StartPlay() override;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ULobbyWidget> LobbyWidget_BP;
 };
 
 

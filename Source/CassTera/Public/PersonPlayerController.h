@@ -48,7 +48,7 @@ protected:
 	virtual void Tick(float DeltaTime);
 
 	UPROPERTY()
-	ACassteraGameState* gs;
+	class ACassteraGameState* gs;
 	
 	// 올바른 폰 클래스 클라이언트 측 반환
 	UFUNCTION(Server, Reliable)

@@ -3,6 +3,7 @@
 #include "CassTeraGameMode.h"
 #include "CassTeraCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "LobbyWidget.h"
 
 ACassTeraGameMode::ACassTeraGameMode()
 {
@@ -11,5 +12,21 @@ ACassTeraGameMode::ACassTeraGameMode()
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
+	}
+}
+
+void ACassTeraGameMode::StartPlay()
+{
+	// LobbyWidget_BP 가 있다면
+	if (LobbyWidget_BP)
+	{
+		// LobbyWidget UI를 만든다
+		auto lobbyUI = Cast<ULobbyWidget>(CreateWidget<ULobbyWidget>(GetWorld(), LobbyWidget_BP));
+
+		if (lobbyUI)
+		{	
+			// lobbyUI를 뷰포트에 띄운다
+			lobbyUI->AddToViewport();
+		}
 	}
 }
