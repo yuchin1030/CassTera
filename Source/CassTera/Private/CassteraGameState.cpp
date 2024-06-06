@@ -1,13 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CassteraGameState.h"
 #include "GameTimerWidget.h"
+#include "ResultWidget.h"
 
 void ACassteraGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
+	resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 	timerWidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 	timerWidget->AddToViewport();
 	UE_LOG(LogTemp, Warning, TEXT("start"));
@@ -86,10 +87,6 @@ void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 			MultiRPC_CalculateTime(bClearTimer, minute, seconds, pgPercent, totalSeconds);
 		}, 1.0f, true);
 	}
-
-
-
-	
 }
 
 void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer, int32 _minute, int32 _seconds, float _pgPercent, float _totalSeconds)
@@ -111,4 +108,10 @@ void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer
 	}
 
 	bClearTimer = false;
+}
+
+void ACassteraGameState::MultiRPC_ShowResult_Implementation()
+{
+	seconds = resultSeconds;
+	resultWidget->AddToViewport();
 }

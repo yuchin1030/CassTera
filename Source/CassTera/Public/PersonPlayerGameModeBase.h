@@ -63,5 +63,8 @@ public:
 
 	UFUNCTION()
 	void DecreaseHidePlayerCount();
+
+	UPROPERTY()
+	class ACassteraGameState* gs;
 };
 
