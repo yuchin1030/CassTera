@@ -59,6 +59,13 @@ void APersonPlayerController::BeginPlay()
 //	{
 
 	//	}
+
+	if (IsLocalController())
+	{
+		mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
+		UE_LOG(LogTemp, Error, TEXT("Create MainUI"));
+
+	}
 }
 
 void APersonPlayerController::OnPossess(APawn* aPawn)
@@ -72,7 +79,7 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 
 	//gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 
-	mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_MainUI));
+	
 
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 

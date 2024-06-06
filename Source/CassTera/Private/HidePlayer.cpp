@@ -327,10 +327,10 @@ void AHidePlayer::Die()
 	//UE_LOG(LogTemp, Warning, TEXT("die : %d"), currentHP);
 // 	PlayerController = Cast<APersonPlayerController>(Controller);
 	ServerRPC_Die();
-	if (dieVFX != nullptr)
+	/*if (dieVFX != nullptr)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
-	}
+	}*/
 	if (PlayerController)
 	{
 		bChangeCam = true;
@@ -574,6 +574,8 @@ void AHidePlayer::ServerRPC_Die_Implementation()
 	{
 		gm->DecreaseHidePlayerCount();
 	}
+
+	MultiRPC_Die();
 }
 
 void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)
@@ -583,6 +585,10 @@ void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)
 
 void AHidePlayer::MultiRPC_Die_Implementation()
 {
+	if (dieVFX != nullptr)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
+	}
 	//Die();
 	//Destroy();
 }

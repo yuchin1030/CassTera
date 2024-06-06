@@ -11,11 +11,14 @@ void ACassteraGameState::BeginPlay()
 	resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 	timerWidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 	timerWidget->AddToViewport();
-	UE_LOG(LogTemp, Warning, TEXT("start"));
+	//UE_LOG(LogTemp, Warning, TEXT("start"));
 }
 
 void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
 {
+	bDecreasing = true;
+	UE_LOG(LogTemp, Warning, TEXT("%d"), bDecreasing);
+
 	if (!(minute == 0 && seconds <= 30))
 	{
 		pgPercent += (1.0f / totalSeconds * minusSeconds);
@@ -36,11 +39,12 @@ void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
 		seconds -= minusSeconds;
 	}
 
-	ClientRPC_DecreaseTime(minute, seconds, minusSeconds, pgPercent, totalSeconds);
+	MultiRPC_DecreaseTime(bDecreasing, minute, seconds, minusSeconds, pgPercent, totalSeconds);
 }
 
-void ACassteraGameState::ClientRPC_DecreaseTime_Implementation(int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds)
+void ACassteraGameState::MultiRPC_DecreaseTime_Implementation(bool _bDecreasing, int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds)
 {
+	bDecreasing = _bDecreasing;
 	minute = _minute;
 	seconds = _seconds;
 	minusSeconds = _minusSeconds;
@@ -48,6 +52,10 @@ void ACassteraGameState::ClientRPC_DecreaseTime_Implementation(int32 _minute, in
 	totalSeconds = _totalSeconds;
 
 	timerWidget->Timer();
+
+	bDecreasing = false;
+	UE_LOG(LogTemp, Warning, TEXT("%d"), bDecreasing);
+
 }
 
 void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
@@ -67,7 +75,7 @@ void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 		bClearTimer = true;
 
 		GetWorld()->GetTimerManager().SetTimer(timerHandler, [&]() {
-			UE_LOG(LogTemp, Warning, TEXT("%d, %d"), minute, seconds);
+			//UE_LOG(LogTemp, Warning, TEXT("%d, %d"), minute, seconds);
 
 			// 프로그래스바 타이머
 			pgPercent += (1.0f / totalSeconds);
@@ -100,7 +108,7 @@ void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer
 	if (timerWidget) {
 	
 		timerWidget->Timer();
-		UE_LOG(LogTemp, Warning, TEXT("timer"));
+		//UE_LOG(LogTemp, Warning, TEXT("timer"));
 	}
 	else
 	{
