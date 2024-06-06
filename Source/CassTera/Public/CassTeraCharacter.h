@@ -48,7 +48,7 @@ public:
 
 	ACassTeraCharacter();
 
-	
+	UCharacterMovementComponent* characterMovement;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	class UStaticMeshComponent* gun;
@@ -120,13 +120,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	bool bIsNotEnemy = false;
 
-	bool bDecreasing;
+	//bool bDecreasing;
 
 	bool bMoving;
 
 	bool bFiring;
 
 	bool bThrowing;
+
+	bool bGameStart;
 
 	UPROPERTY()
 	class ACassteraGameState* gs;
@@ -145,7 +147,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_WorngShot();
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Client, Reliable)
 	void MultiRPC_WorngShot();
 
 	UFUNCTION(Server, Reliable)
@@ -210,6 +212,12 @@ public:
 	void MultiRPC_ThrowFin(bool _bThrowing);
 
 
+	// ==========================================================================
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ChangeMovement();
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_ChangeMovement(bool _bGameStart, UCharacterMovementComponent* _characterMovement);
 
 protected:
 

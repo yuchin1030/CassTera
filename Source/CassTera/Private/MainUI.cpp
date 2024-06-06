@@ -44,13 +44,13 @@ void UMainUI::ShowGrenadeCount()
 
 }
 
-void UMainUI::HideStartUI()
+void UMainUI::ShowStartUI()
 {
 	img_ShowFirst->SetVisibility(ESlateVisibility::Visible);
 	txt_ShowFirst->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UMainUI::ShowStartUI()
+void UMainUI::HideStartUI()
 {
 	img_ShowFirst->SetVisibility(ESlateVisibility::Hidden);
 	txt_ShowFirst->SetVisibility(ESlateVisibility::Hidden);

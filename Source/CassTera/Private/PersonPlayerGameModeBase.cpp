@@ -8,12 +8,15 @@
 #include "Objects.h"
 #include <../../../../../../../Source/Runtime/Engine/Public/Net/UnrealNetwork.h>
 #include "EngineUtils.h"
+#include "CassteraGameState.h"
+#include "Kismet/GameplayStatics.h"
 
 APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 {
 	// 틱이 돌도록 설정해야 된다.
 	PrimaryActorTick.bCanEverTick = true;
 
+	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	PlayerControllerClass = APersonPlayerController::StaticClass();
 
 }
@@ -93,6 +96,11 @@ void APersonPlayerGameModeBase::DecreaseHidePlayerCount()
 {
 	hidePlayerCount = hidePlayerCount - 1;
 	UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
+	if (hidePlayerCount <= 0)
+	{
+	//	gs->MultiRPC_ShowResult();
+
+	}
 }
 
 //UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

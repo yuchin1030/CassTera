@@ -45,6 +45,8 @@ ACassTeraCharacter::ACassTeraCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
+	characterMovement = GetCharacterMovement();
+
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
@@ -86,13 +88,10 @@ void ACassTeraCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-
-	/*if (false == HasAuthority())
-	{
-		AddMainUI();
-	}*/
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
+	// 컨트롤러에서도 OnPossess 에서 create 하니까 mainUI 널 뜬거였음.. 왜지? -> 강사님께 여쭤볼예정
+	// PossessedBy 에 addmainui 있어서 안됐었음... 
  	if (IsLocallyControlled())
  	{
 		ServerRPC_AddMainUI();
@@ -112,7 +111,7 @@ void ACassTeraCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 
 			// 사물 숨을동안(10초) 못 움직임
-			ChangePersonPlayerMovement();
+			ServerRPC_ChangeMovement();
 		}
 	}
 	
@@ -137,7 +136,6 @@ void ACassTeraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	AddMainUI();
 }
 
 void ACassTeraCharacter::Tick(float DeltaSeconds)
@@ -235,13 +233,15 @@ void ACassTeraCharacter::AddMainUI()
 	{
 		mainUI = pc->mainUI;
 		mainUI->AddToViewport();
+		UE_LOG(LogTemp, Error, TEXT("main ui viewport"));
+
 	}
 
 }
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
-	if (bThrowing || bFiring)
+	if (bThrowing || bFiring || !bGameStart)
 		return;
 
 	bFiring = true;
@@ -292,7 +292,7 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			if (enemyPlayer->currentHP == 0)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("bool : %d"), enemyPlayer->bDie);
-				//enemyPlayer->ServerRPC_Die();
+				enemyPlayer->ServerRPC_Die();
 				ServerRPC_KillUI();
 			}
 		}
@@ -306,7 +306,7 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 				enemyPlayer = *it;
 				enemyPlayer->ServerRPC_WrongShot();
 			}*/
-			//	NotEnemyResult();	
+				//NotEnemyResult();	
 		}
 	}
 }
@@ -384,7 +384,7 @@ void ACassTeraCharacter::MultiRPC_IMC_Implementation()
 
 void ACassTeraCharacter::Throw(const FInputActionValue& Value)
 {
-	if (bFiring || bThrowing)
+	if (bFiring || bThrowing || !bGameStart)
 		return;
 
 	ServerRPC_Throw();
@@ -414,10 +414,10 @@ void ACassTeraCharacter::NotEnemyResult()
 		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
 
 		// 더블 클릭해서 시간 감소 버그 방지용 변수
-		if (bDecreasing)
+		if (gs->bDecreasing)
 			return;
 
-		bDecreasing = true;
+		//bDecreasing = true;
 
 		gs->ServerRPC_DecreaseTime();
 
@@ -432,10 +432,11 @@ void ACassTeraCharacter::NotEnemyResult()
 
 				GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
 				
-				bDecreasing = false;
+				//bDecreasing = false;
 			}, 0.5f, false);
 		}
-			
+		
+
 	}
 	else
 	{
@@ -447,14 +448,19 @@ void ACassTeraCharacter::ChangePersonPlayerMovement()
 {
 	if (mainUI)
 	{
-		mainUI->HideStartUI();
+		mainUI->ShowStartUI();
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+		UE_LOG(LogTemp, Warning, TEXT("move none"));
 
 		FTimerHandle changeMoveHandler;
 		GetWorld()->GetTimerManager().SetTimer(changeMoveHandler, [&]() {
 
 			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-			mainUI->ShowStartUI();
+			mainUI->HideStartUI();
+
+			bGameStart = true;
+			UE_LOG(LogTemp, Warning, TEXT("move"));
+
 		}, 10.0f, false);
 	}
 }
@@ -519,7 +525,8 @@ void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing)
 {
 	bThrowing = _bThrowing;
 
-	mainUI->ShowGrenadeCount();
+	if (mainUI)
+		mainUI->ShowGrenadeCount();
 
 	gun->SetVisibility(false);
 
@@ -597,4 +604,16 @@ void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 		}
 	}
 	
+}
+
+void ACassTeraCharacter::ServerRPC_ChangeMovement_Implementation()
+{
+	ClientRPC_ChangeMovement(bGameStart, characterMovement);
+}
+
+void ACassTeraCharacter::ClientRPC_ChangeMovement_Implementation(bool _bGameStart, UCharacterMovementComponent* _characterMovement)
+{
+	bGameStart = _bGameStart;
+
+	ChangePersonPlayerMovement();
 }
