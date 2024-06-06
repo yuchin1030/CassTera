@@ -414,12 +414,10 @@ void ACassTeraCharacter::NotEnemyResult()
 		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
 
 		// 더블 클릭해서 시간 감소 버그 방지용 변수
-		if (bDecreasing)
+		if (gs->bDecreasing)
 			return;
 
-		bDecreasing = true;
-
-		UE_LOG(LogTemp, Warning, TEXT("%d"), bDecreasing);
+		//bDecreasing = true;
 
 		gs->ServerRPC_DecreaseTime();
 
@@ -434,11 +432,10 @@ void ACassTeraCharacter::NotEnemyResult()
 
 				GetWorld()->GetTimerManager().ClearTimer(visibleHandler);
 				
-				bDecreasing = false;
+				//bDecreasing = false;
 			}, 0.5f, false);
 		}
 		
-		UE_LOG(LogTemp, Warning, TEXT("%d"), bDecreasing);
 
 	}
 	else

@@ -27,8 +27,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DecreaseTime();
 
-	UFUNCTION(Client, Reliable)
-	void ClientRPC_DecreaseTime(int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds);
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_DecreaseTime(bool _bDecreasing, int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds);
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DecreaseHidePlayerCount();
@@ -40,6 +40,9 @@ public:
 	FTimerHandle timerHandler;
 
 	bool bClearTimer = false;
+
+	UPROPERTY()
+	bool bDecreasing;
 
 	UPROPERTY()
 	int32 seconds = 0;

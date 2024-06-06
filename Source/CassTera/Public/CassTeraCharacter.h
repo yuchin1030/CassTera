@@ -120,7 +120,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	bool bIsNotEnemy = false;
 
-	bool bDecreasing;
+	//bool bDecreasing;
 
 	bool bMoving;
 
