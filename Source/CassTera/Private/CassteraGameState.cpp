@@ -10,7 +10,7 @@ void ACassteraGameState::BeginPlay()
 
 	timerWidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 	timerWidget->AddToViewport();
-	UE_LOG(LogTemp, Warning, TEXT("start"));
+	//UE_LOG(LogTemp, Warning, TEXT("start"));
 }
 
 void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
@@ -66,7 +66,7 @@ void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 		bClearTimer = true;
 
 		GetWorld()->GetTimerManager().SetTimer(timerHandler, [&]() {
-			UE_LOG(LogTemp, Warning, TEXT("%d, %d"), minute, seconds);
+			//UE_LOG(LogTemp, Warning, TEXT("%d, %d"), minute, seconds);
 
 			// 프로그래스바 타이머
 			pgPercent += (1.0f / totalSeconds);
@@ -103,7 +103,7 @@ void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer
 	if (timerWidget) {
 	
 		timerWidget->Timer();
-		UE_LOG(LogTemp, Warning, TEXT("timer"));
+		//UE_LOG(LogTemp, Warning, TEXT("timer"));
 	}
 	else
 	{

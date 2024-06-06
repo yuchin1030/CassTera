@@ -48,7 +48,7 @@ public:
 
 	ACassTeraCharacter();
 
-	
+	UCharacterMovementComponent* characterMovement;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	class UStaticMeshComponent* gun;
@@ -127,6 +127,8 @@ public:
 	bool bFiring;
 
 	bool bThrowing;
+
+	bool bGameStart;
 
 	UPROPERTY()
 	class ACassteraGameState* gs;
@@ -210,6 +212,12 @@ public:
 	void MultiRPC_ThrowFin(bool _bThrowing);
 
 
+	// ==========================================================================
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ChangeMovement();
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_ChangeMovement(bool _bGameStart, UCharacterMovementComponent* _characterMovement);
 
 protected:
 

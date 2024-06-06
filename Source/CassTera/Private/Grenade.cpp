@@ -129,7 +129,7 @@ void AGrenade::Bomb()
 		{
 			if (playerChar)
 			{
-				playerChar->NotEnemyResult();
+				playerChar->ServerRPC_WorngShot();
 				UE_LOG(LogTemp, Warning, TEXT(""));
 
 			}
