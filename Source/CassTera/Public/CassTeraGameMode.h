@@ -6,7 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "CassTeraGameMode.generated.h"
 
-UCLASS(minimalapi)
+UCLASS()
 class ACassTeraGameMode : public AGameModeBase
 {
 	GENERATED_BODY()

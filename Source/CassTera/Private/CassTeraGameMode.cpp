@@ -17,6 +17,8 @@ ACassTeraGameMode::ACassTeraGameMode()
 
 void ACassTeraGameMode::StartPlay()
 {
+	Super::StartPlay();
+
 	// LobbyWidget_BP 가 있다면
 	if (LobbyWidget_BP)
 	{

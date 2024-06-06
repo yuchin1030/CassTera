@@ -18,7 +18,9 @@ void UHideAndSeekGameInstance::Init()
 
 		sessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UHideAndSeekGameInstance::OnCreateSessionCompleted);
 
+		sessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UHideAndSeekGameInstance::OnFindSessionsComplete);
 
+		sessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UHideAndSeekGameInstance::OnJoinSessionComplete);
 	}
 
 	/*FTimerHandle timer;
@@ -52,8 +54,8 @@ void UHideAndSeekGameInstance::CreateMySession(FString roomName, int32 playerCou
 	set.NumPublicConnections = playerCount;
 
 	// 7. 커스텀 정보 : 방 이름, 호스트 이름
-	set.Set(FName("ROOM_NAME"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-	set.Set(FName("HOST_NAME"), mySessionName, EOnlineDataAdvertisementType::ViaOnlineService);
+	set.Set(FName("ROOM_NAME"), StringBase64Encode(roomName), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	set.Set(FName("HOST_NAME"), StringBase64Encode(mySessionName), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	// 8. netID를 가져 오고 싶다
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
@@ -71,7 +73,13 @@ void UHideAndSeekGameInstance::OnCreateSessionCompleted(FName sessionName, bool 
 	// 방생성 성공을 했다면, 대기방으로 ServerTravel하고 싶다
 	if (bWasSuccessful)
 	{
-		GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/WaitngMap?listen"));		
+		GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/WaitngMap?listen"));
+
+		// 대기 방 입장 후 30초 뒤에 교실 맵으로 ServerTravel하고 싶다
+		FTimerHandle timer;
+		GetWorld()->GetTimerManager().SetTimer(timer, [&]() {
+			GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/SchoolMap?listen"));
+			}, 10, false);
 	}
 }
 
@@ -112,10 +120,61 @@ void UHideAndSeekGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 			}
 			
 			FSessionInfo info;
-			info.Set(item);
+			info.Set(i, item);
 
+			FString roomName;
+			FString hostName;
+			item.Session.SessionSettings.Get(FName("ROOM_NAME"), roomName);
+			item.Session.SessionSettings.Get(FName("HOST_NAME"), hostName);
+
+			info.roomName = StringBase64Decode(roomName);
+			info.hostName = StringBase64Decode(hostName);
+
+			OnMySessionSearchCompleteDelegate.Broadcast(info);
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *info.ToString());
-
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionsComplete bWasSuccessful is false"));
+	}
+}
+
+void UHideAndSeekGameInstance::JoinMySession(int32 index)
+{
+	sessionInterface->JoinSession(0, FName(*mySessionName), sessionInSearch->SearchResults[index]);
+}
+
+void UHideAndSeekGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result)
+{
+	// 호스트의 IP, Port번호를 가져와서 ClientTravel 하고싶다.
+	if (result == EOnJoinSessionCompleteResult::Success)
+	{
+		auto* pc = GetWorld()->GetFirstPlayerController();
+		FString url;
+		sessionInterface->GetResolvedConnectString(SessionName, url);
+		UE_LOG(LogTemp, Warning, TEXT("ClientTravel URL : %s"), *url);
+
+		if (false == url.IsEmpty())
+		{
+			pc->ClientTravel(url, ETravelType::TRAVEL_Absolute);
+		}
+	}
+}
+
+FString UHideAndSeekGameInstance::StringBase64Encode(const FString& str)
+{
+	// Set 할 때 : FString -> UTF8 (std::string) -> TArray<uint8> -> base64 로 Encode
+	std::string utf8String = TCHAR_TO_UTF8(*str);
+	TArray<uint8> arrayData = TArray<uint8>((uint8*)(utf8String.c_str()), utf8String.length());
+	return FBase64::Encode(arrayData);
+}
+
+FString UHideAndSeekGameInstance::StringBase64Decode(const FString& str)
+{
+	// Get 할 때 : base64 로 Decode -> TArray<uint8> -> TCHAR
+	TArray<uint8> arrayData;
+	FBase64::Decode(str, arrayData);
+	std::string ut8String((char*)(arrayData.GetData()), arrayData.Num());
+	return UTF8_TO_TCHAR(ut8String.c_str());
 }

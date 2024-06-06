@@ -18,6 +18,8 @@ void URoomInfoUI::OnMyClickJoinRoom()
 
 void URoomInfoUI::Setup(const struct FSessionInfo& info)
 {
+	index = info.index;
+	
 	// 방정보를 이용해서 UI를 구성하고싶다.
 	Text_RoomName->SetText(FText::FromString(info.roomName));
 	Text_HostName->SetText(FText::FromString(info.hostName));

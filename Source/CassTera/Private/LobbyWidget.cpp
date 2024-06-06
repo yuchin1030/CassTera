@@ -16,6 +16,9 @@ void ULobbyWidget::NativeConstruct()
 	// 게임 인스턴스 채우기
 	gi = Cast<UHideAndSeekGameInstance>(GetWorld()->GetGameInstance());
 
+	// gi의 OnMySessionSearchCompleteDelegate에 AddRoomInfoUI를 연결하고싶다.
+	gi->OnMySessionSearchCompleteDelegate.AddDynamic(this, &ULobbyWidget::AddRoomInfoUI);
+
 	// 버튼 연결
 	Button_CreateRoom->OnClicked.AddDynamic(this, &ULobbyWidget::OnMyClickCreateRoom);
 	Slider_PlayerCount->SetValue(FCString::Atof(*Text_PlayerCounts->GetText().ToString()));
@@ -43,7 +46,7 @@ void ULobbyWidget::OnMyClickCreateRoom()
 		// 플레이어의 숫자를 받아온다
 		int32 count = Slider_PlayerCount->GetValue();
 		// 받아온 플레이어의 숫자대로
-		gi->CreateMySession(Edit_RoomName->GetText().ToString(), count);	
+		gi->CreateMySession(Edit_RoomName->GetText().ToString(), count);
 
 	}
 }
@@ -57,12 +60,10 @@ void ULobbyWidget::OnMyClickGoMenu()
 {
 	SwitcherUI->SetActiveWidgetIndex(0);
 }
-
 void ULobbyWidget::OnMyClickGoCreateRoom()
 {
 	SwitcherUI->SetActiveWidgetIndex(1);
 }
-
 void ULobbyWidget::OnMyClickGoFindRoom()
 {
 	SwitcherUI->SetActiveWidgetIndex(2);
@@ -70,7 +71,8 @@ void ULobbyWidget::OnMyClickGoFindRoom()
 
 void ULobbyWidget::OnMyClickFindRoom()
 {
-
+	// gi의 FindOtherSession 호출
+	gi->FindOtherSessions();
 }
 
 void ULobbyWidget::AddRoomInfoUI(const struct FSessionInfo& info)

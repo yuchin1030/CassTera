@@ -33,13 +33,14 @@ struct FSessionInfo
 
 	int32 index;
 
-	FORCEINLINE void Set(const FOnlineSessionSearchResult& item) {
-		//index = _index;
+	FORCEINLINE void Set(int _index, const FOnlineSessionSearchResult& item) {
+		index = _index;
 		// 방장의 이름
 		userName = item.Session.OwningUserName;
 		// 최대 플레이어 수
 		maxPlayerCount = item.Session.SessionSettings.NumPublicConnections;
 		// 현재 방에 들어온 플레이어 수
+		currentPlayerCount = maxPlayerCount - item.Session.NumOpenPublicConnections;
 		pingMs = item.PingInMs;
 	}
 
@@ -49,7 +50,8 @@ struct FSessionInfo
 };
 
 // 방찾기 요청 후 응답이 왔을 때 호출될 델리게이트
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSessioinSearchDelegate, const FSessionInfo&, info)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSessioinSearchDelegate, const FSessionInfo&, info);
+
 
 UCLASS()
 class CASSTERA_API UHideAndSeekGameInstance : public UGameInstance
@@ -62,14 +64,12 @@ public:
 	// 세션 인터페이스 만들기
 	IOnlineSessionPtr sessionInterface;
 
-	//FSessioinSearchDelegate OnMySessionSearchCompleteDelegate;
+	FSessioinSearchDelegate OnMySessionSearchCompleteDelegate;
 
-	//방 만들기
-	UFUNCTION()
+	//방 만들기	
 	void CreateMySession(FString roomName, int32 playerCount);
 
 	// 방 만들어졌는지 확인
-	UFUNCTION()
 	void OnCreateSessionCompleted(FName sessionName, bool bWasSuccessful);
 
 	FString mySessionName = TEXT("CassTera");
@@ -80,4 +80,14 @@ public:
 
 	// 방 찾기 완료
 	void OnFindSessionsComplete(bool bWasSuccessful);
+
+	// Join 방에 합류
+	void JoinMySession(int32 index);
+
+	// Join 완료
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type result);
+
+	// 방이름을 한글로 하기 위함
+	FString StringBase64Encode(const FString& str);
+	FString StringBase64Decode(const FString& str);
 };
