@@ -292,7 +292,7 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			if (enemyPlayer->currentHP == 0)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("bool : %d"), enemyPlayer->bDie);
-				//enemyPlayer->ServerRPC_Die();
+				enemyPlayer->ServerRPC_Die();
 				ServerRPC_KillUI();
 			}
 		}
@@ -306,7 +306,7 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 				enemyPlayer = *it;
 				enemyPlayer->ServerRPC_WrongShot();
 			}*/
-			//	NotEnemyResult();	
+				//NotEnemyResult();	
 		}
 	}
 }
@@ -419,6 +419,8 @@ void ACassTeraCharacter::NotEnemyResult()
 
 		bDecreasing = true;
 
+		UE_LOG(LogTemp, Warning, TEXT("%d"), bDecreasing);
+
 		gs->ServerRPC_DecreaseTime();
 
 		if (mainUI)
@@ -435,7 +437,9 @@ void ACassTeraCharacter::NotEnemyResult()
 				bDecreasing = false;
 			}, 0.5f, false);
 		}
-			
+		
+		UE_LOG(LogTemp, Warning, TEXT("%d"), bDecreasing);
+
 	}
 	else
 	{

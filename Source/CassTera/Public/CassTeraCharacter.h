@@ -147,7 +147,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_WorngShot();
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Client, Reliable)
 	void MultiRPC_WorngShot();
 
 	UFUNCTION(Server, Reliable)
