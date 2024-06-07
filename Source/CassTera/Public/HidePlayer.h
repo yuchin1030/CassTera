@@ -183,6 +183,18 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Die();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Lose();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Lost();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Win();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Win();
+
 	//UFUNCTION(Server, Reliable)
 	//void ServerRPC_AttachUI();
 

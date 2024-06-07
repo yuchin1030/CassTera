@@ -30,9 +30,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_DecreaseTime(bool _bDecreasing, int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds);
 
-
-
-
 	UPROPERTY()
 	FTimerHandle timerHandler;
 
@@ -73,5 +70,15 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_HidePlayerCount(int32 newHidePlayerCount);
 
+	UPROPERTY()
+	class UResultWidget* resultWidget;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UResultWidget> wbp_resultWidget;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ShowResult(bool bWin);
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_ShowResult(bool _bWin);
 };
