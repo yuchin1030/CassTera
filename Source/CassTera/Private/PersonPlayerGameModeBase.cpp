@@ -99,20 +99,8 @@ void APersonPlayerGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 }
 
 void APersonPlayerGameModeBase::DecreaseHidePlayerCount()
-{
+{	
 	gs->ServerRPC_HidePlayerCount(gs->hidePlayerCount - 1);
-	//UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
-
-}
-
-void APersonPlayerGameModeBase::MultiRPC_ShowResult_Implementation()
-{
-	
-}
-
-void APersonPlayerGameModeBase::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _hidePlayerCount)
-{
-	
 }
 
 //UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

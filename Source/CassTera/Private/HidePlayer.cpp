@@ -593,6 +593,26 @@ void AHidePlayer::MultiRPC_Die_Implementation()
 	//Destroy();
 }
 
+void AHidePlayer::ServerRPC_Lose_Implementation()
+{
+	MultiRPC_Lost();
+}
+
+void AHidePlayer::MultiRPC_Lost_Implementation()
+{
+
+}
+
+void AHidePlayer::ServerRPC_Win_Implementation()
+{
+	MultiRPC_Win();
+}
+
+void AHidePlayer::MultiRPC_Win_Implementation()
+{
+
+}
+
 //void AHidePlayer::ServerRPC_SetTimer_Implementation()
 //{
 //	MultiRPC_SetTimer();

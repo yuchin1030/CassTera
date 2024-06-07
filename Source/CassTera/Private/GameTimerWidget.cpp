@@ -19,9 +19,6 @@ void UGameTimerWidget::NativeConstruct()
 
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
-	// 	pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
-
-
 }
 
 // void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
