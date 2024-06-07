@@ -11,6 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "CassteraGameState.h"
 #include "PersonPlayerGameModeBase.h"
+#include "PersonPlayerController.h"
 
 void UGameTimerWidget::NativeConstruct()
 {
@@ -18,15 +19,15 @@ void UGameTimerWidget::NativeConstruct()
 
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
+	// 	pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
+
 
 }
 
-//void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-//{
-//	Super::NativeTick(MyGeometry, InDeltaTime);
-//
-//	//SetTimer();
-//}
+// void UGameTimerWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+// {
+// 
+// }
 
 //void UGameTimerWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 //{
@@ -42,7 +43,6 @@ void UGameTimerWidget::NativeConstruct()
 void UGameTimerWidget::DecreaseTime()
 {
 	pg_Timer->SetPercent(pgPercent);
-
 	//if (!(minute == 0 && seconds <= 30))
 	//{
 	//	pgPercent += (1.0f / totalSeconds * minusSeconds);
@@ -76,25 +76,18 @@ void UGameTimerWidget::Timer()
 	if (txt_Second)
 		txt_Second->SetText(UKismetTextLibrary::Conv_IntToText(gs->seconds, false, true, 2, 2));
 
+	if (txt_hidePlayerCount && gs)
+	{
+		txt_hidePlayerCount->SetText(UKismetTextLibrary::Conv_IntToText(gs->hidePlayerCount, false, true, 2, 2));
+	}
 
-
-	//UE_LOG(LogTemp, Warning, TEXT("%d %d"), gs->minute, gs->seconds);
+}
+//UE_LOG(LogTemp, Warning, TEXT("%d %d"), gs->minute, gs->seconds);
 
 // 	if (txt_hidePlayerCount)
 // 	{
 // 		txt_hidePlayerCount->SetText(UKismetTextLibrary::Conv_IntToText(gm->hidePlayerCount, false, true, 2, 2));
 // 	}
-}
-
-void UGameTimerWidget::SetHidePlayer(int32 count)
-{
-	gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
-
-	if (txt_hidePlayerCount)
-	{
-		txt_hidePlayerCount->SetText(UKismetTextLibrary::Conv_IntToText(count, false, true, 2, 2));
-	}
-}
 
 //void UGameTimerWidget::ServerRPC_DecreaseTime_Implementation()
 //{

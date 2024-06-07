@@ -64,5 +64,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UGameTimerWidget> WBP_gameTimerWidget;
 
+	UPROPERTY()
+	int32 hidePlayerCount;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_HidePlayerCount(int32 newHidePlayerCount);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_HidePlayerCount(int32 newHidePlayerCount);
+
 
 };

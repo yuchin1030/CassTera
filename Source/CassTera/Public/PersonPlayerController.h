@@ -111,10 +111,6 @@ public:
 	UPROPERTY()
 	int32 _hidePlayerCount;
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_SetHidePlayerCount();
-
-
 //	UPROPERTY()
 //	class APawn* origin;
 
