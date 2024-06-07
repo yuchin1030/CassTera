@@ -148,7 +148,7 @@ public:
 	void ServerRPC_WorngShot();
 
 	UFUNCTION(Client, Reliable)
-	void MultiRPC_WorngShot();
+	void ClientRPC_WorngShot();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_KillUI();
