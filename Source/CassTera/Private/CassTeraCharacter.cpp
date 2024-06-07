@@ -110,9 +110,14 @@ void ACassTeraCharacter::BeginPlay()
 			Subsystem->RemoveMappingContext(DefaultMappingContext);
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 
-			// 사물 숨을동안(10초) 못 움직임
-			ServerRPC_ChangeMovement();
 		}
+	}
+
+	if (pc && pc->IsLocalController())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("1111111111111111111111"));
+			// 사물 숨을동안(10초) 못 움직임
+			ServerRPC_ChangeMovement_Implementation();
 	}
 	
 
@@ -553,23 +558,26 @@ void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 void ACassTeraCharacter::ServerRPC_ChangeMovement_Implementation()
 {
 	// 게임 시작 전(bGameStart == false) 유아이 띄우기
-	ClientRPC_ChangeMovement(bGameStart);
+	ClientRPC_ChangeMovement_Implementation(bGameStart);
 
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	UE_LOG(LogTemp, Warning, TEXT("move none"));
 
 	FTimerHandle changeMoveHandler;
 	GetWorld()->GetTimerManager().SetTimer(changeMoveHandler, [&]() {
+		
+		if (this->IsValidLowLevel())
+		{
+			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 
-		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			bGameStart = true;
+			UE_LOG(LogTemp, Warning, TEXT("move"));
 
-		bGameStart = true;
-		UE_LOG(LogTemp, Warning, TEXT("move"));
+			// 게임 시작되면(bGameStart == true) 유아이 숨기기
+			ClientRPC_ChangeMovement_Implementation(bGameStart);
+		}
 
-		// 게임 시작되면(bGameStart == true) 유아이 숨기기
-		ClientRPC_ChangeMovement(bGameStart);
-
-	}, 1.0f, false);
+	}, 10.0f, false);
 	
 	//ClientRPC_ChangeMovement(bGameStart, characterMovement);
 

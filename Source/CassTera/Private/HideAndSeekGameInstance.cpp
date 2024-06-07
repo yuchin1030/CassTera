@@ -79,7 +79,10 @@ void UHideAndSeekGameInstance::OnCreateSessionCompleted(FName sessionName, bool 
 		FTimerHandle timer;
 		GetWorld()->GetTimerManager().SetTimer(timer, [&]() {
 			GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/SchoolMap?listen"));
-			}, 10, false);
+			UE_LOG(LogTemp, Error, TEXT("SchoolMap Open"));
+			}, 5, false);
+
+		
 	}
 }
 

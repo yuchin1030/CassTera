@@ -13,6 +13,8 @@ ACassTeraGameMode::ACassTeraGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	bActorSeamlessTraveled = false;
 }
 
 void ACassTeraGameMode::StartPlay()
@@ -29,6 +31,12 @@ void ACassTeraGameMode::StartPlay()
 		{	
 			// lobbyUI¸¦ ºäÆ÷Æ®¿¡ ¶ç¿î´Ù
 			lobbyUI->AddToViewport();
+
+			auto* pc = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+			if (pc)
+			{
+				pc->SetShowMouseCursor(true);
+			}
 		}
 	}
 }

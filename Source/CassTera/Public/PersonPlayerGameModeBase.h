@@ -49,7 +49,7 @@ public:
 	// 랜덤 메시 배치
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings")
 	TSubclassOf<class AObjects> Objects_BP;
-	UPROPERTY(EditDefaultsOnly, Replicated)
+	UPROPERTY(Replicated)
 	class AObjects* Objects;
 
 	UPROPERTY()

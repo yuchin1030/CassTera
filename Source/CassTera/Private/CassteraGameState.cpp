@@ -11,7 +11,7 @@ void ACassteraGameState::BeginPlay()
 
 	timerWidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 	timerWidget->AddToViewport();
-	//UE_LOG(LogTemp, Warning, TEXT("start"));
+	UE_LOG(LogTemp, Error, TEXT("start"));
 }
 
 void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
