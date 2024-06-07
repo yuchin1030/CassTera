@@ -30,14 +30,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_DecreaseTime(bool _bDecreasing, int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds);
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_DecreaseHidePlayerCount();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_DecreaseHidePlayerCount(int32 _hidePlayerCount);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_ShowResult();
 
 	UPROPERTY()
 	FTimerHandle timerHandler;
@@ -53,8 +47,6 @@ public:
 	UPROPERTY()
 	int32 minute = 3;
 
-	UPROPERTY()
-	int32 hidePlayerCount = 0;
 
 	UPROPERTY()
 	int minusSeconds = 9;
@@ -62,8 +54,6 @@ public:
 	UPROPERTY()
 	float totalSeconds = 180.0f;
 
-	UPROPERTY()
-	int resultSeconds = 10;
 
 	UPROPERTY()
 	float pgPercent = 0;
@@ -74,9 +64,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UGameTimerWidget> WBP_gameTimerWidget;
 
-	UPROPERTY()
-	class UResultWidget* resultWidget;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UResultWidget> wbp_resultWidget;
 };

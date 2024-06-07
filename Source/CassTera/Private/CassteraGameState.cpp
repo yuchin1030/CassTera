@@ -8,7 +8,7 @@ void ACassteraGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+
 	timerWidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
 	timerWidget->AddToViewport();
 	//UE_LOG(LogTemp, Warning, TEXT("start"));
@@ -56,16 +56,6 @@ void ACassteraGameState::MultiRPC_DecreaseTime_Implementation(bool _bDecreasing,
 	bDecreasing = false;
 	UE_LOG(LogTemp, Warning, TEXT("%d"), bDecreasing);
 
-}
-
-void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
-{
-	
-}
-
-void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _hidePlayerCount)
-{
-	
 }
 
 void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
@@ -118,8 +108,4 @@ void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer
 	bClearTimer = false;
 }
 
-void ACassteraGameState::MultiRPC_ShowResult_Implementation()
-{
-	seconds = resultSeconds;
-	resultWidget->AddToViewport();
-}
+

@@ -66,5 +66,21 @@ public:
 
 	UPROPERTY()
 	class ACassteraGameState* gs;
+
+	UPROPERTY()
+	class UResultWidget* resultWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UResultWidget> wbp_resultWidget;
+
+	UPROPERTY()
+	int resultSeconds = 10;
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_ShowResult();
+
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_DecreaseHidePlayerCount(int32 _hidePlayerCount);
 };
 
