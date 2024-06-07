@@ -241,7 +241,7 @@ void ACassTeraCharacter::AddMainUI()
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
-	if (bThrowing || bFiring || !bGameStart)
+	if (bThrowing || bFiring || false == bGameStart)
 		return;
 
 	bFiring = true;
@@ -299,13 +299,14 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 		else
 		{
 
-			// enemy 아니면 시간 감소
+			// enemy 아니면 빨강이미지
 			ServerRPC_WorngShot();
 			
 			// 더블 클릭해서 시간 감소 버그 방지용 변수
 			if (gs->bDecreasing)
 				return;
 			
+			// enemy 아니면 시간 감소
 			gs->ServerRPC_DecreaseTime();
 
 			/*for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
@@ -323,40 +324,6 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 
 	PlayAnimMontage(FireMontage);
 
-	//if (bFire)
-	//{
-	//	//DrawDebugLine(GetWorld(), start, end, FColor::Red, 0, 2);
-	//	//DrawDebugSphere(GetWorld(), HitInfo.Location, 10, 10, FColor::Green, 0, 2);
-	//	UE_LOG(LogTemp, Warning, TEXT("FIRE"));
-
-	//	// enemy 가 맞으면
-	//	if (HitInfo.GetActor()->IsA<AHidePlayer>())
-	//	{
-	//		enemyPlayer = Cast<AHidePlayer>(HitInfo.GetActor());
-
-	//		// 에너미 데미지 -1
-	//		enemyPlayer->ServerRPC_Damaged();
-	//		UE_LOG(LogTemp, Warning, TEXT("ENEMY"));
-
-	//		// 죽으면
-	//		if (enemyPlayer->bDie)
-	//		{
-	//			ServerRPC_KillUI();
-	//		}
-	//	}
-	//	else
-	//	{
-	//		// enemy 아니면 시간 감소
-	//		ServerRPC_WorngShot();
-	//		
-	//		for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it) 
-	//		{
-	//			enemyPlayer = *it;
-	//			enemyPlayer->ServerRPC_WrongShot();
-	//		}
-	//		//	NotEnemyResult();	
-	//	}
-	//}
 }
 
 
@@ -389,20 +356,6 @@ void ACassTeraCharacter::MultiRPC_IMC_Implementation()
 	}
 }
 
-void ACassTeraCharacter::Throw(const FInputActionValue& Value)
-{
-	if (bFiring || bThrowing || !bGameStart)
-		return;
-
-	ServerRPC_Throw();
-}
-
-void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
-{
-	ServerRPC_ThrowFin();
-
-}
-
 void ACassTeraCharacter::ShowKillUI()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ssssssssss"));
@@ -419,16 +372,7 @@ void ACassTeraCharacter::NotEnemyResult()
 	if (gs->timerWidget != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
-
-		//// 더블 클릭해서 시간 감소 버그 방지용 변수
-		//if (gs->bDecreasing)
-		//	return;
-
-		////bDecreasing = true;
-	
-		//gs->ServerRPC_DecreaseTime();
 		
-
 		if (mainUI)
 		{
 			mainUI->img_RedCH->SetVisibility(ESlateVisibility::Visible);
@@ -449,27 +393,6 @@ void ACassTeraCharacter::NotEnemyResult()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Fail222222"));
-	}
-}
-
-void ACassTeraCharacter::ChangePersonPlayerMovement()
-{
-	if (mainUI)
-	{
-		mainUI->ShowStartUI();
-		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-		UE_LOG(LogTemp, Warning, TEXT("move none"));
-
-		FTimerHandle changeMoveHandler;
-		GetWorld()->GetTimerManager().SetTimer(changeMoveHandler, [&]() {
-
-			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-			mainUI->HideStartUI();
-
-			bGameStart = true;
-			UE_LOG(LogTemp, Warning, TEXT("move"));
-
-		}, 10.0f, false);
 	}
 }
 
@@ -517,6 +440,23 @@ void ACassTeraCharacter::ServerRPC_KillUI_Implementation()
 //	ClientRPC_AddTimerUI();
 //}
 
+void ACassTeraCharacter::Throw(const FInputActionValue& Value)
+{
+	if (bFiring || bThrowing || false == bGameStart)
+		return;
+
+	ServerRPC_Throw();
+}
+
+void ACassTeraCharacter::ThrowFinish(const FInputActionValue& Value)
+{
+	if (false == bGameStart)
+		return;
+
+	ServerRPC_ThrowFin();
+
+}
+
 void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 {
 	bThrowing = true;
@@ -551,6 +491,7 @@ void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
 
 		MultiRPC_ThrowFin(bThrowing);
 
+		grenade->ServerRPC_BeforeBomb();
 	}
 
 }
@@ -561,14 +502,9 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 
 	if (grenade != nullptr && !bThrowing)
 	{
-		
-
 		PlayAnimMontage(throwMontage);
 
 		gun->SetVisibility(true);
-
-		grenade->BeforeBomb(this);
-
 	}
 }
 
@@ -616,12 +552,42 @@ void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 
 void ACassTeraCharacter::ServerRPC_ChangeMovement_Implementation()
 {
-	ClientRPC_ChangeMovement(bGameStart, characterMovement);
+	// 게임 시작 전(bGameStart == false) 유아이 띄우기
+	ClientRPC_ChangeMovement(bGameStart);
+
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	UE_LOG(LogTemp, Warning, TEXT("move none"));
+
+	FTimerHandle changeMoveHandler;
+	GetWorld()->GetTimerManager().SetTimer(changeMoveHandler, [&]() {
+
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+		bGameStart = true;
+		UE_LOG(LogTemp, Warning, TEXT("move"));
+
+		// 게임 시작되면(bGameStart == true) 유아이 숨기기
+		ClientRPC_ChangeMovement(bGameStart);
+
+	}, 1.0f, false);
+	
+	//ClientRPC_ChangeMovement(bGameStart, characterMovement);
+
+
+
 }
 
-void ACassTeraCharacter::ClientRPC_ChangeMovement_Implementation(bool _bGameStart, UCharacterMovementComponent* _characterMovement)
+void ACassTeraCharacter::ClientRPC_ChangeMovement_Implementation(bool _bGameStart)
 {
 	bGameStart = _bGameStart;
 
 	ChangePersonPlayerMovement();
+}
+
+void ACassTeraCharacter::ChangePersonPlayerMovement()
+{
+	if (mainUI)
+	{
+		bGameStart ? mainUI->HideStartUI() : mainUI->ShowStartUI();
+	}
 }

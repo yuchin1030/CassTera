@@ -36,13 +36,22 @@ public:
 
 	bool bBeforeBomb;
 
-	void BeforeBomb(class ACassTeraCharacter* pc);
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_BeforeBomb();
 
-	void Bomb();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_BeforeBomb();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Bomb();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Bomb();
 
 	UPROPERTY()
 	class ACassTeraCharacter* playerChar;
 
-
+	UPROPERTY()
+	class ACassteraGameState* gs;
 
 };

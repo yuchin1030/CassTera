@@ -10,6 +10,7 @@
 #include "CassTeraCharacter.h"
 #include "HidePlayer.h"
 #include <../../../../../../../Source/Runtime/Engine/Public/EngineUtils.h>
+#include "CassteraGameState.h"
 
 AGrenade::AGrenade()
 {
@@ -28,6 +29,8 @@ void AGrenade::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
 	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		playerChar = Cast<ACassTeraCharacter>(*ActorItr);
@@ -49,29 +52,49 @@ void AGrenade::Tick(float DeltaTime)
 	}
 }
 
-void AGrenade::BeforeBomb(ACassTeraCharacter* pc)
-{
-	meshComp->SetSimulatePhysics(true);
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-	if (pc != nullptr)
+
+void AGrenade::ServerRPC_BeforeBomb_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ServerRPC_BeforeBomb"));
+
+	//DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	MultiRPC_BeforeBomb();
+
+	meshComp->SetSimulatePhysics(true);
+
+	if (playerChar != nullptr)
 	{
 		FVector throwDir = GetActorForwardVector() * 2 + GetActorUpVector();
 
 		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
-		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(pc->GetActorLocation(), bombLoc);
-
+		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(playerChar->GetActorLocation(), bombLoc);
 		float speed = 1000;
-		//meshComp->AddImpulse(throwDir);
-		meshComp->SetPhysicsLinearVelocity(newVel * speed);
 
-		Bomb();
+		meshComp->SetPhysicsLinearVelocity(newVel * speed);
+		//MultiRPC_BeforeBomb(newVel, speed);
+
+		ServerRPC_Bomb();
 	}
 
 }
 
-void AGrenade::Bomb()
+void AGrenade::MultiRPC_BeforeBomb_Implementation()
+{	// FVector _newVel, float _speed
+	UE_LOG(LogTemp, Warning, TEXT("MultiRPC_BeforeBomb"));
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	/*FVector newVel = _newVel;
+	float speed = _speed;
+	
+	meshComp->SetPhysicsLinearVelocity(newVel * speed);*/
+
+}
+
+void AGrenade::ServerRPC_Bomb_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ServerRPC_Bomb"));
+
 	FTimerHandle bombHandler;
 	GetWorld()->GetTimerManager().SetTimer(bombHandler, [&] () {
 
@@ -82,19 +105,9 @@ void AGrenade::Bomb()
 		params.AddIgnoredActor(this);
 
 		bool bHit = GetWorld()->OverlapMultiByObjectType(hitsArr, bombLoc, FQuat::Identity, ECC_Pawn, FCollisionShape::MakeSphere(500), params);
-			
-		DrawDebugSphere(GetWorld(), bombLoc, 500, 16, FColor::Blue, false, 5, 0, 5);
-		
+					
 		if (bHit)
 		{
-
-			
-//			ACassTeraCharacter* playerChar = nullptr;
-//			for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-//			{
-//				playerChar = Cast<ACassTeraCharacter>(*ActorItr);
-//// 				enemy = Cast<AHidePlayer>(*ActorItr);
-//			}
 
 			for (int i = 0; i < hitsArr.Num(); i++)
 			{
@@ -107,14 +120,16 @@ void AGrenade::Bomb()
 				// enemy 가 맞으면
 				if (enemy)
 				{
-					enemy->OnTakeDamage();
+					enemy->ServerRPC_Damaged();
 
 					// 죽으면
-					if (enemy->bDie)
+					if (enemy->currentHP == 0)
 					{
+						enemy->ServerRPC_Die();
+
 						if (playerChar)
 						{
-							playerChar->ShowKillUI();
+							playerChar->ServerRPC_KillUI();
 						}
 						else
 						{
@@ -130,7 +145,11 @@ void AGrenade::Bomb()
 			if (playerChar)
 			{
 				playerChar->ServerRPC_WorngShot();
-				UE_LOG(LogTemp, Warning, TEXT(""));
+
+				if (gs)
+				{
+					gs->ServerRPC_DecreaseTime();
+				}
 
 			}
 			else
@@ -140,9 +159,20 @@ void AGrenade::Bomb()
 
 		}
 			
-		spawnedBombVFX = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, bombLoc);	//
+		MultiRPC_Bomb();
 
 	}, 2, false);
+
+
+}
+
+void AGrenade::MultiRPC_Bomb_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("MultiRPC_Bomb"));
+
+	DrawDebugSphere(GetWorld(), bombLoc, 500, 16, FColor::Blue, false, 5, 0, 5);
+
+	spawnedBombVFX = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bombVFX, bombLoc);
 
 	FTimerHandle vfxDestroyHandler;
 	GetWorldTimerManager().SetTimer(vfxDestroyHandler, [&]() {
@@ -152,4 +182,3 @@ void AGrenade::Bomb()
 
 	}, 4, false);
 }
-

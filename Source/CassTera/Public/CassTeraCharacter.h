@@ -217,7 +217,7 @@ public:
 	void ServerRPC_ChangeMovement();
 
 	UFUNCTION(Client, Reliable)
-	void ClientRPC_ChangeMovement(bool _bGameStart, UCharacterMovementComponent* _characterMovement);
+	void ClientRPC_ChangeMovement(bool _bGameStart);
 
 protected:
 
