@@ -298,8 +298,15 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 		}
 		else
 		{
+
 			// enemy 아니면 시간 감소
 			ServerRPC_WorngShot();
+			
+			// 더블 클릭해서 시간 감소 버그 방지용 변수
+			if (gs->bDecreasing)
+				return;
+			
+			gs->ServerRPC_DecreaseTime();
 
 			/*for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 			{
@@ -413,13 +420,14 @@ void ACassTeraCharacter::NotEnemyResult()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
 
-		// 더블 클릭해서 시간 감소 버그 방지용 변수
-		if (gs->bDecreasing)
-			return;
+		//// 더블 클릭해서 시간 감소 버그 방지용 변수
+		//if (gs->bDecreasing)
+		//	return;
 
-		//bDecreasing = true;
-
-		gs->ServerRPC_DecreaseTime();
+		////bDecreasing = true;
+	
+		//gs->ServerRPC_DecreaseTime();
+		
 
 		if (mainUI)
 		{
@@ -465,14 +473,14 @@ void ACassTeraCharacter::ChangePersonPlayerMovement()
 	}
 }
 
-void ACassTeraCharacter::MultiRPC_WorngShot_Implementation()
+void ACassTeraCharacter::ClientRPC_WorngShot_Implementation()
 {
 	NotEnemyResult();
 }
 
 void ACassTeraCharacter::ServerRPC_WorngShot_Implementation()
 {
-	MultiRPC_WorngShot();
+	ClientRPC_WorngShot();
 }
 
 void ACassTeraCharacter::ClientRPC_KillUI_Implementation()
