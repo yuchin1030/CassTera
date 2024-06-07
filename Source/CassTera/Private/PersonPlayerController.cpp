@@ -66,6 +66,7 @@ void APersonPlayerController::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Create MainUI"));
 
 	}
+	MultiRPC_SetHidePlayerCount();
 }
 
 void APersonPlayerController::OnPossess(APawn* aPawn)
@@ -88,11 +89,10 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 	{
 		gm->hidePlayers.Add(p);
 		gm->hidePlayerCount = gm->hidePlayers.Num();
+		_hidePlayerCount = gm->hidePlayerCount;
 
 		UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), gm->hidePlayerCount);
-	}
-
-		
+	}	
 }
 
 void APersonPlayerController::Tick(float DeltaTime)
@@ -239,6 +239,15 @@ void APersonPlayerController::ServerRPC_ChangeToPlayer_Implementation()
 void APersonPlayerController::ChangeToPlayer()
 {
 	ServerRPC_ChangeToPlayer();
+}
+
+void APersonPlayerController::MultiRPC_SetHidePlayerCount_Implementation()
+{
+	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
+	if (gameTimerwidget)
+	{
+		gameTimerwidget->SetHidePlayer(_hidePlayerCount);
+	}
 }
 
 void  APersonPlayerController::GetLifetimeReplicatedProps(TArray < FLifetimeProperty >& OutLifetimeProps)  const

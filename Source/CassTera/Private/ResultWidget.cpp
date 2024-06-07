@@ -24,20 +24,22 @@ void UResultWidget::OnClickQuit()
 	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 }
 
-void UResultWidget::ShowWin()
-{
-	text_Win->SetVisibility(ESlateVisibility::Visible);
-}
 
-void UResultWidget::ShowLose()
+void UResultWidget::ShowResult(bool bWin)
 {
-	text_Lose->SetVisibility(ESlateVisibility::Visible);
+	if (bWin)
+	{
+		text_Win->SetVisibility(ESlateVisibility::Visible);
+		text_Lose->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		text_Win->SetVisibility(ESlateVisibility::Hidden);
+		text_Lose->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 void UResultWidget::SetTimer()
 {
-	if (text_CountDown)
-	{
-		text_CountDown->SetText(UKismetTextLibrary::Conv_IntToText(gs->seconds, false, true, 2, 2));
-	}
+
 }

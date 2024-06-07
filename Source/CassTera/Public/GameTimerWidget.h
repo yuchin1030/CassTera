@@ -62,6 +62,9 @@ public:
 
 	UFUNCTION()
 	void Timer();
+
+	UFUNCTION()
+	void SetHidePlayer(int32 count);
 	 
 	//UFUNCTION(Server, Reliable)
 	//void ServerRPC_Timer();
