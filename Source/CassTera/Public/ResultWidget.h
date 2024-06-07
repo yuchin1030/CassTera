@@ -35,11 +35,10 @@ public:
 	void OnClickQuit();
 
 	UFUNCTION()
-	void ShowWin();
-
-	UFUNCTION()
-	void ShowLose();
+	void ShowResult(bool bWin);
 
 	UFUNCTION()
 	void SetTimer();
+
+
 };

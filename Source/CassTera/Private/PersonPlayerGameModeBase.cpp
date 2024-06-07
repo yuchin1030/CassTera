@@ -11,13 +11,16 @@
 #include "CassteraGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "ResultWidget.h"
+#include "GameTimerWidget.h"
+#include "Kismet/KismetTextLibrary.h"
+#include "Components/TextBlock.h"
+
 
 APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 {
 	// 틱이 돌도록 설정해야 된다.
 	PrimaryActorTick.bCanEverTick = true;
 
-	resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	PlayerControllerClass = APersonPlayerController::StaticClass();
 
@@ -27,15 +30,10 @@ void APersonPlayerGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//// 월드에 있는 모든 hidePlayer 찾아서 배열에 저장 
-	//for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
-	//{
-	//	if (it)
-	//	{
-	//		UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
-	//	}
-	//}
-	//hidePlayerCount = hidePlayers.Num();
+	if (GetWorld()->GetFirstPlayerController())
+	{
+		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+	}
 }
 
 void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
@@ -98,10 +96,7 @@ void APersonPlayerGameModeBase::DecreaseHidePlayerCount()
 {
 	hidePlayerCount = hidePlayerCount - 1;
 	UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
-	if (hidePlayerCount <= 0)
-	{
-		MultiRPC_DecreaseHidePlayerCount(hidePlayerCount);
-	}
+
 }
 
 void APersonPlayerGameModeBase::MultiRPC_ShowResult_Implementation()
