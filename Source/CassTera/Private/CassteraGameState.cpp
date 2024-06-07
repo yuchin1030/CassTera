@@ -14,6 +14,17 @@ void ACassteraGameState::BeginPlay()
 	//UE_LOG(LogTemp, Warning, TEXT("start"));
 }
 
+void ACassteraGameState::ServerRPC_HidePlayerCount_Implementation(int32 newHidePlayerCount)
+{
+	hidePlayerCount = newHidePlayerCount;
+	MultiRPC_HidePlayerCount(newHidePlayerCount);
+}
+
+void ACassteraGameState::MultiRPC_HidePlayerCount_Implementation(int32 newHidePlayerCount)
+{
+	hidePlayerCount = newHidePlayerCount;
+}
+
 void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
 {
 	bDecreasing = true;

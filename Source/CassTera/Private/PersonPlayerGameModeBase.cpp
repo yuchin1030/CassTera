@@ -94,8 +94,8 @@ void APersonPlayerGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 
 void APersonPlayerGameModeBase::DecreaseHidePlayerCount()
 {
-	hidePlayerCount = hidePlayerCount - 1;
-	UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
+	gs->ServerRPC_HidePlayerCount(gs->hidePlayerCount - 1);
+	//UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), hidePlayerCount);
 
 }
 

@@ -52,9 +52,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Replicated)
 	class AObjects* Objects;
 
-	UPROPERTY()
-	int32 hidePlayerCount;
-	
+
 	UPROPERTY()
 	TArray<class AHidePlayer*> hidePlayers;
 

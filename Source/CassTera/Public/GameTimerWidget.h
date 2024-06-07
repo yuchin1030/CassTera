@@ -16,7 +16,7 @@ class CASSTERA_API UGameTimerWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
-	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+// 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 
 	UPROPERTY()
@@ -63,9 +63,10 @@ public:
 	UFUNCTION()
 	void Timer();
 
-	UFUNCTION()
-	void SetHidePlayer(int32 count);
-	 
+	UPROPERTY()
+	class APersonPlayerController* pc;
+
+
 	//UFUNCTION(Server, Reliable)
 	//void ServerRPC_Timer();
 
