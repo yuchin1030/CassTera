@@ -31,6 +31,15 @@ public:
 	void MultiRPC_DecreaseTime(bool _bDecreasing, int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds);
 
 	UPROPERTY()
+	class ACassTeraCharacter* cassTeraPlayer;
+	UPROPERTY()
+	class AHidePlayer* hidePlayer;
+
+	UPROPERTY()
+	class AHidePlayerCamera* hidePlayerCamera;
+
+
+	UPROPERTY()
 	FTimerHandle timerHandler;
 
 	bool bClearTimer = false;

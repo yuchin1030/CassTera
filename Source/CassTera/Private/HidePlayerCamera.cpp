@@ -12,6 +12,8 @@
 #include "EngineUtils.h"
 #include "PersonPlayerController.h"
 #include "GameTimerWidget.h"
+#include "CassteraGameState.h"
+#include "ResultWidget.h"
 
 AHidePlayerCamera::AHidePlayerCamera()
 {
@@ -134,3 +136,36 @@ void AHidePlayerCamera::MultiRPC_MakeIMC_Implementation()
 	}
 }
 
+
+void AHidePlayerCamera::ServerRPC_Lose_Implementation()
+{
+	MultiRPC_Lost();
+}
+
+void AHidePlayerCamera::MultiRPC_Lost_Implementation()
+{
+	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+	if (gs)
+	{
+		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget->AddToViewport();
+		bWin = false;
+		gs->ServerRPC_ShowResult(bWin);
+
+	}
+}
+
+void AHidePlayerCamera::ServerRPC_Win_Implementation()
+{
+	MultiRPC_Win();
+}
+
+void AHidePlayerCamera::MultiRPC_Win_Implementation()
+{
+	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+	if (gs)
+	{
+		bWin = true;
+		gs->ServerRPC_ShowResult(bWin);
+	}
+}

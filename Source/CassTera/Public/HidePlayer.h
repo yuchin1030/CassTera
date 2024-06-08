@@ -117,6 +117,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = HidePlayer)
 	TSubclassOf<class UUserWidget> WBP_PlayergameTimerWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = HidePlayer)
+	TSubclassOf<class UResultWidget> wbp_resultWidget;
+
+	UPROPERTY()
+	class UResultWidget* resultWidget;
+
+
+
 	UFUNCTION()
 	void OnIAMove(const FInputActionValue& value);
 	UFUNCTION()
@@ -183,11 +192,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Die();
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_Lose();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_Lost();
+	UPROPERTY()
+	bool bWin;
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_Win();

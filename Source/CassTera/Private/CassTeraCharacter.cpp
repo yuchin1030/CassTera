@@ -27,6 +27,7 @@
 #include "StartLocation.h"
 #include "EngineUtils.h"
 #include "CassteraGameState.h"
+#include "ResultWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -512,6 +513,44 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 		gun->SetVisibility(true);
 	}
 }
+
+void ACassTeraCharacter::ServerRPC_Lose_Implementation()
+{
+	MultiRPC_Lost();
+}
+
+void ACassTeraCharacter::MultiRPC_Lost_Implementation()
+{
+	gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+	if (gs)
+	{
+		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget->AddToViewport();
+		bWin = false;
+		gs->ServerRPC_ShowResult(bWin);
+	}
+}
+
+
+void ACassTeraCharacter::ServerRPC_Win_Implementation()
+{
+	MultiRPC_Win();
+}
+
+
+void ACassTeraCharacter::MultiRPC_Win_Implementation()
+{
+	gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+	if (gs)
+	{
+		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget->AddToViewport();
+		bWin = true;
+		gs->ServerRPC_ShowResult(bWin);
+	}
+}
+
+
 
 void ACassTeraCharacter::ServerRPC_AddMainUI_Implementation()
 {
