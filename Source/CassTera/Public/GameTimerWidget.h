@@ -63,6 +63,9 @@ public:
 	UFUNCTION()
 	void Timer();
 
+	UFUNCTION()
+	void SetHidePlayerCount();
+
 	UPROPERTY()
 	class APersonPlayerController* pc;
 

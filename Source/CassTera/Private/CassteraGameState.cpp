@@ -15,19 +15,19 @@ void ACassteraGameState::BeginPlay()
 	UE_LOG(LogTemp, Error, TEXT("start"));
 }
 
-void ACassteraGameState::ServerRPC_HidePlayerCount_Implementation(int32 newHidePlayerCount)
+void ACassteraGameState::ServerRPC_HidePlayerCount_Implementation()
 {
-	hidePlayerCount = newHidePlayerCount;
-	MultiRPC_HidePlayerCount(newHidePlayerCount);
-	if (newHidePlayerCount <= 0)
-	{
-		resultWidget->ShowResult(true);
-	}
+// 	hidePlayerCount = newHidePlayerCount;
+	MultiRPC_HidePlayerCount(hidePlayerCount);
 }
 
-void ACassteraGameState::MultiRPC_HidePlayerCount_Implementation(int32 newHidePlayerCount)
+void ACassteraGameState::MultiRPC_HidePlayerCount_Implementation(int32 _hidePlayer)
 {
-	hidePlayerCount = newHidePlayerCount;
+	hidePlayerCount = _hidePlayer;
+	if (timerWidget)
+	{
+		timerWidget->SetHidePlayerCount();
+	}
 }
 
 void ACassteraGameState::ServerRPC_ShowResult_Implementation(bool bWin)
@@ -39,6 +39,26 @@ void ACassteraGameState::ServerRPC_ShowResult_Implementation(bool bWin)
 void ACassteraGameState::ClientRPC_ShowResult_Implementation(bool _bWin)
 {
 	resultWidget->ShowResult(_bWin);
+}
+
+void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
+{
+	hidePlayerCount -= 1;
+	MultiRPC_DecreaseHidePlayerCount(hidePlayerCount);
+	if (hidePlayerCount <= 0)
+	{
+		
+	}
+}
+
+void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _hidePlayer)
+{
+	hidePlayerCount = _hidePlayer;
+	if (timerWidget)
+	{
+		timerWidget->SetHidePlayerCount();
+	}
+
 }
 
 void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()

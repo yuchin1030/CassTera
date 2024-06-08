@@ -65,10 +65,10 @@ public:
 	int32 hidePlayerCount;
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_HidePlayerCount(int32 newHidePlayerCount);
+	void ServerRPC_HidePlayerCount();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_HidePlayerCount(int32 newHidePlayerCount);
+	void MultiRPC_HidePlayerCount(int32 _hidePlayer);
 
 	UPROPERTY()
 	class UResultWidget* resultWidget;
@@ -81,4 +81,11 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_ShowResult(bool _bWin);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DecreaseHidePlayerCount();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_DecreaseHidePlayerCount(int32 _hidePlayer);
+
 };

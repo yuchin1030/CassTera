@@ -23,7 +23,6 @@ APersonPlayerGameModeBase::APersonPlayerGameModeBase()
 
 	//resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 
-	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	PlayerControllerClass = APersonPlayerController::StaticClass();
 
 	bActorSeamlessTraveled = false;
@@ -34,6 +33,7 @@ void APersonPlayerGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	if (GetWorld()->GetFirstPlayerController())
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
@@ -100,7 +100,7 @@ void APersonPlayerGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 
 void APersonPlayerGameModeBase::DecreaseHidePlayerCount()
 {	
-	gs->ServerRPC_HidePlayerCount(gs->hidePlayerCount - 1);
+// 	gs->ServerRPC_HidePlayerCount(gs->hidePlayerCount - 1);
 }
 
 //UClass* APersonPlayerGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)

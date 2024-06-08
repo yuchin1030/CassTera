@@ -82,16 +82,16 @@ void APersonPlayerController::OnPossess(APawn* aPawn)
 
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
+		if (auto* p = Cast<AHidePlayer>(GetPawn()))
+		{
+			gm->hidePlayers.Add(p);
+			gs->hidePlayerCount = gm->hidePlayers.Num();
+// 			_hidePlayerCount = gs->hidePlayerCount;
+			gs->ServerRPC_HidePlayerCount();
+			UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), gs->hidePlayerCount);
+
+		}	
 	
-	if (auto* p = Cast<AHidePlayer>(GetPawn()))
-	{
-		gm->hidePlayers.Add(p);
-		gs->hidePlayerCount = gm->hidePlayers.Num();
-		_hidePlayerCount = gs->hidePlayerCount;
-
-		UE_LOG(LogTemp, Error, TEXT("Rest HidePlayer Count : %d"), gs->hidePlayerCount);
-
-	}	
 }
 
 void APersonPlayerController::Tick(float DeltaTime)

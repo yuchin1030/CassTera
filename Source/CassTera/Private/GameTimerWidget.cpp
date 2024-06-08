@@ -73,12 +73,18 @@ void UGameTimerWidget::Timer()
 	if (txt_Second)
 		txt_Second->SetText(UKismetTextLibrary::Conv_IntToText(gs->seconds, false, true, 2, 2));
 
+
+}
+
+void UGameTimerWidget::SetHidePlayerCount()
+{
 	if (txt_hidePlayerCount && gs)
 	{
 		txt_hidePlayerCount->SetText(UKismetTextLibrary::Conv_IntToText(gs->hidePlayerCount, false, true, 2, 2));
 	}
 
 }
+
 //UE_LOG(LogTemp, Warning, TEXT("%d %d"), gs->minute, gs->seconds);
 
 // 	if (txt_hidePlayerCount)

@@ -297,7 +297,7 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			if (enemyPlayer->currentHP == 0)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("bool : %d"), enemyPlayer->bDie);
-				enemyPlayer->ServerRPC_Die();
+// 				enemyPlayer->ServerRPC_Die();
 				ServerRPC_KillUI();
 			}
 		}

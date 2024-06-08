@@ -18,6 +18,7 @@
 #include "CassTeraCharacter.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/Materials/MaterialInstance.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Materials/Material.h>
+#include "CassteraGameState.h"
 
 
 AHidePlayer::AHidePlayer()
@@ -308,7 +309,7 @@ void AHidePlayer::OnResetCamera()
 
 void AHidePlayer::OnTakeDamage()
 {
-	currentHP = currentHP-1;
+// 	currentHP = currentHP-1;
 
 	//UE_LOG(LogTemp, Warning, TEXT("damage : %d"), currentHP);
 
@@ -318,7 +319,7 @@ void AHidePlayer::OnTakeDamage()
 	}
 	if (currentHP <= 0)
 	{
-		Die();
+// 		Die();
 	}
 }
 
@@ -569,12 +570,11 @@ void AHidePlayer::ClientRPC_Damaged_Implementation(int32 _currentHP)
 
 void AHidePlayer::ServerRPC_Die_Implementation()
 {
-	APersonPlayerGameModeBase* gm = Cast<APersonPlayerGameModeBase>(GetWorld()->GetAuthGameMode());
-	if (gm)
+	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+	if (gs)
 	{
-		gm->DecreaseHidePlayerCount();
+		gs->ServerRPC_DecreaseHidePlayerCount();
 	}
-
 	MultiRPC_Die();
 }
 
