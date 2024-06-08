@@ -48,6 +48,27 @@ public:
 	UFUNCTION()
 	void OnIAChangeCamera(const FInputActionValue& value);
 
+	UPROPERTY()
+	bool bWin;
+	
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Lose();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Lost();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Win();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Win();
+
+	UPROPERTY(EditDefaultsOnly, Category = HidePlayer)
+	TSubclassOf<class UResultWidget> wbp_resultWidget;
+
+	UPROPERTY()
+	class UResultWidget* resultWidget;
+
 
 
 	class AHidePlayer* player;

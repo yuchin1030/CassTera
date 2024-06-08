@@ -3,6 +3,10 @@
 #include "CassteraGameState.h"
 #include "GameTimerWidget.h"
 #include "ResultWidget.h"
+#include "CassTeraCharacter.h"
+#include "HidePlayer.h"
+#include "HidePlayerCamera.h"
+#include "EngineUtils.h"
 
 void ACassteraGameState::BeginPlay()
 {
@@ -47,7 +51,22 @@ void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
 	MultiRPC_DecreaseHidePlayerCount(hidePlayerCount);
 	if (hidePlayerCount <= 0)
 	{
-		
+		for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
+		{
+			hidePlayerCamera = *camera;
+			if (hidePlayerCamera)
+			{
+				hidePlayerCamera->ServerRPC_Lose();		
+			}
+		}
+		for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
+		{
+			cassTeraPlayer = *player;
+			if (cassTeraPlayer)
+			{
+				cassTeraPlayer->ServerRPC_Win();
+			}
+		}
 	}
 }
 
@@ -84,6 +103,34 @@ void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
 	else if (!(minute == 0 && seconds <= 30))	// 버닝타임 제외하고는 모두 10초씩 차감
 	{
 		seconds -= minusSeconds;
+	}
+
+	if (minute == 0 && seconds <= 0)
+	{
+		for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
+		{
+			hidePlayerCamera = *camera;
+			if (hidePlayerCamera)
+			{
+				hidePlayerCamera->ServerRPC_Win();
+			}
+		}
+		for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
+		{
+			hidePlayer = *h;
+			if (hidePlayer)
+			{
+				hidePlayer->ServerRPC_Win();
+			}
+		}
+		for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
+		{
+			cassTeraPlayer = *player;
+			if (cassTeraPlayer)
+			{
+				cassTeraPlayer->ServerRPC_Lose();
+			}
+		}
 	}
 
 	MultiRPC_DecreaseTime(bDecreasing, minute, seconds, minusSeconds, pgPercent, totalSeconds);

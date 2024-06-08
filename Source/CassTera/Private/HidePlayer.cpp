@@ -19,6 +19,7 @@
 #include <../../../../../../../Source/Runtime/Engine/Classes/Materials/MaterialInstance.h>
 #include <../../../../../../../Source/Runtime/Engine/Classes/Materials/Material.h>
 #include "CassteraGameState.h"
+#include "ResultWidget.h"
 
 
 AHidePlayer::AHidePlayer()
@@ -593,16 +594,6 @@ void AHidePlayer::MultiRPC_Die_Implementation()
 	//Destroy();
 }
 
-void AHidePlayer::ServerRPC_Lose_Implementation()
-{
-	MultiRPC_Lost();
-}
-
-void AHidePlayer::MultiRPC_Lost_Implementation()
-{
-
-}
-
 void AHidePlayer::ServerRPC_Win_Implementation()
 {
 	MultiRPC_Win();
@@ -610,7 +601,14 @@ void AHidePlayer::ServerRPC_Win_Implementation()
 
 void AHidePlayer::MultiRPC_Win_Implementation()
 {
-
+	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+	if (gs)
+	{
+		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget->AddToViewport();
+		bWin = true;
+		gs->ServerRPC_ShowResult(bWin);
+	}
 }
 
 //void AHidePlayer::ServerRPC_SetTimer_Implementation()
