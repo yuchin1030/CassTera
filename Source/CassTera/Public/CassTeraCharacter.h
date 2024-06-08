@@ -220,7 +220,7 @@ public:
 	void ServerRPC_Throw();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_Throw(bool _bThrowing);
+	void MultiRPC_Throw(bool _bThrowing, int32 _grenadeCount);
 
 
 
@@ -230,7 +230,6 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_ThrowFin(bool _bThrowing);
-
 
 	// ==========================================================================
 	UFUNCTION(Server, Reliable)

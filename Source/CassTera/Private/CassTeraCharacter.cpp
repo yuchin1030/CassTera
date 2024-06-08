@@ -118,7 +118,7 @@ void ACassTeraCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("1111111111111111111111"));
 			// 사물 숨을동안(10초) 못 움직임
-			ServerRPC_ChangeMovement_Implementation();
+			ServerRPC_ChangeMovement();
 	}
 	
 
@@ -471,22 +471,30 @@ void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 
 	if (grenadeCount >= 0)
 	{
-		MultiRPC_Throw(bThrowing);
+		//grenade = Cast<AGrenade>(grenade_bp);
+
+		MultiRPC_Throw(bThrowing, grenadeCount);
 	}
 }
 
-void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing)
+void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing, int32 _grenadeCount)
 {
 	bThrowing = _bThrowing;
+	grenadeCount = _grenadeCount;
+	//grenade = _grenade;
 
 	if (mainUI)
 		mainUI->ShowGrenadeCount();
 
 	gun->SetVisibility(false);
-
+	
 	FActorSpawnParameters params;
 	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
-	grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Weapon_L");
+	
+	if (grenade)
+	{
+		grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Weapon_L");
+	}
 }
 
 void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
@@ -497,7 +505,10 @@ void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
 
 		MultiRPC_ThrowFin(bThrowing);
 
-		grenade->ServerRPC_BeforeBomb();
+		if (grenade)
+		{
+			grenade->ServerRPC_BeforeBomb();
+		}
 	}
 
 }
@@ -513,6 +524,27 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 		gun->SetVisibility(true);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void ACassTeraCharacter::ServerRPC_Lose_Implementation()
 {
@@ -597,7 +629,7 @@ void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 void ACassTeraCharacter::ServerRPC_ChangeMovement_Implementation()
 {
 	// 게임 시작 전(bGameStart == false) 유아이 띄우기
-	ClientRPC_ChangeMovement_Implementation(bGameStart);
+	ClientRPC_ChangeMovement(bGameStart);
 
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	UE_LOG(LogTemp, Warning, TEXT("move none"));
@@ -613,10 +645,10 @@ void ACassTeraCharacter::ServerRPC_ChangeMovement_Implementation()
 			UE_LOG(LogTemp, Warning, TEXT("move"));
 
 			// 게임 시작되면(bGameStart == true) 유아이 숨기기
-			ClientRPC_ChangeMovement_Implementation(bGameStart);
+			ClientRPC_ChangeMovement(bGameStart);
 		}
 
-	}, 10.0f, false);
+	}, 1.0f, false);
 	
 	//ClientRPC_ChangeMovement(bGameStart, characterMovement);
 
