@@ -13,7 +13,8 @@ void URoomInfoUI::NativeConstruct()
 
 void URoomInfoUI::OnMyClickJoinRoom()
 {
-	
+	// gi의 joingRoom 함수 호출
+	Cast<UHideAndSeekGameInstance>(GetWorld()->GetGameInstance())->JoinMySession(index);
 }
 
 void URoomInfoUI::Setup(const struct FSessionInfo& info)

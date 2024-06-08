@@ -49,11 +49,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UScrollBox* ScrollBox_RoomList;
 
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UTextBlock* Text_Finding;
+
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UEditableText* Edit_SessionName;
+
 	UPROPERTY()
 	class UHideAndSeekGameInstance* gi;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class URoomInfoUI> roomInfoUI_BP;
+	TSubclassOf<class URoomInfoUI> roomInfoUI_BP;	
 
 	UFUNCTION()
 	void OnMyClickCreateRoom();
@@ -75,4 +81,10 @@ public:
 
 	UFUNCTION()
 	void AddRoomInfoUI(const struct FSessionInfo& info);
+
+	UFUNCTION()
+	void OnMySetActiveFindingText(bool bSearching);
+
+	UFUNCTION()
+	void SetSessionName();
 };

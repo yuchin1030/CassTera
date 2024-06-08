@@ -80,7 +80,7 @@ void UHideAndSeekGameInstance::OnCreateSessionCompleted(FName sessionName, bool 
 		GetWorld()->GetTimerManager().SetTimer(timer, [&]() {
 			GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/SchoolMap?listen"));
 			UE_LOG(LogTemp, Error, TEXT("SchoolMap Open"));
-			}, 5, false);
+			}, 30, false);
 
 		
 	}
@@ -88,6 +88,11 @@ void UHideAndSeekGameInstance::OnCreateSessionCompleted(FName sessionName, bool 
 
 void UHideAndSeekGameInstance::FindOtherSessions()
 {
+	if (OnMySessionSearchFinishedDelegate.IsBound())
+	{
+		OnMySessionSearchFinishedDelegate.Broadcast(true);
+	}
+
 	// 세션 인터페이스를 이용해서 방을 찾고 싶다
 	sessionInSearch = MakeShareable(new FOnlineSessionSearch);
 	
@@ -140,6 +145,7 @@ void UHideAndSeekGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionsComplete bWasSuccessful is false"));
+		OnMySessionSearchFinishedDelegate.Broadcast(false);
 	}
 }
 
