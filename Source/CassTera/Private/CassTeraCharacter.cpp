@@ -525,60 +525,43 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void ACassTeraCharacter::ServerRPC_Lose_Implementation()
 {
-	MultiRPC_Lost();
+	ClientRPC_Lost();
 }
 
-void ACassTeraCharacter::MultiRPC_Lost_Implementation()
+void ACassTeraCharacter::ClientRPC_Lost_Implementation()
 {
 	gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 		resultWidget->AddToViewport();
+		resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
+		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
 		bWin = false;
-		gs->ServerRPC_ShowResult(bWin);
+//		gs->ServerRPC_ShowResult(bWin);
 	}
 }
 
 
 void ACassTeraCharacter::ServerRPC_Win_Implementation()
 {
-	MultiRPC_Win();
+	ClientRPC_Win();
 }
 
 
-void ACassTeraCharacter::MultiRPC_Win_Implementation()
+void ACassTeraCharacter::ClientRPC_Win_Implementation()
 {
 	gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 		resultWidget->AddToViewport();
+		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
+		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
-		gs->ServerRPC_ShowResult(bWin);
+//		gs->ServerRPC_ShowResult(bWin);
 	}
 }
 
@@ -609,11 +592,14 @@ void ACassTeraCharacter::ClientRPC_AddMainUI_Implementation()
 
 void ACassTeraCharacter::ServerRPC_DisableOutLiner_Implementation()
 {
-	ClientRPC_DisableOutLiner();
+	MultiRPC_DisableOutLiner();
 }
 
-void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
+void ACassTeraCharacter::MultiRPC_DisableOutLiner_Implementation()
 {
+	if (IsLocallyControlled())
+	{
+
 	for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 	{
 		AHidePlayer* hidePlayer = *it;
@@ -622,6 +608,7 @@ void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 		{
 			hidePlayer->meshComp->SetOverlayMaterial(nullptr);
 		}
+	}
 	}
 	
 }

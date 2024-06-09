@@ -19,6 +19,7 @@ void ACassteraGameState::BeginPlay()
 	UE_LOG(LogTemp, Error, TEXT("start"));
 }
 
+
 void ACassteraGameState::ServerRPC_HidePlayerCount_Implementation()
 {
 // 	hidePlayerCount = newHidePlayerCount;
@@ -34,29 +35,28 @@ void ACassteraGameState::MultiRPC_HidePlayerCount_Implementation(int32 _hidePlay
 	}
 }
 
-void ACassteraGameState::ServerRPC_ShowResult_Implementation(bool bWin)
+void ACassteraGameState::ServerRPC_ShowResult_Implementation()
 {	
 
-	ClientRPC_ShowResult(bWin);
+	MultiRPC_ShowResult();
 }
 
-void ACassteraGameState::ClientRPC_ShowResult_Implementation(bool _bWin)
+void ACassteraGameState::MultiRPC_ShowResult_Implementation()
 {
-	resultWidget->ShowResult(_bWin);
-}
-
-void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
-{
-	hidePlayerCount -= 1;
-	MultiRPC_DecreaseHidePlayerCount(hidePlayerCount);
-	if (hidePlayerCount <= 0)
-	{
 		for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
 		{
 			hidePlayerCamera = *camera;
 			if (hidePlayerCamera)
 			{
-				hidePlayerCamera->ServerRPC_Lose();		
+				hidePlayerCamera->ServerRPC_Win();
+			}
+		}
+		for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
+		{
+			hidePlayer = *h;
+			if (hidePlayer)
+			{
+				hidePlayer->ServerRPC_Win();
 			}
 		}
 		for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
@@ -64,10 +64,15 @@ void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
 			cassTeraPlayer = *player;
 			if (cassTeraPlayer)
 			{
-				cassTeraPlayer->ServerRPC_Win();
+				cassTeraPlayer->ServerRPC_Lose();
 			}
 		}
-	}
+}
+
+void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
+{
+	hidePlayerCount -= 1;
+	MultiRPC_DecreaseHidePlayerCount(hidePlayerCount);
 }
 
 void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _hidePlayer)
@@ -76,6 +81,10 @@ void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _
 	if (timerWidget)
 	{
 		timerWidget->SetHidePlayerCount();
+		if (hidePlayerCount <= 0)
+		{
+			ServerRPC_ShowResult2();
+		}
 	}
 
 }
@@ -105,33 +114,7 @@ void ACassteraGameState::ServerRPC_DecreaseTime_Implementation()
 		seconds -= minusSeconds;
 	}
 
-	if (minute == 0 && seconds <= 0)
-	{
-		for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
-		{
-			hidePlayerCamera = *camera;
-			if (hidePlayerCamera)
-			{
-				hidePlayerCamera->ServerRPC_Win();
-			}
-		}
-		for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
-		{
-			hidePlayer = *h;
-			if (hidePlayer)
-			{
-				hidePlayer->ServerRPC_Win();
-			}
-		}
-		for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
-		{
-			cassTeraPlayer = *player;
-			if (cassTeraPlayer)
-			{
-				cassTeraPlayer->ServerRPC_Lose();
-			}
-		}
-	}
+
 
 	MultiRPC_DecreaseTime(bDecreasing, minute, seconds, minusSeconds, pgPercent, totalSeconds);
 }
@@ -202,4 +185,27 @@ void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer
 	bClearTimer = false;
 }
 
+void ACassteraGameState::ServerRPC_ShowResult2_Implementation()
+{
+	MultiRPC_ShowResult2();
+}
 
+void ACassteraGameState::MultiRPC_ShowResult2_Implementation()
+{
+	for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
+	{
+		hidePlayerCamera = *camera;
+		if (hidePlayerCamera)
+		{
+			hidePlayerCamera->ServerRPC_Lose();
+		}
+	}
+	for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
+	{
+		cassTeraPlayer = *player;
+		if (cassTeraPlayer)
+		{
+			cassTeraPlayer->ServerRPC_Win();
+		}
+	}
+}

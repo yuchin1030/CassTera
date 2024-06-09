@@ -187,7 +187,7 @@ public:
 	void ServerRPC_Die();
 
 	UFUNCTION(Client, Reliable)
-	void ClientRPC_Die(bool _bDie);
+	void ClientRPC_Die();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Die();

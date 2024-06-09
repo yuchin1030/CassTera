@@ -86,6 +86,16 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+	if (gs)
+	{
+		if (gs->minute == 0 && gs->seconds <= 0)
+		{
+			gs->ServerRPC_ShowResult();
+		}
+	}
+	
+
 
 	//UE_LOG(LogTemp, Warning, TEXT("%d"), curSeaker);
 }

@@ -14,6 +14,7 @@
 #include "GameTimerWidget.h"
 #include "CassteraGameState.h"
 #include "ResultWidget.h"
+#include "Components/TextBlock.h"
 
 AHidePlayerCamera::AHidePlayerCamera()
 {
@@ -144,14 +145,20 @@ void AHidePlayerCamera::ServerRPC_Lose_Implementation()
 
 void AHidePlayerCamera::MultiRPC_Lost_Implementation()
 {
+	if (IsLocallyControlled())
+	{
+
 	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 		resultWidget->AddToViewport();
+		resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
+		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
 		bWin = false;
-		gs->ServerRPC_ShowResult(bWin);
+//		gs->ServerRPC_ShowResult(bWin);
 
+	}
 	}
 }
 
@@ -162,10 +169,18 @@ void AHidePlayerCamera::ServerRPC_Win_Implementation()
 
 void AHidePlayerCamera::MultiRPC_Win_Implementation()
 {
+	if (IsLocallyControlled())
+	{
+
 	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{
+		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget->AddToViewport();
+		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
+		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
-		gs->ServerRPC_ShowResult(bWin);
+//		gs->ServerRPC_ShowResult(bWin);
+	}
 	}
 }

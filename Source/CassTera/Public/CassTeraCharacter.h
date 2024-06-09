@@ -146,21 +146,21 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_Lose();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_Lost();
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_Lost();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_Win();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_Win();
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_Win();
 
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DisableOutLiner();
 
-	UFUNCTION(Client, Reliable)
-	void ClientRPC_DisableOutLiner();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_DisableOutLiner();
 
 
 	// ==========================================================================

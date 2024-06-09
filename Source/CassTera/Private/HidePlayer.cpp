@@ -20,6 +20,7 @@
 #include <../../../../../../../Source/Runtime/Engine/Classes/Materials/Material.h>
 #include "CassteraGameState.h"
 #include "ResultWidget.h"
+#include "Components/TextBlock.h"
 
 
 AHidePlayer::AHidePlayer()
@@ -320,7 +321,7 @@ void AHidePlayer::OnTakeDamage()
 	}
 	if (currentHP <= 0)
 	{
-// 		Die();
+ 	//	Die();
 	}
 }
 
@@ -564,8 +565,12 @@ void AHidePlayer::ClientRPC_Damaged_Implementation(int32 _currentHP)
 
 	if (currentHP <= 0)
 	{
+		if (IsLocallyControlled())
+		{
+
 		bDie = true;
-		Die();
+		ServerRPC_Die();
+		}
 	}
 }
 
@@ -576,11 +581,18 @@ void AHidePlayer::ServerRPC_Die_Implementation()
 	{
 		gs->ServerRPC_DecreaseHidePlayerCount();
 	}
+
+	if (PlayerController)
+	{
+		bChangeCam = true;
+		PlayerController->ServerRPC_ChangeToSpectator(this);
+	}	
 	MultiRPC_Die();
 }
 
-void AHidePlayer::ClientRPC_Die_Implementation(bool _bDie)
+void AHidePlayer::ClientRPC_Die_Implementation()
 {
+
 
 }
 
@@ -591,23 +603,31 @@ void AHidePlayer::MultiRPC_Die_Implementation()
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
 	}
 	//Die();
-	//Destroy();
+	// 클라이언트는 죽었을 때 카메라액터 스폰이랑 Destroy 자체를 안하고 있어서 켜둠
+	Destroy();
 }
 
 void AHidePlayer::ServerRPC_Win_Implementation()
 {
+
 	MultiRPC_Win();
+	
 }
 
 void AHidePlayer::MultiRPC_Win_Implementation()
 {
+	if (IsLocallyControlled())
+	{
 	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 		resultWidget->AddToViewport();
+		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
+		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
-		gs->ServerRPC_ShowResult(bWin);
+//		gs->ServerRPC_ShowResult(bWin);
+	}
 	}
 }
 

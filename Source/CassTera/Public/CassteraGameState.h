@@ -17,7 +17,7 @@ class CASSTERA_API ACassteraGameState : public AGameStateBase
 public:
 
 	virtual void BeginPlay() override;
-	
+
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CalculateTime();
 
@@ -86,10 +86,16 @@ public:
 	TSubclassOf<class UResultWidget> wbp_resultWidget;
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_ShowResult(bool bWin);
+	void ServerRPC_ShowResult();
 
-	UFUNCTION(Client, Reliable)
-	void ClientRPC_ShowResult(bool _bWin);
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_ShowResult();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_ShowResult2();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_ShowResult2();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DecreaseHidePlayerCount();
