@@ -36,11 +36,18 @@ public:
 
 	bool bBeforeBomb;
 
+	UPROPERTY()
+	FVector newVel;
+
+	UPROPERTY()
+	float speed;
+
+
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_BeforeBomb();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_BeforeBomb();
+	void MultiRPC_BeforeBomb(FVector _newVel, float _speed);
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_Bomb();

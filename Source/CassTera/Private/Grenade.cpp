@@ -58,36 +58,37 @@ void AGrenade::ServerRPC_BeforeBomb_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ServerRPC_BeforeBomb"));
 
-	//DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	MultiRPC_BeforeBomb();
+	//MultiRPC_BeforeBomb();
 
-	meshComp->SetSimulatePhysics(true);
 
 	if (playerChar != nullptr)
 	{
-		FVector throwDir = GetActorForwardVector() * 2 + GetActorUpVector();
+		//FVector throwDir = GetActorForwardVector() * 2 + GetActorUpVector();
+	
 
 		// from 에서 to 까지의 방향(플레이어에서 수류탄까지의 방향)
-		FVector newVel = UKismetMathLibrary::GetDirectionUnitVector(playerChar->GetActorLocation(), bombLoc);
-		float speed = 1000;
+		newVel = UKismetMathLibrary::GetDirectionUnitVector(playerChar->GetActorLocation(), bombLoc);
+		speed = 1000;
 
-		meshComp->SetPhysicsLinearVelocity(newVel * speed);
-		//MultiRPC_BeforeBomb(newVel, speed);
+		/*meshComp->SetPhysicsLinearVelocity(newVel * speed);*/
+		MultiRPC_BeforeBomb(newVel, speed);
 
 		ServerRPC_Bomb();
 	}
 
 }
 
-void AGrenade::MultiRPC_BeforeBomb_Implementation()
+void AGrenade::MultiRPC_BeforeBomb_Implementation(FVector _newVel, float _speed)
 {	// FVector _newVel, float _speed
-	UE_LOG(LogTemp, Warning, TEXT("MultiRPC_BeforeBomb"));
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	newVel = _newVel;
+	speed = _speed;
 
-	/*FVector newVel = _newVel;
-	float speed = _speed;
+	meshComp->SetSimulatePhysics(true);
+
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	
-	meshComp->SetPhysicsLinearVelocity(newVel * speed);*/
+	meshComp->SetPhysicsLinearVelocity(newVel * speed);
+
 
 }
 
