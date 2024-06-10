@@ -247,6 +247,13 @@ void ACassTeraCharacter::AddMainUI()
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
+	// 연타로 수류탄 던진 후에 총 안 쏴져서(bThrowing이 true 상태로 뜸), 
+	// --> 수류탄 0개 이하이면서 bThrowing이 true 면 bThrowing = false 로 강제로 만들어줌
+	if (grenadeCount <= 0 && bThrowing)
+	{
+		bThrowing = false;
+	}
+
 	if (bThrowing || bFiring || false == bGameStart)
 		return;
 
@@ -292,12 +299,10 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			enemyPlayer->ServerRPC_Damaged();
 			UE_LOG(LogTemp, Warning, TEXT("ENEMY"));
 
-			UE_LOG(LogTemp, Warning, TEXT("char bool : %d"), enemyPlayer->bDie);
 
 			// 죽으면
 			if (enemyPlayer->currentHP == 0)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("bool : %d"), enemyPlayer->bDie);
 // 				enemyPlayer->ServerRPC_Die();
 				ServerRPC_KillUI();
 			}
@@ -364,7 +369,6 @@ void ACassTeraCharacter::MultiRPC_IMC_Implementation()
 
 void ACassTeraCharacter::ShowKillUI()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ssssssssss"));
 
 	// 킬 이미지, 텍스트 UI 띄우기
 	if (mainUI)
@@ -373,11 +377,9 @@ void ACassTeraCharacter::ShowKillUI()
 
 void ACassTeraCharacter::NotEnemyResult()
 {
-	UE_LOG(LogTemp, Warning, TEXT("2222222222"));
 
 	if (gs->timerWidget != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
 		
 		if (mainUI)
 		{
@@ -472,6 +474,9 @@ void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 	if (grenadeCount >= 0)
 	{
 		//grenade = Cast<AGrenade>(grenade_bp);
+		FActorSpawnParameters params;
+		grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
+		UE_LOG(LogTemp, Warning, TEXT("spawn grenade"));
 
 		MultiRPC_Throw(bThrowing, grenadeCount);
 	}
@@ -481,24 +486,27 @@ void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing, int32 _g
 {
 	bThrowing = _bThrowing;
 	grenadeCount = _grenadeCount;
-	//grenade = _grenade;
 
 	if (mainUI)
 		mainUI->ShowGrenadeCount();
 
 	gun->SetVisibility(false);
 	
-	FActorSpawnParameters params;
-	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
-	
+	/*FActorSpawnParameters params;
+	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);*/
+	//UE_LOG(LogTemp, Warning, TEXT("spawn grenade"));
+
 	if (grenade)
 	{
 		grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Weapon_L");
+		UE_LOG(LogTemp, Warning, TEXT("attach grenade"));
 	}
 }
 
 void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ServerRPC_ThrowFin"));
+
 	if (grenadeCount >= 0)
 	{
 		bThrowing = false;
@@ -517,12 +525,11 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 {
 	bThrowing = _bThrowing;
 
-	if (grenade != nullptr && !bThrowing)
-	{
-		PlayAnimMontage(throwMontage);
+	PlayAnimMontage(throwMontage);
 
-		gun->SetVisibility(true);
-	}
+	gun->SetVisibility(true);
+	UE_LOG(LogTemp, Warning, TEXT("MultiRPC_ThrowFin"));PlayAnimMontage(throwMontage);
+
 }
 
 void ACassTeraCharacter::ServerRPC_Lose_Implementation()
@@ -592,23 +599,23 @@ void ACassTeraCharacter::ClientRPC_AddMainUI_Implementation()
 
 void ACassTeraCharacter::ServerRPC_DisableOutLiner_Implementation()
 {
-	MultiRPC_DisableOutLiner();
+	ClientRPC_DisableOutLiner();
 }
 
-void ACassTeraCharacter::MultiRPC_DisableOutLiner_Implementation()
+void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 {
 	if (IsLocallyControlled())
 	{
 
-	for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
-	{
-		AHidePlayer* hidePlayer = *it;
-
-		if (hidePlayer)
+		for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 		{
-			hidePlayer->meshComp->SetOverlayMaterial(nullptr);
+			AHidePlayer* hidePlayer = *it;
+
+			if (hidePlayer)
+			{
+				hidePlayer->meshComp->SetOverlayMaterial(nullptr);
+			}
 		}
-	}
 	}
 	
 }

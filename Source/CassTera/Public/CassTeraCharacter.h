@@ -159,8 +159,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DisableOutLiner();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_DisableOutLiner();
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_DisableOutLiner();
 
 
 	// ==========================================================================
@@ -235,7 +235,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_ChangeMovement();
 
-	UFUNCTION(Client, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void ClientRPC_ChangeMovement(bool _bGameStart);
 
 protected:

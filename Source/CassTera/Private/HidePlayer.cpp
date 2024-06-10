@@ -541,37 +541,46 @@ void AHidePlayer::ServerRPC_Damaged_Implementation()
 
 	currentHP = currentHP - 1;
 
-	ClientRPC_Damaged(currentHP);
-	MultiRPC_Damaged();
+	if (currentHP <= 0)
+	{
+		bDie = true;
+		ServerRPC_Die();
+	}
+
+	/*ClientRPC_Damaged(currentHP);*/
+	MultiRPC_Damaged(currentHP);
 }
 
-void AHidePlayer::MultiRPC_Damaged_Implementation()
+void AHidePlayer::MultiRPC_Damaged_Implementation(int32 _currentHP)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MULTI_DMG"));
+// 	UE_LOG(LogTemp, Warning, TEXT("MULTI_DMG"));
+// 
+// 	//OnTakeDamage();
+// 	UE_LOG(LogTemp, Warning, TEXT("Client_DMG"));
 
-	//OnTakeDamage();
+	currentHP = _currentHP;
 
 	if (hitVFX != nullptr)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), hitVFX, GetActorLocation());
 	}
+
+	if (currentHP <= 0)
+	{
+		bDie = true;
+		if (dieVFX != nullptr)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), dieVFX, GetActorLocation());
+		}
+		//Die();
+		// 클라이언트는 죽었을 때 카메라액터 스폰이랑 Destroy 자체를 안하고 있어서 켜둠
+		Destroy();
+	}
 }
 
 void AHidePlayer::ClientRPC_Damaged_Implementation(int32 _currentHP)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Client_DMG"));
 
-	currentHP = _currentHP;
-
-	if (currentHP <= 0)
-	{
-		if (IsLocallyControlled())
-		{
-
-		bDie = true;
-		ServerRPC_Die();
-		}
-	}
 }
 
 void AHidePlayer::ServerRPC_Die_Implementation()
@@ -582,12 +591,13 @@ void AHidePlayer::ServerRPC_Die_Implementation()
 		gs->ServerRPC_DecreaseHidePlayerCount();
 	}
 
+	PlayerController = Cast<APersonPlayerController>(Controller);
+
 	if (PlayerController)
 	{
 		bChangeCam = true;
 		PlayerController->ServerRPC_ChangeToSpectator(this);
-	}	
-	MultiRPC_Die();
+	}
 }
 
 void AHidePlayer::ClientRPC_Die_Implementation()

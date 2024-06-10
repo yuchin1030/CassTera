@@ -7,6 +7,7 @@
 #include "HidePlayer.h"
 #include "HidePlayerCamera.h"
 #include "EngineUtils.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/PlayerState.h>
 
 void ACassteraGameState::BeginPlay()
 {
@@ -83,7 +84,24 @@ void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _
 		timerWidget->SetHidePlayerCount();
 		if (hidePlayerCount <= 0)
 		{
-			ServerRPC_ShowResult2();
+			//ServerRPC_ShowResult2();
+			for (TObjectPtr<APlayerState> ps : PlayerArray)
+			{
+				auto* pawn = ps->GetPawn();
+				if (pawn->IsA<AHidePlayerCamera>())
+				{
+					Cast<AHidePlayerCamera>(pawn)->ServerRPC_Lose();
+				}
+				else if (pawn->IsA<ACassTeraCharacter>())
+				{
+					Cast<ACassTeraCharacter>(pawn)->ServerRPC_Win();
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("111111111111111111111111111111111111111 : %s"), *pawn->GetActorNameOrLabel());
+				}
+			}
+
 		}
 	}
 
@@ -192,20 +210,33 @@ void ACassteraGameState::ServerRPC_ShowResult2_Implementation()
 
 void ACassteraGameState::MultiRPC_ShowResult2_Implementation()
 {
-	for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
+	for (TObjectPtr<APlayerState> ps : PlayerArray)
 	{
-		hidePlayerCamera = *camera;
-		if (hidePlayerCamera)
+		auto* pawn = ps->GetPawn();
+		if (pawn->IsA<AHidePlayerCamera>())
 		{
-			hidePlayerCamera->ServerRPC_Lose();
+			Cast<AHidePlayerCamera>(pawn)->ServerRPC_Lose();
+		}
+		else if (pawn->IsA<ACassTeraCharacter>())
+		{
+			Cast<ACassTeraCharacter>(pawn)->ServerRPC_Win();
 		}
 	}
-	for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
-	{
-		cassTeraPlayer = *player;
-		if (cassTeraPlayer)
-		{
-			cassTeraPlayer->ServerRPC_Win();
-		}
-	}
+	
+	//for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
+	//{
+	//	hidePlayerCamera = *camera;
+	//	if (hidePlayerCamera)
+	//	{
+	//		hidePlayerCamera->ServerRPC_Lose();
+	//	}
+	//}
+	//for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
+	//{
+	//	cassTeraPlayer = *player;
+	//	if (cassTeraPlayer)
+	//	{
+	//		cassTeraPlayer->ServerRPC_Win();
+	//	}
+	//}
 }
