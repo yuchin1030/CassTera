@@ -86,7 +86,8 @@ void AGrenade::MultiRPC_BeforeBomb_Implementation(FVector _newVel, float _speed)
 	meshComp->SetSimulatePhysics(true);
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	
+	UE_LOG(LogTemp, Warning, TEXT("detach grenade"));
+
 	meshComp->SetPhysicsLinearVelocity(newVel * speed);
 
 
