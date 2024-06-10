@@ -247,6 +247,12 @@ void ACassTeraCharacter::AddMainUI()
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("%d"), bThrowing);
+	if (grenadeCount <= 0 && bThrowing)
+	{
+		bThrowing = false;
+	}
+
 	if (bThrowing || bFiring || false == bGameStart)
 		return;
 
@@ -292,12 +298,10 @@ void ACassTeraCharacter::ServerRPC_Fire_Implementation()
 			enemyPlayer->ServerRPC_Damaged();
 			UE_LOG(LogTemp, Warning, TEXT("ENEMY"));
 
-			UE_LOG(LogTemp, Warning, TEXT("char bool : %d"), enemyPlayer->bDie);
 
 			// 죽으면
 			if (enemyPlayer->currentHP == 0)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("bool : %d"), enemyPlayer->bDie);
 // 				enemyPlayer->ServerRPC_Die();
 				ServerRPC_KillUI();
 			}
@@ -364,7 +368,6 @@ void ACassTeraCharacter::MultiRPC_IMC_Implementation()
 
 void ACassTeraCharacter::ShowKillUI()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ssssssssss"));
 
 	// 킬 이미지, 텍스트 UI 띄우기
 	if (mainUI)
@@ -373,11 +376,9 @@ void ACassTeraCharacter::ShowKillUI()
 
 void ACassTeraCharacter::NotEnemyResult()
 {
-	UE_LOG(LogTemp, Warning, TEXT("2222222222"));
 
 	if (gs->timerWidget != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("333333333333333"));
 		
 		if (mainUI)
 		{
@@ -490,10 +491,12 @@ void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing, int32 _g
 	
 	FActorSpawnParameters params;
 	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
-	
+	UE_LOG(LogTemp, Warning, TEXT("spawn grenade"));
+
 	if (grenade)
 	{
 		grenade->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Weapon_L");
+		UE_LOG(LogTemp, Warning, TEXT("attach grenade"));
 	}
 }
 
