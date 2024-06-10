@@ -29,6 +29,6 @@ public:
 	UFUNCTION()
 	void ChangeToPlayer();
 
-	AHidePlayerCamera* spectator;
-	AHidePlayer* originPlayer;
+	class AHidePlayerCamera* spectator;
+	class AHidePlayer* originPlayer;
 };

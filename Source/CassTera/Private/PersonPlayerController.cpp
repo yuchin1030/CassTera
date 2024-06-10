@@ -104,11 +104,15 @@ void APersonPlayerController::Tick(float DeltaTime)
 			if (gs->resultWidget)
 			{
 				gs->ServerRPC_CountDown();
+				if (gs->countDown <= 0)
+				{
+// 					ClientTravel("/Game/Yohan/Maps/WaitngMap", ETravelType::TRAVEL_Absolute);
+				}
 			}
 		}
 		
 	}
-}
+} 
 
 
 
