@@ -211,7 +211,7 @@ public:
 	void ServerRPC_Damaged();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiRPC_Damaged();
+	void MultiRPC_Damaged(int32 _currentHP);
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_Damaged(int32 _currentHP);
 

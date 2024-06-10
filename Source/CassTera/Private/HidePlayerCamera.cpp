@@ -140,6 +140,7 @@ void AHidePlayerCamera::MultiRPC_MakeIMC_Implementation()
 
 void AHidePlayerCamera::ServerRPC_Lose_Implementation()
 {
+
 	MultiRPC_Lost();
 }
 
@@ -148,17 +149,17 @@ void AHidePlayerCamera::MultiRPC_Lost_Implementation()
 	if (IsLocallyControlled())
 	{
 
-	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
-	if (gs)
-	{
-		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
-		resultWidget->AddToViewport();
-		resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
-		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
-		bWin = false;
-//		gs->ServerRPC_ShowResult(bWin);
+		ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+		if (gs)
+		{
+			resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+			resultWidget->AddToViewport();
+			resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
+			resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
+			bWin = false;
+	//		gs->ServerRPC_ShowResult(bWin);
 
-	}
+		}
 	}
 }
 
