@@ -247,7 +247,8 @@ void ACassTeraCharacter::AddMainUI()
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%d"), bThrowing);
+	// 연타로 수류탄 던진 후에 총 안 쏴져서(bThrowing이 true 상태로 뜸), 
+	// --> 수류탄 0개 이하이면서 bThrowing이 true 면 bThrowing = false 로 강제로 만들어줌
 	if (grenadeCount <= 0 && bThrowing)
 	{
 		bThrowing = false;
@@ -473,6 +474,9 @@ void ACassTeraCharacter::ServerRPC_Throw_Implementation()
 	if (grenadeCount >= 0)
 	{
 		//grenade = Cast<AGrenade>(grenade_bp);
+		FActorSpawnParameters params;
+		grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
+		UE_LOG(LogTemp, Warning, TEXT("spawn grenade"));
 
 		MultiRPC_Throw(bThrowing, grenadeCount);
 	}
@@ -482,16 +486,15 @@ void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing, int32 _g
 {
 	bThrowing = _bThrowing;
 	grenadeCount = _grenadeCount;
-	//grenade = _grenade;
 
 	if (mainUI)
 		mainUI->ShowGrenadeCount();
 
 	gun->SetVisibility(false);
 	
-	FActorSpawnParameters params;
-	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);
-	UE_LOG(LogTemp, Warning, TEXT("spawn grenade"));
+	/*FActorSpawnParameters params;
+	grenade = GetWorld()->SpawnActor<AGrenade>(grenade_bp, gun->GetSocketTransform("Weapon_L"), params);*/
+	//UE_LOG(LogTemp, Warning, TEXT("spawn grenade"));
 
 	if (grenade)
 	{
@@ -502,6 +505,8 @@ void ACassTeraCharacter::MultiRPC_Throw_Implementation(bool _bThrowing, int32 _g
 
 void ACassTeraCharacter::ServerRPC_ThrowFin_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ServerRPC_ThrowFin"));
+
 	if (grenadeCount >= 0)
 	{
 		bThrowing = false;
@@ -520,12 +525,11 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 {
 	bThrowing = _bThrowing;
 
-	if (grenade != nullptr && !bThrowing)
-	{
-		PlayAnimMontage(throwMontage);
+	PlayAnimMontage(throwMontage);
 
-		gun->SetVisibility(true);
-	}
+	gun->SetVisibility(true);
+	UE_LOG(LogTemp, Warning, TEXT("MultiRPC_ThrowFin"));PlayAnimMontage(throwMontage);
+
 }
 
 void ACassTeraCharacter::ServerRPC_Lose_Implementation()
