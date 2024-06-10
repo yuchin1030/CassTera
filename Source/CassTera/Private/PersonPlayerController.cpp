@@ -13,7 +13,7 @@
 #include "PersonPlayerGameModeBase.h"
 #include "CassteraGameState.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
-#include "ChatWidget.h"
+#include "HideAndSeekGameInstance.h"
 
 APersonPlayerController::APersonPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -102,14 +102,7 @@ void APersonPlayerController::Tick(float DeltaTime)
 		if (HasAuthority() && IsLocalController())
 		{
 			gs->ServerRPC_CalculateTime();
-			if (gs->resultWidget)
-			{
-				gs->ServerRPC_CountDown();
-				if (gs->countDown <= 0)
-				{
-// 					ClientTravel("/Game/Yohan/Maps/WaitngMap", ETravelType::TRAVEL_Absolute);
-				}
-			}
+
 		}
 		
 	}

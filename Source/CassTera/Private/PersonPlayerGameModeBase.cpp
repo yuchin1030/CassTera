@@ -79,8 +79,6 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 
 		}
 	}
-
-
 }
 
 void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
@@ -92,12 +90,10 @@ void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
 		if (gs->minute == 0 && gs->seconds <= 0)
 		{
 			gs->ServerRPC_ShowResult();
+			gs->ServerRPC_CountDown();
 		}
 	}
-	
 
-
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), curSeaker);
 }
 
 

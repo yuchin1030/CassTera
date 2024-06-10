@@ -176,7 +176,8 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_DisableOutLiner();
 
-
+	UPROPERTY()
+	AHidePlayer* hidePlayer;
 	// ==========================================================================
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_WorngShot();

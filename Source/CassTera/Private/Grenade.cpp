@@ -127,7 +127,7 @@ void AGrenade::ServerRPC_Bomb_Implementation()
 					// Á×À¸¸é
 					if (enemy->currentHP == 0)
 					{
-						enemy->ServerRPC_Die();
+// 						enemy->ServerRPC_Die();
 
 						if (playerChar)
 						{
