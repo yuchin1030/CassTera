@@ -41,5 +41,10 @@ void UResultWidget::ShowResult(bool bWin)
 
 void UResultWidget::SetTimer()
 {
+	if (text_CountDown)
+	{
+		gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
+		text_CountDown->SetText(UKismetTextLibrary::Conv_IntToText(gs->countDown, false, true, 2, 2));
+	}
 }

@@ -148,7 +148,6 @@ void ACassTeraCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -531,6 +530,7 @@ void ACassTeraCharacter::MultiRPC_ThrowFin_Implementation(bool _bThrowing)
 void ACassTeraCharacter::ServerRPC_Lose_Implementation()
 {
 	ClientRPC_Lost();
+
 }
 
 void ACassTeraCharacter::ClientRPC_Lost_Implementation()
@@ -539,10 +539,13 @@ void ACassTeraCharacter::ClientRPC_Lost_Implementation()
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget = gs->resultWidget;
 		resultWidget->AddToViewport();
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
 		bWin = false;
+// 		ServerRPC_CountDown();
+
 //		gs->ServerRPC_ShowResult(bWin);
 	}
 }
@@ -551,6 +554,7 @@ void ACassTeraCharacter::ClientRPC_Lost_Implementation()
 void ACassTeraCharacter::ServerRPC_Win_Implementation()
 {
 	ClientRPC_Win();
+
 }
 
 
@@ -560,10 +564,13 @@ void ACassTeraCharacter::ClientRPC_Win_Implementation()
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget = gs->resultWidget;
 		resultWidget->AddToViewport();
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
+// 		ServerRPC_CountDown();
+
 //		gs->ServerRPC_ShowResult(bWin);
 	}
 }
@@ -660,3 +667,4 @@ void ACassTeraCharacter::ChangePersonPlayerMovement()
 		bGameStart ? mainUI->HideStartUI() : mainUI->ShowStartUI();
 	}
 }
+

@@ -30,6 +30,25 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_DecreaseTime(bool _bDecreasing, int32 _minute, int32 _seconds, int32 _minusSeconds, float _pgPercent, float _totalSeconds);
 
+	UFUNCTION(Server,Reliable)
+	void ServerRPC_CountDown();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_CountDown(int32 _Count);
+
+	UPROPERTY()
+	int32 countDown = 10;
+
+	UPROPERTY()
+	bool bCount;
+
+	UPROPERTY()
+	bool bResult;
+
+	UPROPERTY()
+	FTimerHandle countHandle;
+
+
 	UPROPERTY()
 	class ACassTeraCharacter* cassTeraPlayer;
 	UPROPERTY()

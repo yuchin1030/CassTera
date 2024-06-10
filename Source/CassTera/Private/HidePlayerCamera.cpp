@@ -51,7 +51,7 @@ void AHidePlayerCamera::Tick(float DeltaTime)
 	AddControllerYawInput(deltaRotation.Yaw);
 	AddControllerPitchInput(deltaRotation.Pitch);
 	AddControllerRollInput(deltaRotation.Roll);
-	
+
 }
 
 void AHidePlayerCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -153,10 +153,12 @@ void AHidePlayerCamera::MultiRPC_Lost_Implementation()
 		if (gs)
 		{
 			resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+			resultWidget = gs->resultWidget;
 			resultWidget->AddToViewport();
 			resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
 			resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
 			bWin = false;
+// 			ServerRPC_CountDown();
 	//		gs->ServerRPC_ShowResult(bWin);
 
 		}
@@ -177,11 +179,15 @@ void AHidePlayerCamera::MultiRPC_Win_Implementation()
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget = gs->resultWidget;
 		resultWidget->AddToViewport();
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
+// 		ServerRPC_CountDown();
+
 //		gs->ServerRPC_ShowResult(bWin);
 	}
 	}
 }
+

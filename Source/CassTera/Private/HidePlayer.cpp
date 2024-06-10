@@ -138,8 +138,6 @@ void AHidePlayer::Tick(float DeltaTime)
 		AddControllerYawInput(deltaRotation.Yaw);
 		AddControllerPitchInput(deltaRotation.Pitch);
 	}
-	
-
 
 }
 
@@ -632,14 +630,17 @@ void AHidePlayer::MultiRPC_Win_Implementation()
 	if (gs)
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+		resultWidget = gs->resultWidget;
 		resultWidget->AddToViewport();
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
+// 		ServerRPC_CountDown();
 //		gs->ServerRPC_ShowResult(bWin);
 	}
 	}
 }
+
 
 //void AHidePlayer::ServerRPC_SetTimer_Implementation()
 //{

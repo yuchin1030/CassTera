@@ -101,6 +101,10 @@ void APersonPlayerController::Tick(float DeltaTime)
 		if (HasAuthority() && IsLocalController())
 		{
 			gs->ServerRPC_CalculateTime();
+			if (gs->resultWidget)
+			{
+				gs->ServerRPC_CountDown();
+			}
 		}
 		
 	}

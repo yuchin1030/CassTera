@@ -36,39 +36,7 @@ void ACassteraGameState::MultiRPC_HidePlayerCount_Implementation(int32 _hidePlay
 	}
 }
 
-void ACassteraGameState::ServerRPC_ShowResult_Implementation()
-{	
 
-	MultiRPC_ShowResult();
-}
-
-void ACassteraGameState::MultiRPC_ShowResult_Implementation()
-{
-		for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
-		{
-			hidePlayerCamera = *camera;
-			if (hidePlayerCamera)
-			{
-				hidePlayerCamera->ServerRPC_Win();
-			}
-		}
-		for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
-		{
-			hidePlayer = *h;
-			if (hidePlayer)
-			{
-				hidePlayer->ServerRPC_Win();
-			}
-		}
-		for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
-		{
-			cassTeraPlayer = *player;
-			if (cassTeraPlayer)
-			{
-				cassTeraPlayer->ServerRPC_Lose();
-			}
-		}
-}
 
 void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
 {
@@ -98,7 +66,7 @@ void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _
 				}
 				else
 				{
-					UE_LOG(LogTemp, Warning, TEXT("111111111111111111111111111111111111111 : %s"), *pawn->GetActorNameOrLabel());
+// 					UE_LOG(LogTemp, Warning, TEXT("111111111111111111111111111111111111111 : %s"), *pawn->GetActorNameOrLabel());
 				}
 			}
 
@@ -153,6 +121,29 @@ void ACassteraGameState::MultiRPC_DecreaseTime_Implementation(bool _bDecreasing,
 
 }
 
+void ACassteraGameState::ServerRPC_CountDown_Implementation()
+{
+	if (!bCount)
+	{
+		bCount = true;
+
+		GetWorld()->GetTimerManager().SetTimer(countHandle, [&]() {
+			countDown -= 1;
+			MultiRPC_CountDown(countDown);
+			}, 1.0f, true);
+	}
+}
+
+void ACassteraGameState::MultiRPC_CountDown_Implementation(int32 _Count)
+{
+	countDown = _Count;
+	if (resultWidget)
+	{
+		resultWidget->SetTimer();
+	}
+	bCount = false;
+}
+
 void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 {
 	if (bClearTimer == false)
@@ -202,7 +193,38 @@ void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer
 
 	bClearTimer = false;
 }
+void ACassteraGameState::ServerRPC_ShowResult_Implementation()
+{
+	MultiRPC_ShowResult();
+}
 
+void ACassteraGameState::MultiRPC_ShowResult_Implementation()
+{
+	for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
+	{
+		hidePlayerCamera = *camera;
+		if (hidePlayerCamera)
+		{
+			hidePlayerCamera->ServerRPC_Win();
+		}
+	}
+	for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
+	{
+		hidePlayer = *h;
+		if (hidePlayer)
+		{
+			hidePlayer->ServerRPC_Win();
+		}
+	}
+	for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
+	{
+		cassTeraPlayer = *player;
+		if (cassTeraPlayer)
+		{
+			cassTeraPlayer->ServerRPC_Lose();
+		}
+	}
+}
 void ACassteraGameState::ServerRPC_ShowResult2_Implementation()
 {
 	MultiRPC_ShowResult2();
