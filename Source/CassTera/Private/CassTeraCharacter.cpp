@@ -96,7 +96,15 @@ void ACassTeraCharacter::BeginPlay()
  	if (IsLocallyControlled())
  	{
 		ServerRPC_AddMainUI();
-		ServerRPC_DisableOutLiner();
+
+		// 타이밍 문제 때문에 이미 ServerRPC_DisableOutLiner 이 호출 되고 HidePlayer 가 로드되는 문제 발생
+		// ==> HidePlayer인지 체크 불가. 
+		// 따라서 로딩 시간을 넉넉히 줘서 HidePlayer 다 찾을 수 있게 함.
+		FTimerHandle checkhandler;
+		GetWorldTimerManager().SetTimer(checkhandler, [&]() {
+
+			ServerRPC_DisableOutLiner();
+		}, 5.0f, false);
  	}
 
 	//ServerRPC_AddTimerUI();
@@ -606,25 +614,28 @@ void ACassTeraCharacter::ClientRPC_AddMainUI_Implementation()
 
 void ACassTeraCharacter::ServerRPC_DisableOutLiner_Implementation()
 {
-	ClientRPC_DisableOutLiner();
+	ClientRPC_DisableOutLiner();	
 }
 
 void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 {
 	if (IsLocallyControlled())
 	{
-
 		for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 		{
-			AHidePlayer* hidePlayer = *it;
+			hidePlayer = *it;
 
 			if (hidePlayer)
 			{
 				hidePlayer->meshComp->SetOverlayMaterial(nullptr);
+
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("cant find hideplayer"));
 			}
 		}
 	}
-	
 }
 
 void ACassTeraCharacter::ServerRPC_ChangeMovement_Implementation()
