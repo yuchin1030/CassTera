@@ -26,4 +26,10 @@ public:
 	// 대기방 게임모드
 	UPROPERTY()
 	class AWatinGameMode* gm;
+
+	UPROPERTY()
+	class AWaitingRoomGameState* gs;
+
+	UFUNCTION()
+	void TimerSet();
 };
