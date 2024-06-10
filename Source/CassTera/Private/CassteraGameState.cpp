@@ -8,6 +8,7 @@
 #include "HidePlayerCamera.h"
 #include "EngineUtils.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/PlayerState.h>
+#include "HideAndSeekGameInstance.h"
 
 void ACassteraGameState::BeginPlay()
 {
@@ -42,6 +43,11 @@ void ACassteraGameState::ServerRPC_DecreaseHidePlayerCount_Implementation()
 {
 	hidePlayerCount -= 1;
 	MultiRPC_DecreaseHidePlayerCount(hidePlayerCount);
+	if (hidePlayerCount <= 0)
+	{
+		ServerRPC_CountDown();
+
+	}
 }
 
 void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _hidePlayer)
@@ -68,6 +74,7 @@ void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _
 				{
 // 					UE_LOG(LogTemp, Warning, TEXT("111111111111111111111111111111111111111 : %s"), *pawn->GetActorNameOrLabel());
 				}
+
 			}
 
 		}
@@ -123,15 +130,24 @@ void ACassteraGameState::MultiRPC_DecreaseTime_Implementation(bool _bDecreasing,
 
 void ACassteraGameState::ServerRPC_CountDown_Implementation()
 {
-	if (!bCount)
-	{
+	FTimerHandle goHandle;
+	GetWorld()->GetTimerManager().SetTimer(goHandle, [&]() {
 		bCount = true;
+		GetWorld()->GetTimerManager().ClearTimer(countHandle);
+		//자꾸터져서 주석처리
+// 		GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/WaitngMap?listen"));
 
-		GetWorld()->GetTimerManager().SetTimer(countHandle, [&]() {
-			countDown -= 1;
-			MultiRPC_CountDown(countDown);
-			}, 1.0f, true);
-	}
+	}, 10.f, false);
+
+	GetWorld()->GetTimerManager().SetTimer(countHandle, [&]() {
+		countDown -= 1;
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 카운트다운 끝나고 serverTravel 하면 여기서 터짐, 이 타이머핸들을 멈춰줘야 하는데 흠 
+		MultiRPC_CountDown(countDown);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	}, 1.0f, true);
+
 }
 
 void ACassteraGameState::MultiRPC_CountDown_Implementation(int32 _Count)
@@ -141,7 +157,7 @@ void ACassteraGameState::MultiRPC_CountDown_Implementation(int32 _Count)
 	{
 		resultWidget->SetTimer();
 	}
-	bCount = false;
+// 	bCount = false;
 }
 
 void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
@@ -195,17 +211,20 @@ void ACassteraGameState::MultiRPC_CalculateTime_Implementation(bool _bClearTimer
 }
 void ACassteraGameState::ServerRPC_ShowResult_Implementation()
 {
+	bCount = true;
 	MultiRPC_ShowResult();
 }
 
 void ACassteraGameState::MultiRPC_ShowResult_Implementation()
 {
+	bCount = true;
 	for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
 	{
 		hidePlayerCamera = *camera;
 		if (hidePlayerCamera)
 		{
 			hidePlayerCamera->ServerRPC_Win();
+
 		}
 	}
 	for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
@@ -226,12 +245,14 @@ void ACassteraGameState::MultiRPC_ShowResult_Implementation()
 	}
 }
 void ACassteraGameState::ServerRPC_ShowResult2_Implementation()
-{
+{	bCount = true;
 	MultiRPC_ShowResult2();
+	ServerRPC_CountDown();
 }
 
 void ACassteraGameState::MultiRPC_ShowResult2_Implementation()
 {
+	bCount = true;
 	for (TObjectPtr<APlayerState> ps : PlayerArray)
 	{
 		auto* pawn = ps->GetPawn();
@@ -244,21 +265,5 @@ void ACassteraGameState::MultiRPC_ShowResult2_Implementation()
 			Cast<ACassTeraCharacter>(pawn)->ServerRPC_Win();
 		}
 	}
-	
-	//for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
-	//{
-	//	hidePlayerCamera = *camera;
-	//	if (hidePlayerCamera)
-	//	{
-	//		hidePlayerCamera->ServerRPC_Lose();
-	//	}
-	//}
-	//for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
-	//{
-	//	cassTeraPlayer = *player;
-	//	if (cassTeraPlayer)
-	//	{
-	//		cassTeraPlayer->ServerRPC_Win();
-	//	}
-	//}
+
 }

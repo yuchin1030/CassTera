@@ -86,6 +86,13 @@ void UHideAndSeekGameInstance::OnCreateSessionCompleted(FName sessionName, bool 
 	}
 }
 
+bool UHideAndSeekGameInstance::IsInRoom()
+{
+	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
+
+	return sessionInterface->IsPlayerInSession(FName(*mySessionName), *netID);
+}
+
 void UHideAndSeekGameInstance::FindOtherSessions()
 {
 	if (OnMySessionSearchFinishedDelegate.IsBound())

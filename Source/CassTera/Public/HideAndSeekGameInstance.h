@@ -93,4 +93,6 @@ public:
 	// 방이름을 한글로 하기 위함
 	FString StringBase64Encode(const FString& str);
 	FString StringBase64Decode(const FString& str);
+
+	bool IsInRoom();
 };
