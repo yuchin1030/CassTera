@@ -106,7 +106,10 @@ void ACassTeraCharacter::BeginPlay()
 			ServerRPC_DisableOutLiner();
 		}, 5.0f, false);
  	}
-
+	if(HasAuthority())
+	{
+		ClientRPC_DisableOutLiner();
+	}
 	//ServerRPC_AddTimerUI();
 	auto pc = Cast<APlayerController>(Controller);
 	if (pc)
