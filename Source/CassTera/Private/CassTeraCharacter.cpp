@@ -599,23 +599,23 @@ void ACassTeraCharacter::ClientRPC_AddMainUI_Implementation()
 
 void ACassTeraCharacter::ServerRPC_DisableOutLiner_Implementation()
 {
-	MultiRPC_DisableOutLiner();
+	ClientRPC_DisableOutLiner();
 }
 
-void ACassTeraCharacter::MultiRPC_DisableOutLiner_Implementation()
+void ACassTeraCharacter::ClientRPC_DisableOutLiner_Implementation()
 {
 	if (IsLocallyControlled())
 	{
 
-	for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
-	{
-		AHidePlayer* hidePlayer = *it;
-
-		if (hidePlayer)
+		for (TActorIterator<AHidePlayer> it(GetWorld()); it; ++it)
 		{
-			hidePlayer->meshComp->SetOverlayMaterial(nullptr);
+			AHidePlayer* hidePlayer = *it;
+
+			if (hidePlayer)
+			{
+				hidePlayer->meshComp->SetOverlayMaterial(nullptr);
+			}
 		}
-	}
 	}
 	
 }
