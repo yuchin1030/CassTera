@@ -59,6 +59,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ia_throw;
 
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* ia_chat;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* ia_chatEnter;
+
+	bool bChatEnabled;
+
+	UFUNCTION()
+	void OnIAChatEnter(const FInputActionValue& value);
+
+	UFUNCTION()
+	void OnIAChat(const FInputActionValue& value);
+
 	UPROPERTY(EditDefaultsOnly, Category = MySettings)
 	UParticleSystem* fireVFX;
 
@@ -267,6 +281,19 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	// Ã¤ÆÃ
+	UPROPERTY(EditDefaultsOnly, Category = "MySetting")
+	TSubclassOf<class UChatWidget> Chat_BP;
+
+	UPROPERTY()
+	class UChatWidget* chatUI;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SendMsg(const FString& msg);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_SendMsg(const FString& msg);
 
 };
 

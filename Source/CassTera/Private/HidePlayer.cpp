@@ -21,6 +21,7 @@
 #include "CassteraGameState.h"
 #include "ResultWidget.h"
 #include "Components/TextBlock.h"
+#include "ChatWidget.h"
 
 
 AHidePlayer::AHidePlayer()
@@ -92,6 +93,12 @@ void AHidePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// 채팅 UI 추가
+	if (IsLocallyControlled())
+	{
+		ServerRPC_AddChatUI();
+	}
+
 	if(HasAuthority())
 	{ 
 		RandomMesh();
@@ -154,6 +161,10 @@ void AHidePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(ia_lockLocation, ETriggerEvent::Started, this, &AHidePlayer::OnIALockLocation);
 		EnhancedInputComponent->BindAction(ia_sounding, ETriggerEvent::Started, this, &AHidePlayer::OnIASounding);
 		EnhancedInputComponent->BindAction(ia_changeCam, ETriggerEvent::Started, this, &AHidePlayer::OnIAChangeCamera);
+		
+		// 채팅
+		EnhancedInputComponent->BindAction(ia_chat, ETriggerEvent::Started, this, &AHidePlayer::OnIAChat);
+		EnhancedInputComponent->BindAction(ia_chatEnter, ETriggerEvent::Started, this, &AHidePlayer::OnIAChatEnter);
 	}
 }
 
@@ -661,3 +672,76 @@ void AHidePlayer::MultiRPC_Win_Implementation()
 //		playerGameTimerwidget->SetTimer();
 //	}
 //}
+// 채팅
+void AHidePlayer::ServerRPC_SendMsg_Implementation(const FString& msg)
+{
+	MultiRPC_SendMsg(msg);
+}
+
+void AHidePlayer::MultiRPC_SendMsg_Implementation(const FString& msg)
+{
+	// 로컬 플레이어 컨트롤러를 가져와서 chatUI의 addMsg호출
+	auto* pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (pc)
+	{
+		pc->chatUI->AddMsg(msg);
+	}
+}
+
+void AHidePlayer::ServerRPC_AddChatUI_Implementation()
+{
+	ClientRPC_AddChatUI();
+}
+
+
+
+void AHidePlayer::ClientRPC_AddChatUI_Implementation()
+{
+	AddChatUI();
+}
+
+void AHidePlayer::AddChatUI()
+{
+	// 내가 조작하는 주인공만 UI를 생성하고싶다.
+	//MyController = Cast<ACassTeraPlayerController>(Controller);
+	auto* pc = Cast<APersonPlayerController>(Controller);
+	
+	// 채팅 추가
+	if (nullptr == pc->chatUI)
+	{
+		pc->chatUI = Cast<UChatWidget>(CreateWidget(GetWorld(), Chat_BP));
+		pc->chatUI->AddToViewport();
+	}
+	chatUI = pc->chatUI;
+}
+
+void AHidePlayer::OnIAChatEnter(const FInputActionValue& value)
+{
+	auto* pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
+	//if(pc)
+	//pc->chatUI->OnMyClickSendMsg();
+}
+
+// 채팅 IA 키 눌렸을 때 실행될 기능
+void AHidePlayer::OnIAChat(const FInputActionValue& value)
+{
+	auto* pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (nullptr == pc)
+	{
+		return;
+	}
+
+	bChatEnabled = !bChatEnabled;
+
+	if (bChatEnabled)
+	{
+		pc->SetInputMode(FInputModeGameAndUI());
+		pc->SetShowMouseCursor(true);
+	}
+	else
+	{
+		pc->chatUI->OnMyClickSendMsg();
+		pc->SetInputMode(FInputModeGameOnly());
+		pc->SetShowMouseCursor(false);
+	}
+}

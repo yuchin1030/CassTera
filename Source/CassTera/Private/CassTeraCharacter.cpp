@@ -28,6 +28,7 @@
 #include "EngineUtils.h"
 #include "CassteraGameState.h"
 #include "ResultWidget.h"
+#include "ChatWidget.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -83,6 +84,7 @@ ACassTeraCharacter::ACassTeraCharacter()
 	gun->SetRelativeLocation(FVector(6.974221, 17.777489, 3.074630));
 	gun->SetRelativeRotation(FRotator(-1.104704, 63.238364, 1.899696));
 }
+
 
 void ACassTeraCharacter::BeginPlay()
 {
@@ -150,6 +152,8 @@ void ACassTeraCharacter::Tick(float DeltaSeconds)
 
 }
 
+
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -176,6 +180,10 @@ void ACassTeraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		// Throw
 		EnhancedInputComponent->BindAction(ia_throw, ETriggerEvent::Started, this, &ACassTeraCharacter::Throw);
 		EnhancedInputComponent->BindAction(ia_throw, ETriggerEvent::Completed, this, &ACassTeraCharacter::ThrowFinish);
+
+		// 채팅
+		EnhancedInputComponent->BindAction(ia_chat, ETriggerEvent::Started, this, &ACassTeraCharacter::OnIAChat);
+		EnhancedInputComponent->BindAction(ia_chatEnter, ETriggerEvent::Started, this, &ACassTeraCharacter::OnIAChatEnter);
 
 	}
 	else
@@ -241,7 +249,13 @@ void ACassTeraCharacter::AddMainUI()
 		UE_LOG(LogTemp, Error, TEXT("main ui viewport"));
 
 	}
-
+	// 채팅 추가
+	if (nullptr == pc->chatUI)
+	{
+		pc->chatUI = Cast<UChatWidget>(CreateWidget(GetWorld(), Chat_BP));
+		pc->chatUI->AddToViewport();
+	}
+	chatUI = pc->chatUI;
 }
 
 void ACassTeraCharacter::Fire(const FInputActionValue& Value)
@@ -683,3 +697,49 @@ void ACassTeraCharacter::ChangePersonPlayerMovement()
 	}
 }
 
+// 채팅
+void ACassTeraCharacter::ServerRPC_SendMsg_Implementation(const FString& msg)
+{
+	MultiRPC_SendMsg(msg);
+}
+
+void ACassTeraCharacter::MultiRPC_SendMsg_Implementation(const FString& msg)
+{
+	// 로컬 플레이어 컨트롤러를 가져와서 chatUI의 addMsg호출
+	auto* pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (pc)
+	{
+		pc->chatUI->AddMsg(msg);
+	}
+}
+
+void ACassTeraCharacter::OnIAChatEnter(const FInputActionValue& value)
+{
+	auto* pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
+	//if(pc)
+	//pc->chatUI->OnMyClickSendMsg();
+}
+
+// 채팅 IA 키 눌렸을 때 실행될 기능
+void ACassTeraCharacter::OnIAChat(const FInputActionValue& value)
+{
+	auto* pc = Cast<APersonPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (nullptr == pc)
+	{
+		return;
+	}
+	
+	bChatEnabled = !bChatEnabled;
+	
+	if (bChatEnabled)
+	{	
+		pc->SetInputMode(FInputModeGameAndUI());
+		pc->SetShowMouseCursor(true);
+	}
+	else
+	{
+		pc->chatUI->OnMyClickSendMsg();
+		pc->SetInputMode(FInputModeGameOnly());
+		pc->SetShowMouseCursor(false);
+	}
+}

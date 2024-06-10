@@ -223,4 +223,40 @@ public:
 	void MultiRPC_SetTimer();*/
 
 
+	// 채팅
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* ia_chat;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* ia_chatEnter;
+
+	bool bChatEnabled;
+
+	UFUNCTION()
+	void OnIAChatEnter(const FInputActionValue& value);
+
+	UFUNCTION()
+	void OnIAChat(const FInputActionValue& value);
+
+	// 채팅
+	UPROPERTY(EditDefaultsOnly, Category = "MySetting")
+	TSubclassOf<class UChatWidget> Chat_BP;
+
+	UPROPERTY()
+	class UChatWidget* chatUI;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SendMsg(const FString& msg);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_SendMsg(const FString& msg);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_AddChatUI();
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_AddChatUI();
+
+	UFUNCTION()
+	void AddChatUI();
 };

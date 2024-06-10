@@ -3,6 +3,7 @@
 
 #include "WaitingRoomGameState.h"
 #include "WaitingRoomTimerWidget.h"
+#include "ChatWidget.h"
 
 void AWaitingRoomGameState::BeginPlay()
 {
@@ -16,7 +17,8 @@ void AWaitingRoomGameState::BeginPlay()
 		// 뷰포트에 붙힌다
 		WaitingTimerUI->AddToViewport();
 	}
-}
+	
+}	
 
 void AWaitingRoomGameState::ServerRPC_SetTimer_Implementation(float DeltaSeconds)
 {
@@ -40,3 +42,5 @@ void AWaitingRoomGameState::MultiRPC_SetTimer_Implementation(float second)
 		// 멀티RPC에서 시간 동기화 및 타이머 UI의 숫자 반영
 	}
 }
+
+

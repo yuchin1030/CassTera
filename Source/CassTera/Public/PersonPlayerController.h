@@ -32,6 +32,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UMainUI> WBP_MainUI;
 
+	// Ã¤ÆÃ
+	UPROPERTY()
+	class UChatWidget* chatUI;
+
 // 	UFUNCTION(Server, Reliable)
 // 	void ServerRPC_CreateTimerUI();
 // 
@@ -45,7 +49,9 @@ protected:
 
 	virtual void OnPossess(APawn* aPawn) override;
 	
-	virtual void Tick(float DeltaTime);
+	virtual void Tick(float DeltaTime) override;
+
+
 
 	UPROPERTY()
 	class ACassteraGameState* gs;

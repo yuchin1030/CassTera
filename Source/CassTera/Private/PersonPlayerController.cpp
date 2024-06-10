@@ -13,6 +13,7 @@
 #include "PersonPlayerGameModeBase.h"
 #include "CassteraGameState.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include "ChatWidget.h"
 
 APersonPlayerController::APersonPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
