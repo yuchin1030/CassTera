@@ -63,6 +63,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Win();
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sound");
+	class USoundBase* winSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound");
+	class USoundBase* loseSound;
+
 
 	UPROPERTY(EditDefaultsOnly, Category = HidePlayer)
 	TSubclassOf<class UResultWidget> wbp_resultWidget;

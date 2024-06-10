@@ -201,6 +201,14 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Win();
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* winSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* gameStartSound;
+
+	 
+
+
 
 	//UFUNCTION(Server, Reliable)
 	//void ServerRPC_AttachUI();

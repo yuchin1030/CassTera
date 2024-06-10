@@ -148,7 +148,11 @@ void AHidePlayerCamera::MultiRPC_Lost_Implementation()
 {
 	if (IsLocallyControlled())
 	{
+		if (loseSound)
+		{
+		UGameplayStatics::PlaySound2D(GetWorld(), loseSound);
 
+		}
 		ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 		if (gs)
 		{
@@ -179,6 +183,10 @@ void AHidePlayerCamera::MultiRPC_Win_Implementation()
 {
 	if (IsLocallyControlled())
 	{
+		if (winSound)
+		{
+		UGameplayStatics::PlaySound2D(GetWorld(), winSound);
+		}
 
 	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)

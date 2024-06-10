@@ -22,6 +22,8 @@
 #include "ResultWidget.h"
 #include "Components/TextBlock.h"
 #include "ChatWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 
 
 AHidePlayer::AHidePlayer()
@@ -93,6 +95,11 @@ void AHidePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (gameStartSound)
+	{
+
+	UGameplayStatics::PlaySound2D(GetWorld(), gameStartSound);
+	}
 	// 채팅 UI 추가
 	if (IsLocallyControlled())
 	{
@@ -637,6 +644,11 @@ void AHidePlayer::MultiRPC_Win_Implementation()
 {
 	if (IsLocallyControlled())
 	{
+		if (winSound)
+		{
+		UGameplayStatics::PlaySound2D(GetWorld(), winSound);
+
+		}
 	ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{

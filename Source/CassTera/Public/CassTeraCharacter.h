@@ -65,6 +65,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ia_chatEnter;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* gunShot;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* GameStartSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* winSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* loseSound;
+
+
 	bool bChatEnabled;
 
 	UFUNCTION()

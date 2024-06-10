@@ -29,6 +29,8 @@
 #include "CassteraGameState.h"
 #include "ResultWidget.h"
 #include "ChatWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -93,6 +95,7 @@ void ACassTeraCharacter::BeginPlay()
 
 	gs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
+	UGameplayStatics::PlaySound2D(GetWorld(), GameStartSound);
 	// 컨트롤러에서도 OnPossess 에서 create 하니까 mainUI 널 뜬거였음.. 왜지? -> 강사님께 여쭤볼예정
 	// PossessedBy 에 addmainui 있어서 안됐었음... 
  	if (IsLocallyControlled())
@@ -358,6 +361,11 @@ void ACassTeraCharacter::MultiRPC_Fire_Implementation(FHitResult HitInfo, bool b
 {
 
 	PlayAnimMontage(FireMontage);
+	if (gunShot)
+	{
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), gunShot,GetActorLocation());
+	}
 
 }
 
@@ -567,6 +575,11 @@ void ACassTeraCharacter::ClientRPC_Lost_Implementation()
 	gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
 	{
+		if (loseSound)
+		{
+		UGameplayStatics::PlaySound2D(GetWorld(), loseSound);
+
+		}
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 		resultWidget = gs->resultWidget;
 		resultWidget->AddToViewport();
@@ -597,7 +610,12 @@ void ACassTeraCharacter::ClientRPC_Win_Implementation()
 {
 	gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 	if (gs)
-	{
+	{	
+		if (winSound)
+		{
+		UGameplayStatics::PlaySound2D(GetWorld(), winSound);
+
+		}
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 		resultWidget = gs->resultWidget;
 		resultWidget->AddToViewport();

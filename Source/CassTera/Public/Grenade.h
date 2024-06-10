@@ -61,4 +61,6 @@ public:
 	UPROPERTY()
 	class ACassteraGameState* gs;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* explosionSound;
 };

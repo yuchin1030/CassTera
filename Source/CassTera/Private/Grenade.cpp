@@ -11,6 +11,8 @@
 #include "HidePlayer.h"
 #include <../../../../../../../Source/Runtime/Engine/Public/EngineUtils.h>
 #include "CassteraGameState.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 
 AGrenade::AGrenade()
 {
@@ -99,7 +101,11 @@ void AGrenade::ServerRPC_Bomb_Implementation()
 
 	FTimerHandle bombHandler;
 	GetWorld()->GetTimerManager().SetTimer(bombHandler, [&] () {
+		if (explosionSound)
+		{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), explosionSound, GetActorLocation());
 
+		}
 		bBeforeBomb = true;
 
 		TArray<FOverlapResult> hitsArr;
