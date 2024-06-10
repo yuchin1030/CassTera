@@ -635,6 +635,11 @@ void AHidePlayer::MultiRPC_Win_Implementation()
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
+		PlayerController = Cast<APersonPlayerController>(Controller);
+		if (PlayerController)
+		{
+			PlayerController->SetShowMouseCursor(true);
+		}
 // 		ServerRPC_CountDown();
 //		gs->ServerRPC_ShowResult(bWin);
 	}

@@ -556,6 +556,12 @@ void ACassTeraCharacter::ClientRPC_Lost_Implementation()
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
 		bWin = false;
+
+		auto* PlayerController = Cast<APersonPlayerController>(Controller);
+		if (PlayerController)
+		{
+			PlayerController->SetShowMouseCursor(true);
+		}
 // 		ServerRPC_CountDown();
 
 //		gs->ServerRPC_ShowResult(bWin);
@@ -581,6 +587,11 @@ void ACassTeraCharacter::ClientRPC_Win_Implementation()
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
+		auto* PlayerController = Cast<APersonPlayerController>(Controller);
+		if (PlayerController)
+		{
+			PlayerController->SetShowMouseCursor(true);
+		}
 // 		ServerRPC_CountDown();
 
 //		gs->ServerRPC_ShowResult(bWin);

@@ -158,6 +158,11 @@ void AHidePlayerCamera::MultiRPC_Lost_Implementation()
 			resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
 			resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
 			bWin = false;
+			PlayerController = Cast<APersonPlayerController>(Controller);
+			if (PlayerController)
+			{
+				PlayerController->SetShowMouseCursor(true);
+			}
 // 			ServerRPC_CountDown();
 	//		gs->ServerRPC_ShowResult(bWin);
 
@@ -184,6 +189,11 @@ void AHidePlayerCamera::MultiRPC_Win_Implementation()
 		resultWidget->text_Win->SetVisibility(ESlateVisibility::Visible);
 		resultWidget->text_Lose->SetVisibility(ESlateVisibility::Hidden);
 		bWin = true;
+		PlayerController = Cast<APersonPlayerController>(Controller);
+		if (PlayerController)
+		{
+			PlayerController->SetShowMouseCursor(true);
+		}
 // 		ServerRPC_CountDown();
 
 //		gs->ServerRPC_ShowResult(bWin);
