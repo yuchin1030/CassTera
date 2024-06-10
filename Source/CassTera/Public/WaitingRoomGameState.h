@@ -17,6 +17,7 @@ class CASSTERA_API AWaitingRoomGameState : public AGameStateBase
 public:
 	virtual void BeginPlay() override;
 
+
 	// 타이머 ui
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UWaitingRoomTimerWidget> WaitingTimerUI_BP;
@@ -25,6 +26,7 @@ public:
 	class UWaitingRoomTimerWidget* WaitingTimerUI;
 
 	// 시작 타이머
+	UPROPERTY()
 	float StartTimer = 30.0f;
 
 	UFUNCTION(Server, Reliable)

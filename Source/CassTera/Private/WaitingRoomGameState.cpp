@@ -4,6 +4,7 @@
 #include "WaitingRoomGameState.h"
 #include "WaitingRoomTimerWidget.h"
 #include "ChatWidget.h"
+#include "Net/UnrealNetwork.h"
 
 void AWaitingRoomGameState::BeginPlay()
 {
@@ -20,10 +21,12 @@ void AWaitingRoomGameState::BeginPlay()
 	
 }	
 
+
 void AWaitingRoomGameState::ServerRPC_SetTimer_Implementation(float DeltaSeconds)
 {
 	// 게임시작 타이머 돌리기
 	float sec = StartTimer - DeltaSeconds;
+	sec = FMath::Clamp(sec, 0, StartTimer);
 
 	// 클라이언트와 시간 동기화
 	MultiRPC_SetTimer(sec);

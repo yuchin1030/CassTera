@@ -38,6 +38,8 @@ void APersonPlayerGameModeBase::BeginPlay()
 	{
 		resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
 	}
+
+	
 }
 
 void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
@@ -45,18 +47,21 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 	// 현재 술래 숫자가 최대 술래 숫자보다 작다면
 	if (curSeaker < maxSeaker)
 	{
-		// 랜덤으로 역할을 배정한다
-		if (playerRate < FMath::RandRange(0, 100))
-		{
-			DefaultPawnClass = SeakPlayerPawn;
-			curSeaker++;
+		DefaultPawnClass = SeakPlayerPawn;
+		curSeaker += 1;
+
+		//// 랜덤으로 역할을 배정한다
+		//if (playerRate < FMath::RandRange(0, 100))
+		//{
+		//	DefaultPawnClass = SeakPlayerPawn;
+		//	curSeaker++;
 
 
-		}
-		else
-		{
-			DefaultPawnClass = HidePlayerPawn;
-		}
+		//}
+		//else
+		//{
+		//	DefaultPawnClass = HidePlayerPawn;
+		//}
 
 		
 	}
