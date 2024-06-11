@@ -669,6 +669,40 @@ void AHidePlayer::MultiRPC_Win_Implementation()
 	}
 }
 
+void AHidePlayer::ServerRPC_Lose_Implementation()
+{
+	MultiRPC_Lost();
+}
+
+void AHidePlayer::MultiRPC_Lost_Implementation()
+{
+	if (IsLocallyControlled())
+	{
+		if (loseSound)
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), loseSound);
+
+		}
+		ACassteraGameState* gs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+		if (gs)
+		{
+			resultWidget = Cast<UResultWidget>(CreateWidget(GetWorld(), wbp_resultWidget));
+			resultWidget = gs->resultWidget;
+			resultWidget->AddToViewport();
+			resultWidget->text_Win->SetVisibility(ESlateVisibility::Hidden);
+			resultWidget->text_Lose->SetVisibility(ESlateVisibility::Visible);
+			bWin = false;
+			PlayerController = Cast<APersonPlayerController>(Controller);
+			if (PlayerController)
+			{
+				PlayerController->SetShowMouseCursor(true);
+			}
+			// 			ServerRPC_CountDown();
+				//		gs->ServerRPC_ShowResult(bWin);
+
+		}
+	}
+}
 
 //void AHidePlayer::ServerRPC_SetTimer_Implementation()
 //{

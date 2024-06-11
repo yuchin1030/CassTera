@@ -21,6 +21,9 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sound");
+	class USoundBase* burningTime;
+
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CalculateTime();
 

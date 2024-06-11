@@ -72,5 +72,7 @@ public:
 
 	UFUNCTION()
 	void DecreaseHidePlayerCount();
+
+	bool bBurningSound;
 };
 

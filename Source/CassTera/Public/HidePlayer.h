@@ -201,8 +201,18 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiRPC_Win();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_Lose();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiRPC_Lost();
+
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	class USoundBase* winSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound");
+	class USoundBase* loseSound;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	class USoundBase* gameStartSound;
 

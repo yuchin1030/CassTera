@@ -9,6 +9,7 @@
 #include "EngineUtils.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/PlayerState.h>
 #include "HideAndSeekGameInstance.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 ACassteraGameState::ACassteraGameState()
 {
@@ -72,23 +73,31 @@ void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _
 		timerWidget->SetHidePlayerCount();
 		if (hidePlayerCount <= 0)
 		{
-			//ServerRPC_ShowResult2();
-			for (TObjectPtr<APlayerState> ps : PlayerArray)
+			bCount = true;
+			for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
 			{
-				auto* pawn = ps->GetPawn();
-				if (pawn->IsA<AHidePlayerCamera>())
+				hidePlayerCamera = *camera;
+				if (hidePlayerCamera)
 				{
-					Cast<AHidePlayerCamera>(pawn)->ServerRPC_Lose();
-				}
-				else if (pawn->IsA<ACassTeraCharacter>())
-				{
-					Cast<ACassTeraCharacter>(pawn)->ServerRPC_Win();
-				}
-				else
-				{
-					// 					UE_LOG(LogTemp, Warning, TEXT("111111111111111111111111111111111111111 : %s"), *pawn->GetActorNameOrLabel());
-				}
+					hidePlayerCamera->ServerRPC_Lose();
 
+				}
+			}
+			for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
+			{
+				hidePlayer = *h;
+				if (hidePlayer)
+				{
+					hidePlayer->ServerRPC_Lose();
+				}
+			}
+			for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
+			{
+				cassTeraPlayer = *player;
+				if (cassTeraPlayer)
+				{
+					cassTeraPlayer->ServerRPC_Win();
+				}
 			}
 
 		}
@@ -205,15 +214,18 @@ void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 			if (minute >= 0 && seconds > 0)
 			{
 				seconds -= 1;
+				UE_LOG(LogTemp, Warning, TEXT("time -1"));
+
 			}
 			else if (minute > 0 && seconds == 0)
 			{
 				minute -= 1;
 				seconds = 59;
+				UE_LOG(LogTemp, Warning, TEXT("time 59"));
 			}
 
 			MultiRPC_CalculateTime(bClearTimer, minute, seconds, pgPercent, totalSeconds);
-			}, 1.0f, true);
+		}, 1.0f, true);
 	}
 }
 
