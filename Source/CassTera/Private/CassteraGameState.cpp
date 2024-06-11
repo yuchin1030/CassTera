@@ -9,6 +9,7 @@
 #include "EngineUtils.h"
 #include <../../../../../../../Source/Runtime/Engine/Classes/GameFramework/PlayerState.h>
 #include "HideAndSeekGameInstance.h"
+#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 ACassteraGameState::ACassteraGameState()
 {
@@ -205,15 +206,18 @@ void ACassteraGameState::ServerRPC_CalculateTime_Implementation()
 			if (minute >= 0 && seconds > 0)
 			{
 				seconds -= 1;
+				UE_LOG(LogTemp, Warning, TEXT("time -1"));
+
 			}
 			else if (minute > 0 && seconds == 0)
 			{
 				minute -= 1;
 				seconds = 59;
+				UE_LOG(LogTemp, Warning, TEXT("time 59"));
 			}
 
 			MultiRPC_CalculateTime(bClearTimer, minute, seconds, pgPercent, totalSeconds);
-			}, 1.0f, true);
+		}, 1.0f, true);
 	}
 }
 
