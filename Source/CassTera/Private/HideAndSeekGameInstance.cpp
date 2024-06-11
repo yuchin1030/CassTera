@@ -6,10 +6,18 @@
 #include <Interfaces/OnlineSessionInterface.h>
 #include <Online/OnlineSessionNames.h>
 #include "CassteraGameState.h"
+#include <../../../../../../../Source/Runtime/Core/Public/Containers/Ticker.h>
+#include <../../../../../../../Source/Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+
+
 
 void UHideAndSeekGameInstance::Init()
 {
+	TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UHideAndSeekGameInstance::Tick));
+
 	Super::Init();
+
+	
 
 	// 서브시스템에서 세션 인터페이스 가져오기
 	auto subsys = IOnlineSubsystem::Get();
@@ -28,15 +36,10 @@ void UHideAndSeekGameInstance::Init()
 	GetWorld()->GetTimerManager().SetTimer(timer, [&]() {
 		CreateMySession(TEXT("School"), 3);
 		}, 3.0f, false);*/
-}	
-
-void UHideAndSeekGameInstance::Tick(float DeltaSeconds)
-{
-	FDelegateHandle TickDelegateHandle;
-
-	auto* pc = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
-	auto* cgs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
 }
+
+
+
 
 void UHideAndSeekGameInstance::CreateMySession(FString roomName, int32 playerCount)
 {
@@ -202,4 +205,45 @@ FString UHideAndSeekGameInstance::StringBase64Decode(const FString& str)
 	FBase64::Decode(str, arrayData);
 	std::string ut8String((char*)(arrayData.GetData()), arrayData.Num());
 	return UTF8_TO_TCHAR(ut8String.c_str());
+}
+
+bool UHideAndSeekGameInstance::Tick(float DeltaSeconds)
+{
+	//FDelegateHandle TickDelegateHandle;
+	//auto* pc = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+	//cgs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+	//if (cgs) 
+	//{
+	//	if (cgs->countDown <= 0)
+	//	{
+	//		cgs->countDown = 10;
+	//		FTimerHandle goHandle;
+	//		if (pc->IsLocalController())
+	//		{
+	//			GetWorld()->GetTimerManager().SetTimer(goHandle, [&]() {
+	//				//자꾸터져서 주석처리
+	//				cgs->bCount = true;
+	//				GetWorld()->GetTimerManager().ClearTimer(cgs->countHandle);
+	//				GetWorld()->GetTimerManager().ClearTimer(cgs->timerHandler);
+	//				GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/WaitngMap?listen"));
+
+	//				}, 10.f, false);
+	//		}
+	//		FTimerHandle startGame;
+	//		GetWorld()->GetTimerManager().SetTimer(startGame, [&]() {
+	//			GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/SchoolMap?listen"));
+	//			}, 30, false);
+	//	}
+	//}
+	
+	return true;
+}
+
+
+void UHideAndSeekGameInstance::Shutdown()
+{
+	// Unregister ticker delegate
+	FTSTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+
+	Super::Shutdown();
 }

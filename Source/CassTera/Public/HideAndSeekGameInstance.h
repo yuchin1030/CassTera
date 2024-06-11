@@ -62,8 +62,17 @@ class CASSTERA_API UHideAndSeekGameInstance : public UGameInstance
 public:
 	virtual void Init() override;
 
-	void Tick(float DeltaSeconds);
+	void Shutdown() override;
 
+	bool Tick(float DeltaSeconds);
+
+	FTSTicker::FDelegateHandle TickDelegateHandle;
+
+	UPROPERTY()
+	class ACassteraGameState* cgs;
+
+
+public:
 	// 세션 인터페이스 만들기
 	IOnlineSessionPtr sessionInterface;
 

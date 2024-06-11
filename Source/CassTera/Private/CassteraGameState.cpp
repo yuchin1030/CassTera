@@ -146,6 +146,9 @@ void ACassteraGameState::ServerRPC_CountDown_Implementation()
 {
 	//auto pc = GetNetOwningPlayer()->PlayerController;
 	auto* pc = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+	
+
+	countDown = 10;
 	FTimerHandle goHandle;
 	if (pc->IsLocalController())
 	{
@@ -158,6 +161,11 @@ void ACassteraGameState::ServerRPC_CountDown_Implementation()
 
 			}, 10.f, false);
 	}
+	/*FTimerHandle startGame;
+	GetWorld()->GetTimerManager().SetTimer(startGame, [&]() {
+		GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/SchoolMap?listen"));
+			}, 30, false);
+	*/
 
 	GetWorld()->GetTimerManager().SetTimer(countHandle, [&]() {
 		countDown -= 1;
