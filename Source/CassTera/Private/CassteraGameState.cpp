@@ -167,7 +167,9 @@ void ACassteraGameState::ServerRPC_CountDown_Implementation()
 			GetWorld()->GetTimerManager().ClearTimer(countHandle);
 			GetWorld()->GetTimerManager().ClearTimer(timerHandler);
 			GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/WaitngMap?listen"));
-
+			
+			// 이후에 다시 교실로 돌아가기 위해 게임 인스턴스에 정보 전달(게임 스테이트가 달라서 대기 방으로 가면 스테이트가 없어짐. 그래서 나머지는 인스턴스에서 구현해야함
+			bIsTraveld = true;
 			}, 10.f, false);
 	}
 	/*FTimerHandle startGame;

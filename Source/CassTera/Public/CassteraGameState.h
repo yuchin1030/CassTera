@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Sound");
 	class USoundBase* burningTime;
 
+	UPROPERTY()
+	bool bIsTraveld = false;
+
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CalculateTime();
 

@@ -209,6 +209,19 @@ FString UHideAndSeekGameInstance::StringBase64Decode(const FString& str)
 
 bool UHideAndSeekGameInstance::Tick(float DeltaSeconds)
 {
+	cgs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
+	if (cgs)
+	{
+		// 교실 스테이트에서 대기방으로 서버 트레블을 했다면
+		if (cgs->bIsTraveld == true)
+		{
+			cgs->bIsTraveld = false;
+			FTimerHandle startGame;
+			GetWorld()->GetTimerManager().SetTimer(startGame, [&]() {
+				GetWorld()->ServerTravel(TEXT("/Game/Yohan/Maps/SchoolMap?listen"));
+				}, 30, false);
+		}
+	}
 	//FDelegateHandle TickDelegateHandle;
 	//auto* pc = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
 	//cgs = Cast<ACassteraGameState>(UGameplayStatics::GetGameState(GetWorld()));
