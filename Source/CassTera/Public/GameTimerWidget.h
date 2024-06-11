@@ -44,7 +44,7 @@ public:
 	int32 minute = 3;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
-	int minusSeconds = 9;
+	int minusSeconds = 10;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
 	float totalSeconds = 180.0f;

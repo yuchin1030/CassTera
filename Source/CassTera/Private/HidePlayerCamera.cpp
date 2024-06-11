@@ -140,7 +140,6 @@ void AHidePlayerCamera::MultiRPC_MakeIMC_Implementation()
 
 void AHidePlayerCamera::ServerRPC_Lose_Implementation()
 {
-
 	MultiRPC_Lost();
 }
 

@@ -706,7 +706,7 @@ void ACassTeraCharacter::ServerRPC_ChangeMovement_Implementation()
 			ClientRPC_ChangeMovement(bGameStart);
 		}
 
-	}, 1.0f, false);
+	}, 10.0f, false);
 	
 	//ClientRPC_ChangeMovement(bGameStart, characterMovement);
 

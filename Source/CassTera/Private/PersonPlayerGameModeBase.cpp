@@ -86,6 +86,7 @@ void APersonPlayerGameModeBase::PostLogin(APlayerController* NewPlayer)
 	}
 }
 
+// 술래가 졌을떄
 void APersonPlayerGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
