@@ -256,13 +256,21 @@ void ACassTeraCharacter::AddMainUI()
 	auto* pc = Cast<APersonPlayerController>(Controller);
 
 	//	gameTimerwidget = Cast<UGameTimerWidget>(CreateWidget(GetWorld(), WBP_gameTimerWidget));
-	if (pc && pc->mainUI)
+	/*if (pc && pc->mainUI)
 	{
 		mainUI = pc->mainUI;
 		mainUI->AddToViewport();
 		UE_LOG(LogTemp, Error, TEXT("main ui viewport"));
 
+	}*/
+
+	if (IsLocallyControlled())
+	{
+		mainUI = Cast<UMainUI>(CreateWidget(GetWorld(), WBP_mainUI));
+		mainUI->AddToViewport();
+		UE_LOG(LogTemp, Error, TEXT("Create MainUI"));
 	}
+
 	// 채팅 추가
 	if (nullptr == pc->chatUI)
 	{
