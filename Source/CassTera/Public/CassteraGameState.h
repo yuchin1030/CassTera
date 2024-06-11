@@ -15,8 +15,11 @@ class CASSTERA_API ACassteraGameState : public AGameStateBase
 	GENERATED_BODY()
 
 public:
+	ACassteraGameState();
 
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CalculateTime();

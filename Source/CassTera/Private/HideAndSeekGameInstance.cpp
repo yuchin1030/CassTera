@@ -5,6 +5,7 @@
 #include <OnlineSubsystem.h>
 #include <Interfaces/OnlineSessionInterface.h>
 #include <Online/OnlineSessionNames.h>
+#include "CassteraGameState.h"
 
 void UHideAndSeekGameInstance::Init()
 {
@@ -28,6 +29,14 @@ void UHideAndSeekGameInstance::Init()
 		CreateMySession(TEXT("School"), 3);
 		}, 3.0f, false);*/
 }	
+
+void UHideAndSeekGameInstance::Tick(float DeltaSeconds)
+{
+	FDelegateHandle TickDelegateHandle;
+
+	auto* pc = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+	auto* cgs = Cast<ACassteraGameState>(GetWorld()->GetGameState());
+}
 
 void UHideAndSeekGameInstance::CreateMySession(FString roomName, int32 playerCount)
 {

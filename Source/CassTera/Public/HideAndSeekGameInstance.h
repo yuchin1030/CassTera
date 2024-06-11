@@ -62,6 +62,8 @@ class CASSTERA_API UHideAndSeekGameInstance : public UGameInstance
 public:
 	virtual void Init() override;
 
+	void Tick(float DeltaSeconds);
+
 	// 세션 인터페이스 만들기
 	IOnlineSessionPtr sessionInterface;
 
