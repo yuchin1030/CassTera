@@ -72,23 +72,31 @@ void ACassteraGameState::MultiRPC_DecreaseHidePlayerCount_Implementation(int32 _
 		timerWidget->SetHidePlayerCount();
 		if (hidePlayerCount <= 0)
 		{
-			//ServerRPC_ShowResult2();
-			for (TObjectPtr<APlayerState> ps : PlayerArray)
+			bCount = true;
+			for (TActorIterator<AHidePlayerCamera> camera(GetWorld()); camera; ++camera)
 			{
-				auto* pawn = ps->GetPawn();
-				if (pawn->IsA<AHidePlayerCamera>())
+				hidePlayerCamera = *camera;
+				if (hidePlayerCamera)
 				{
-					Cast<AHidePlayerCamera>(pawn)->ServerRPC_Lose();
-				}
-				else if (pawn->IsA<ACassTeraCharacter>())
-				{
-					Cast<ACassTeraCharacter>(pawn)->ServerRPC_Win();
-				}
-				else
-				{
-					// 					UE_LOG(LogTemp, Warning, TEXT("111111111111111111111111111111111111111 : %s"), *pawn->GetActorNameOrLabel());
-				}
+					hidePlayerCamera->ServerRPC_Lose();
 
+				}
+			}
+			for (TActorIterator<AHidePlayer> h(GetWorld()); h; ++h)
+			{
+				hidePlayer = *h;
+				if (hidePlayer)
+				{
+					hidePlayer->ServerRPC_Lose();
+				}
+			}
+			for (TActorIterator<ACassTeraCharacter> player(GetWorld()); player; ++player)
+			{
+				cassTeraPlayer = *player;
+				if (cassTeraPlayer)
+				{
+					cassTeraPlayer->ServerRPC_Win();
+				}
 			}
 
 		}
